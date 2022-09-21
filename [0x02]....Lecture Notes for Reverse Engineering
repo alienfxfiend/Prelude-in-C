@@ -1,0 +1,162 @@
+#2 The Reverse Engineering Process:: ISA: x86-64, ARM & AMD. Static vs. Dynamic Analysis: —Static involves analyzing a program & its code without execution —activities go from looking at strings to digging in with a disassembler; Dynamic Analysis involves analyzing the program during execution —Process monitors, debuggers, network captures. Native Code Obfuscation: Authors will attempt to make their code difficult to analyze whether for malicious or non-malicious purposes; Anti-analysis techniques can also be employed to slow down your ability to reverse engineer software. What you should already know ? Programming & Operating System fundamentals, Basics of virtualization to setup your own lab machine, Assembly familiarization is helpful -don't worry that is a focus of this course.
+
+#3 CPU architecture:: How does a CPU work ? Program on disk > (OS Loader) Primary memory > (CPU) <- fetch -> decode > Execute. "Any sufficiently advanced technology is indistinguishable from magic" -Third Law - Arthur Charles Clarke. CPU cores & clock cyles: Originally CPUs had a single core -this limited the number of instructions it could execute concurrently —Modern systems now come with multiple physical cores -not uncommon to see 2,4,6 or more physical cores in a system —Virtual cores are also possible but do not perform as well as physical cores -Intel's hyper-threading technology is an example. Other important components —Network interface, Secondary storage {HDD}, Primary memory {RAM}, Graphics Processing Unit (GPU.) Layers of Memory: CPU Registers, Caches, Primary memory, Secondary storage, Input devices. Processor Registers: 32 bits, Lower 16 bits, Lower 8 Bits, Upper 8 Bits: EAX, AX, AL, AH; EBX, BX, BL, BH; ECX, CX, CL, CH; EDX, DX, DL, CL; ESI, SI; EDI, DI; EBP, BP; ESP, SP. 64bit architecture extends 32bit general purpose registers & adds 8 more: RAX, RBX, RCX, RDX, RSI, RDI, RBP, RSP, R8-R15. Pointer Registers: 32bit pointer registers with 16bit portions —EIP -Instruction Pointer —ESP -Stack Pointer —EBP -Base Pointer —ESI -Source Index —EDI -Destination Index (these are commonly uses for copy operations); 64bit pointer registers: RIP, RSP, RBP. EFLAGS & RFLAGS: 32bit & 64bit registers that represent the results of operations & the state of the CPU; Common values include: Carry Flag -CF, Zero Flag (ZF), Sign Flag (SF), Trap Flag (TF), Direction Flag (DF), Overflow Flag (OF); The upper 32bits of RFLAGS are reserved. 
+
+#3 The Assembler & Program:: Headers; Sections: Code (.txt), imports\ exports, read-only data, resources, other sections. .text\.code: program instructions in binary state, entry point of program; .data\ .idata: initialized data, .rsrc: resources used by the program -icons, images, arbitrary binary data; .bss: uninitilized data. [bits 32] <- Defines architecture, section .text <- Defines the section for the code, global _START <- Defines the entry point, _START push ebp  mov esp, ebp  sub esp, 8h <- Entry point *NASM syntax
+
+#3 Instruction Set Architecture (ISA):: Defines the instructions the CPU understands; This is machine code, in binary state; Compiler\ assembler\ interpreter translates source code into appropriate machine code; When reverse engineering, disassemblers revert machine code back to assembly; Decompilers may be able to generate code in original language. It starts with a mnemonic: Mnemonics are human-readable forms of the instructions —add, mov, sub are some examples; Operands are arguments expected by the instruction; Operands can be of a few types: a register, a constant (or immediate value) or a memory location. OPCODES are simple the binary representation of the instruction & any operands -often displayed as hexadecimal values. Generating machine code: Write an instruction: xor eax, eax > Translate: assembler, compiler or interpreter > Results in machine code: 0x31 0xC00011000111000000
+
+#3 Essential Intstructions:: There is approximately 1503 instructions defined in Intel's ISA. We can organize into a few primary categories —arithmetic —memory —comparison —control flow —bit-manipulation. Arithemetic: Many instructions require you to explicitly define the operands, such as Addition ADD DEST, SOURCE. Multiplication: —unsigned multiply —uses an implicit argument based on operand size —eg. MUL BX. DIV: —unsigned divide —uses an implicit argument based on operand size —eg. DIV AX; IDIV —signed divide —eg. IDIV AX. Working with Memory: Often necessary to move data —between registers —into & out of memory (heap & stack); MOV instruction —MOV <reg>,<reg> —mov <reg>,<mem> —mov <mem>,<reg> —mov <reg>,<const> —mov <mem>,<const>; eg. mov eax, ebx; mov dword ptr [ecx], 18h. Performing Comparisons: CMP instruction compairs 2 values by performing subtraction —second operand is subtracted from first —cmp <reg>, <reg> —cmp <reg>,<mem> —cmp <mem>,<reg> —cmp <reg>, <con>; Results of the comparison update corresponding "flags" in the E\RFLAGS register. Control flow with Jumps: Instruction, Description: JE\JZ: Jump Equal or Jump Zero; JNE\JNZ: Jump Not Equal or Jump Not Zero; JG\ JNLE: Jump Not Equal or Jump Not Less\Equal; JGE\ JNL: Jump Greater or Jump Not Less\Equal; JL\ JNGE: Jump Less or Jump Not Greater\ Equal; JLE\ JNG: Jump Less\ Equal or Jump Not Greater.  Unconditional jumps don't check the flags register -transfers control to argument; Conditional jumps allow for branching logic -checks the flags register to determine if it should take the jump. The CALL Instruction: CALL [function] is similar to a jump instruction, tells CPU where to go next —however there's a key difference: CALL pushes the address of the next instruction onto the stack; A CALL is typically followed by a RET instruction —RET pops the value on top of the stack into EIP. A note on syntax: AT&T prefixes registers with a "%" & immediate values with a "$" AT&T also changes the direction of operands for many instructions: instruction source, destination. mov eax, ebx becomes %ebx, %eax.
+
+#3 Bitwise Operations:: AND: Multiplies each register bit by bit; OR: the bit is 0 only if both bits are 0, otherwise the bit is 1; XOR: the bit is 0 if both bits are 0 or both bits are 1. If one bit is 0 & the other is 1 then the bit will be 1. Size Directives: You will need to think in terms of size & not datatypes: quad-word (qword): 8 bytes\ 64 bits; double-word (dword): 4 bytes\ 32 bits, word: 2 bytes\ 16 bits; byte: 8 bits; bit: a single 1 or 0. Endianness: When storing data in memory, the byte order is determined by architecture —Big-endian: Most significant byte first —Little-endian: Least significant byte first; Only affects multi-byte values
+
+#4 The Portable Executable:: PE:: Headers -> IMAGE_DOS_HEADER, IMAGE_NT_HEADERS: IMAGE_FILE_HEADER, IMAGE_OPTIONAL_HEADER, IMAGE_DATA_DIRECTORY; ] IMAGE_SECTION_HEADER; Sections -> Image Sections: .text\ .code, .bss, .rdata, export data, import data, resources, thread-local storage, debug information; ] IMAGE_DOS_HEADER: All PEs start with this header - first 64 bytes of file. Has 19 members, magic & e_lfanew are important —magic: contains values 4Dh, 5Ah (MZ), signifies a valid DOS header. e_lfanew: DWORD, contains offset for IMAGE_NT_HEADERS 58 bytes of additional members. {Data in the PE file format is stored using Little Endian} —entry point of the program —image base (virtual memory) —whether it uses address space layout randomization (ASLR, data execution prevention (DEP) & other security features. IMAGE_OPTIONAL_HEADER Large structure that contains a variety of useful information; entry point DWORD AddressOfEntryPoint; DWORD ImageBase; image base; WORD os Linker Version; WORD DllCharacteristics image characteristics; IMAGE_DATA_DIRECTORIES Holds at most 16 entries —array of IMAGE_DATA_DIRECTORY structures; refers to different parts of code: imports, exports, resources, relocation tables; IMAGE_SECTION_HEADER
+IMAGE_SECTION_HEADER{
+BYTE name //name of section
+union {
+DWORD PhysicalAddress //size of section when loaded into memory
+dword VirtualSize
+}
+dword VirtualAddress //address of section in memory
+DWORD SizeOfRawData //size of section on disk
+DWORD PointerToRawData //beginning of section on disk
+ … snipped … 
+DWORD Characteristics //characteristics of the image
+}
+From Disk to Memory: Loader will navigate DOS header to find PE section, checks for validity > Section tables are read & sections mapped into memory > Loader then parses other aspects of the image, such as imports & exports > Finally, uses AddressOfEntry to calculate entry point & begins image execution.
+
+#4 An Introduction To The Windowz API:: msdn.microsoft.com  Types & Hungarian Notation: BYTE, WORD & dWORD are used to represent 8,16,32 bit values -this is in contrast to C types such as int, short & unsigned int; Hungarian notation is a prefix notation used to identify a variable's type eg. LPCTSTR which means long pointer to a constant TCHAR string. Handles: Opened or created by the OS —provides direct access to windows, menus, files, directories, et cetera; Similar in concept to a C pointer —Can't do arithmetic on them —Will look like a pointer in Assembly. You can view process handles with tools like Process Hacker. Creating a process with the Windowz API:
+BOOL WINAPI CreateProcess(
+_In_opt_			LPCTSTR							lpApplicationName,
+_Inoutopt_			LPTSTR							lpCommandLine,
+_In_opt_			LPSECURITY_ATTRITBUTES			lpProcessAttributes,
+_In_opt_			LPSECURITY_ATTRITBUTES			lpThreadAttributes,
+_In_				BOOL							bInheritHandles,
+_In_				DWORD							dwCreationFlags,
+_In_opt_			LPVOID							lpEnvironment,
+_In_opt_			LPCTSTR							lpCurrentDirectory,
+_In_				LPSTARTUPINFO					lpStartupInfo,
+_Out_				LPPROCESS_INFORMATION			lpProcessInformation
+);
+[User mode] Windowz API: Kernel32, user32, ws2_32, & other DLLs > Native API NTDLL > [Kernel mode] Kernel API. Linking Code: Static —directly copies code from the libraries into the executable —Runtime —imports from libraries only when that function is needed -malware often uses this technique —Dynamic —OS looks for libraries when executable is loaded -this is the most common. Common DLLs: DLL Name, Description: Kernel32 Core functionality -memory, processes, files & hardware; Advapi32 Service manager, registry; User32 User interface; Ntdll Low level API not intended to be called directly; WSock32\ ws2_32 Low-level networking; wininet High-level networking (HTTP, FTP etc.) 
+
+#4 Demo:: Use the following to automatically parse a PE file: 010 Hex Editor, PE Studio, Dependency Walker Hex Edit: We have offsets to the left We have RAW binary content in the center We have the ASCII representation of any of that binary content off to the right Configured to show 16 bytes per row So not only do we have offsets to the left but then we have column offsets above this binary content.
+
+#5 Debugger Functionality:: Executing Software: —Programs run in memory so you'll be dealing with virtual addresses {RVAs (Relative Virtual Addresses) just an offset that when added to the image base or some other absolute address can be used to calculate a new address.} —Our focus will be running native code programs it is possible to debug interpreted languages (Python, PHP, JavaScript in the browser) —You can also debug Dynamic Link Libraries (DLLs) using rundll32 in Windowz. Debug Symbols: can provide information about functions & variable names; Generated at compile time; May not be available for the code you are reversing; Micro$oft provides symbols for many of their libraries; Many tools will integrate directly with Micro$oft symbol servers {To-Do}
+
+#5 Using WinDbg Under Windowz:: … Memory Window: Allows you to view contents of memory; virtual -change the scope of the view; Display format -changes how the data is displayed. Viewing the Stack Frame: The Stack Frame is the region of the Stack that a function uses for such things as arguments & local variables. Command Window: Allows you to interact with the debugged program —single step, step-in, step-out, set & view breakpoints. .help provides a comprehensive list of commands. Basic Commands: Action, Command: Step into (trace) t, Step over p(count), Step return gu, Continue (go) g, lm List running processes, list breakpoints bl, Set breakpoint bp address, Clear breakpoint bc #, Search memory s range pattern. 
+
+#6 Functions & the Stack Frame:: (Imported libraries) Stack grows from higher to lower High addresses 0x7FFFFFFF ↓, Heap grows up (lower to higher) Low addresses 0x00000000 ↑ (Virtual Memory) (uninitialized data section.) A function is a section of code that performs a specific task & can accept arguments & return a value; When reversing it is important to understand the internals of how a function is called, such as the Stack Frame & calling convention; It is also crucial to be able to discriminate between library code & code written by the author [...] Reversing tools may help identify functions for you -but you can't always trust them ! What About Locals ? In Assembly local variables are just space on the stack —typically referenced relative to EBP or Especially —Function prologue & epilogue help prepare & free a functions stack frame.
+example_function:		// Prologue
+	push EBP			// Prologue
+	mov EBP, ESP		// Prologue
+	sub ESP, 0x08		// Prologue
+	...
+	mov ESP, EBP
+	pop EBP
+	ret
+Stack Frame Arguments: Sample Program:
+0x401000: push 3
+0x401002: push 2
+0x401004: push 1
+0x401006: call function
+0x401008: add ESP, 0xC
+(Virtual Memory) [Higher] [N\A] 3 2 1 0x40100A [NA] [NA] [NA] [Lower]
+Stack Frame Locals: 
+0x401100: push EBP
+0x401101: mov EBP, ESP
+0x401103: sub ESP. 0x4
+...
+0x40110A: mov ESP, EBP
+0x40110C: pop EBP
+0x40110C: ret
+(Virtual Memory) [Higher] 3 2 1 0x40100A Old EBP Local variable [NA] [NA] [Lower]
+
+{(Practical Assembly To-Do) N=rename X=Cross references Spacebar=Graph\ Linear toggle D=convert datatype rmb>Cross references from IDA. Code Hollowing}}
+
+#6 Calling Conventions:: Rules for calling functions: Implemented by the compiler but assembly programmers can do as they please; Two parts: How arguments are passed to the function & who is responsible for stack cleanup. C Declaration -CDECL: default calling convention for C & C++ —arguments are pushed from last to first —Stack cleanup is done by the caller. Example:
+function1(1,2,3)
+push 3
+push 2
+push 1
+call function1
+add ESP, 0xC
+2.Standard call -stdcall —often used with Win32 API —arguments are pushed last to first. Example:
+function2(1,2,3)
+push 3
+push 2
+push 1
+call function2
+Inside the function: ret 0xC —callee cleans the stack.
+3. Fast call -fastcall —favors registers over the stack —ECX & EDX are used first —The rest are pushed —Callee is responsible for Stack clean-up. Example:
+function3(1,2,3)
+push 3
+mov EDX, 1
+mov ECX, 2
+call function3
+
+#6 Conditionals & Control Structures:: IF Statements:
+if (a > b){
+	a++
+}	else{
+	b++
+}
+mov eax, [ebp-0x4]
+cmp eax, [ebp-0x8]
+jle else
+add [ebp-0x4], 1
+jmp end_if
+else:
+add [ebp-0x8], 1
+mov eax, [ebp-0x4]
+cmp eax, [ebp-0x8]
+jle else
+cmp eax, [ebp-0xC]
+jge else
+add [ebp-0x4], 1
+jmp end_if
+FOR Loops: Three distinct sections of code especially when compiler generated —Comparisons —Body —Counter increment\ decrement:
+int a;
+for (a=0; a<10; a++)
+{
+// loop body
+}
+mov eax, [ebp-0x4]
+loop comparison:
+cmp eax, 9
+jg end_loop
+add eax, 1
+jmp loop_comparison
+end_loop:
+WHILE Loops: Typically harder to discern the distinct components of this loop —you have to look for variables used in the condition —Loop body & continuation logic can come in any order —As with a FOR loop look for unconditional jumps "backwards"
+mov eax, [ebp-0x4]
+loop_comparison:
+cmp eax, 9
+jg end_loop
+add eax, 1
+jmp loop_comparison
+end_loop:
+Switches: Small switches will appear as a series of IF ELSE-IF statements —Large switches may generate a jump table -this optimizes the logic to reduce comparison & calculate what case to jump to —Reversing tools such as IDA Pro help make these easier to identify & navigate.
+
+#6 Arrays:: Arrays are simply a contiguous block of memory —The size of each element determines the size of the array —to access an element you need to be able to calculat the address —you will generally see the base of the array plus element size.
+.data
+		array1 dw 1,2,3,4,5,6
+mov eax, array1; moves the address into eax
+mov ebx, [array1]; gets the first element
+mov ecx, [array1 + 0x2]; gets the second element
+Stack based arrays:
+void function1(void){
+	short array[8];
+	array[2]=42;
+function1:
+push ebp
+mov ebp, espp
+sub espp, 10h
+}
+[Args], [Return Addy], [Old EBP] (EBP), EBP-4h|EBP-6h, EBP-8h|EBP-Ah, EBP-Bh|EBP-10h, EBP-12h|EBP-14h (ESPP) EBP-14h|EBP-18h
+
+#7 Getting Started With IDA Pro:: IDA Database Files: IDA's analysis of the binary code results in an IDA database file -this will have a .IDB extension; While IDA is open you will also see files with the following extensions: id0, id1, .nam & .til; Once the database is created the originally binary is no longer needed unless you want to perform dynamic analysis. Database Creation: Loader Module: Parses the binary, selected during startup; Parses binary content: Loads from disks & creates corresponding sections; Entry Point: Calculates the entry point & attempts to find main; Virtual Memory: Provides virtual addresses as to appear similar to being in memory; Recursive Descent: Parses instructions then generates the Assembly syntax. Finding Main: AddressOfEntryPoint takes you to Start, not main —IDA's signature detection will usually find main for you —code between start & main is usually compiler generated —look for 3 pushes then a call from start
+
+#7 Leveraging String & APIs:: Strings: Often represent important data in a binary such as IP addresses & domain names; APIs: Provide insight into what the program is doing & helps to focus our analysis; Obfuscation: Primary efforts to obfuscate code are to hide strings & APIs. IMPORTS Window: Similar to Strings window -easy way to identify imported APIs —double-click to find in the import table follow cross-references from there —A lack of imports (& strings) also tells you something about the binary
+
+#7 Strategies For Tracing Programs: It's All about Navigation: IDA provides an overview of navigation —Light blue is a library function —Dark blue is a regular function —There is a yellow arrow that indicates where you are at. Branching logic is indicated by colored arrows; Graph view makes it easy to see possible paths; Space bar switches to linear view; Loops are easy to spot: For loops have clearly identified basic blocks —While loops still have a reverse flow. Additional key features: Renaming & Comments: IDA allows for renaming of variables & functions plus comments; Hex editor: Can be used to view & even edit raw binary data; IDA Python: Automate interaction with the database; Structures: Map more comprehensive memory usage into structures & objects; Decompiler: Recovers code to a higher-level representation.
