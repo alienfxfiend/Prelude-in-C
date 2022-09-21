@@ -1,0 +1,63 @@
+C++ 11 {#3} 0:32 : 1:44} #2 Demo: Dynamic Linking:: Objects: Hens do more than Cluck() We need to define an interface in C++ to model this behavior
+
+#3 Introduction:: GUIDS & HRESULTS
+
+#3 rpcrt4.lib smart pointer -> shared_ptr unique_ptr null pointer naked pointer make_shared function {Smart pointers copy semantics are certainly handy especially when you're dealing with your typical C++ container that assumes copy semantics.} move semantics (auto keyword ?) 
+
+#1 What is COM ?:: "COM is an architecture for component reuse that allows dynamic & efficient composition of systems from independently developed binary components" —Don Box
+
+#1 Core Concepts:: Essential: IUnknown & a C++ Compiler Non essential: Registry, Apartments & activation, Interface Definition Language (IDL), Proxies & Marshaling, Servers & Security, VARIANT BSTR & SAFEARRAY, etc. 
+
+#1 Pillars Of COM:: Interfaces, Classes, Apartments, Security.
+
+#1 History::  OLE 1 released in 1990; OLE 2 (built on COM) released in 1993; Office, Windows Shell, Micro$oft Transaction Server, Direct X.
+
+#1 The Players:: Principal architects & developers: Tony Williams, Bob Atkinson, Craig Wittenberg, Rick Hill. Principal evangelists: Kraig Brockschmidt, Don Box.
+
+#2 COM As A Better C++98:: C++ & Object Oriented Programming; Modern C++ … & the dark age of managed code; Software distribution; Portability; Binary standard.
+
+#2 Dynamic Linking:: Dynamic vs. Static; Exporting C-Style functions; Performance. Dependency Walker.
+
+#2 Exporting Objects:: COM involves cheating ?; Implementation of Virtual Functions; stdcall.
+
+#2 Managing Lifetime:: How & when to delete ?!; If you new it, you must delete it; Proliferation of interfaces & pointers.
+
+#2 Extending Objects:: Interfaces are immutable contracts; Objects can still be extended; dynamic_cast doesn't cut it.
+
+#2 Say Hello To Unknown::
+struct IObject
+{
+		virtual void __stdcall AddRef() = 0;
+		virtual void __stdcall Release() = 0;
+		virtual void * __stdcall As(char const * type) = 0;
+};
+struct IUnknown
+{
+		virtual HRESULT __stdcall QueryInterface(GUID const & id, void ** result) = 0;
+		virtual ULONG __stdcall AddRef() = 0;
+		virtual ULONG __stdcall Release() = 0;
+}
+
+# S_OK, it's just an HRESULT::
+typedef long HRESULT;
+
+Severity code, Facility code, Status code.
+
+#define SUCCEEDED(hr) (((HRESULT)(hr)) >= 0) //probably
+#define FAILED(hr) (((HRESULT)(hr)) >= 0) //not
+
+if (S_OK == hr)  … //OK
+if (S_OK != hr) … //Failed
+
+#3 Taming the GUID:: 128bit value; Globally unique identifier
+typedef GUID UUID;
+typedef GUID IID;
+typedef GUID CLSID;
+
+#3 The Rise Of The Smart Pointer:: operator ->; template <typename T>; auto_ptr deprecated; C++11's unique_ptr & shared_ptr.
+
+#3 C++11 as a better COM:: Is COM redundant ?; Consider C++11 smart pointers before turning to COM.
+
+#4 Windows Runtime C++ Template Libray:: Windows Runtime (WinRT) vs. Classic COM; "Windows Runtime Library"; Jointly owned by Windows & Visual C++.
+
+#4 WRL's Runtime Class:: ComPtr is for COM clients. RuntimeClass is for COM servers.
