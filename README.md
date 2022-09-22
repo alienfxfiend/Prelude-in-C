@@ -13,7 +13,7 @@
 - [ ] Learn Depth First Search
 - [ ] Learn KMP Algorithm for Pattern Searching
 - [ ] Learn Ternary Search [searchsortsynchro algos]
-- [ ] Learn Thunking (is a DLL term)
+- [ ] Learn Thunking (it's a DLL term)
 - [ ] Learn ASM e-Book least significant bit
 - [ ] Matrix Transformation\ COS Trigonometry GDev
 - [ ] [api-virtua-hook-api-hooking-engine-yahoo-messenger](https://code.google.com/archive/p/api-virtua-hook-api-hooking-engine-yahoo-messenger/) :: <br />
