@@ -2,7 +2,7 @@
 
 ## xL AUX<br />
 
-###### Started /w Java, C, C++, Visual Basic, VBScript, Microsoft Small Basic, LibertyBASIC & now finally C# !<br />
+###### Started /w Java, C, C++, Visual Basic, VBScript, Microsoft Small Basic, Liberty BASIC v4.5.1 & now finally C# !<br />
 - [ ] Learn Function Pointers<br />
 - [ ] Learn Singly\ Double Linked Lists
 - [ ] Learn Variadic Functions
