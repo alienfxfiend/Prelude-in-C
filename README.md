@@ -3,18 +3,18 @@
 ## xL AUX<br />
 
 ###### Started /w Java, C, C++, Visual Basic, VBScript, Microsoft Small Basic, LibertyBASIC & now finally C# !<br />
-* learn function pointers<br />
-* learn singly linked lists
-* learn variadic functions
-* learn bit manipulation
-* learn dynamic libraries
-* learn malloc
-* learn file I\O
-* learn Depth First Search
-* learn KMP Algorithm for Pattern Searching
-* learn Ternary Search [searchsortsynchro algos]
-* learn thunking is a DLL term
-* learn ASM e-Book least significant bit
+* Learn Function Pointers<br />
+* Learn Singly\ Double Linked Lists
+* Learn Variadic Functions
+* Learn Bit Manipulation
+* Learn Dynamic Libraries
+* Learn malloc
+* Learn File I\O
+* Learn Depth First Search
+* Learn KMP Algorithm for Pattern Searching
+* Learn Ternary Search [searchsortsynchro algos]
+* Learn Thunking (is a DLL term)
+* Learn ASM e-Book least significant bit
 * Matrix Transformation\ COS Trigonometry GDev
 * [api-virtua-hook-api-hooking-engine-yahoo-messenger](https://code.google.com/archive/p/api-virtua-hook-api-hooking-engine-yahoo-messenger/) :: <br />
 Intend to create an api hooking possibly running as a process or createremotethread app that runs as a service<br />
