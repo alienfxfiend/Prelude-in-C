@@ -193,7 +193,7 @@ As p is pointing to the variable x, dereferencing the pointer (*p) is representi
 78.1 Stack & Queue
 79.1 Dictionary & HashSet
 
-Check for Try it yourself before Basic Concepts -> Printing Text. Delegates + -=Typecasting=- convert one datatype to another. -=Delegate=- function pointer; delegates contains the reference to several methods and call them when needed. So, you create numbers of methods as you need and attach it to delegates. At runtime, an event gets fired and delegates dynamically call the function and show the result. -=Callback Function=- call to another function await another function to finish & alert calling. -=Nested For Loop=- outer loop creates rectangle, inner loop fills it. -=index++ (postfix (increment afterwards))=-
+Check for Try it yourself before Basic Concepts -> Printing Text. Delegates + -=Typecasting=- convert one datatype to another. -=Delegate=- function pointer; delegates contains the reference to several methods and call them when needed. So, you create numbers of methods as you need and attach it to delegates. At runtime, an event gets fired and delegates dynamically call the function and show the result. -=Callback Function=- call to another function await another function to finish & alert calling. -=Nested For Loop=- outer loop creates rectangle, inner loop fills it. -=index++ (postfix (increment afterwards))=- https://www.cprogramming.com/tutorial/function-pointers.html
 
 =============================
 =============================
@@ -7272,5 +7272,74 @@ Loops.
 Here both the interfaces IEnumerable and IEnumerator are implemented. To avoid this hassle you can use of Generic Classes. There by default System.Collections.Generic.IEnumerable(T) is implemented and it will directly iterate through foreach loop.
 Performance Tips
 Since foreach iterates through objects of a collection, it is slower than for loop, which is looping based on counter. [1] Still sometimes you would have to use foreach over for.
+
+{ C# Delegates (US YT):: https://youtu.be/EyR2AfLkwcA ervistrupja https://youtu.be/3ZfwqWl-YI0 codemonkey https://youtu.be/vOlLd2SsKM4 simplilearn https://youtu.be/KaxNwGA9fiY rawcoding https://youtu.be/R8Blt5c-Vi4?t=723 *iamtimcorey } threadsafe {{ The 4 types of Programming Language that are classified are: Procedural Programming Language. Functional Programming Language. Scripting Programming Language. Logic Programming Language. Object-Oriented Programming Language. }} {{ The seven steps of programming. Step 1: Define the Program Objectives. ... Step 2: Design the Program. ... Step 3: Write the Code. ... Step 4: Compile. ... Step 5: Run the Program. ... Step 6: Test and Debug the Program. ... Step 7: Maintain and Modify the Program. }} {{ Coder. Programmer. Developer. Codaholic. }} {{ -=crowdsourcing=- Getting help from a large group of people to finish something faster. -=cyberbullying=- Doing something on the internet, usually again and again, to make another personal feel angry, sad, or scared. -=digital citizen=- Someone who acts safely, responsibly, and respectfully online. -=decompose=- Break a problem down into smaller pieces. -=digital footprint=- The information about someone on the Internet. -=F.A.I.L=- First Attempt In Learning -=iteration=- A repetitive action or command typically created with programming loops. -=pixel=- Short for "picture element", the fundamental unit of a digital image, typically a tiny square or dot that contains a single point of color of a larger image. -=Object-oriented programming=- is centered around digital objects that contain functions and data. Data and code are representations of an object’s properties. This data structure allows for unique variables within the program. || OOP is a programming paradigm that allows for the independent modeling of data. Objects consist of both protocols and values. An example of an object-oriented language is JavaScript, C++, or Python. -=Class=- A class is one of the basic building blocks of a computer program. Programmers define classes that act as blueprints for creating objects in the code. The idea of a class is to group together related values and behavior. For example, in a social media app, there could be a class for a User. The User class holds reusable code and properties, such as name, picture, hobbies, and more. -=Agile software development=- is a set of practices that governs the way a team creates software programs. Agile development involves collaboration among cross-functional teams to build software efficiently. Each team within the Agile framework will work on its own piece of code that will become part of the final project. || Why Programmers Should Know About Agile Software Development Agile software development is a common software creation approach that’s used by many major tech firms. By dividing a project into smaller chunks, each programming team can write code more efficiently. Sprints provide developers with concise workloads and allows them to conduct a proper code review to ensure that each component is perfect. -=Asynchronous programming=- “out of sync” In simple terms is a technique that allows a program or application to continue its operation while waiting for other tasks to be completed. A typical example in web development is the ability of a website like Facebook to allow the user to, for example, read your post feed while the messenger chat is still loading. This technique is now widely used in modern websites and applications. -=Class (Object-oriented programming)=- In object-oriented programming, a class defines a structure for creating objects consisting of variables or attributes and functions or methods. Each of these objects is then called an “instance” of the class. -=Crawl=- Anything you look for you can find on Google, but how does Google know what each website contains? Well.. Google crawls each website from time to time to read its contents and store it in their databases so that you can later retrieve it. -=DevOps=- A set of practices, philosophies, and tools that combine software development (dev) and IT operations (ops) to increase the efficiency and speed at which teams and organizations can deliver applications and services. -=Event, Event Listener=- In certain situations, it is necessary to trigger actions after certain user or system interactions, e.g., the user moves the mouse, clicks on a button, the clock ticks a new second, etc. Those moments are called events, and an event listener is a connector that allows developers to plug custom logic or algorithms when one of these actions occurs. Note that different events will be available depending on the platform, software, tools, etc. -=Framework=- A framework is a set of tools, libraries, design, and structure that help developers build products. Not to be confused with a library (though it is quite common), a framework does not provide only functions and routines but also opinionates on how to solve certain problems. -=JWT=- JWT or JSON Web Token is a standard used to identify user identity between client and server. They contain information about the logged-in user, and it is transmitted between the FE and the BE, or even between different BE systems. The user information cannot be forged or altered as it is protected by encryption. Thus, it is a safe mechanism that enables it to become an industry standard. -=Kebab case=- Snake case is the practice of naming variables, functions, etc., by separating words with a dash (-). It is very common in URLs. E.g.: /gear-and-tools/. -=Pascal case=- Pascal case is the practice of naming variables, functions, etc., by capitalizing all words. It is very common to declare classes. E.g.: UserService. -=Snake case=- Snake case is the practice of naming variables, functions, etc., by separating words with an underscore (_). It is common in some programming languages like Python and JSON responses from APIs. E.g.: is_user_logged_in. -=Camel case=- Camel case is the practice of naming variables, functions, etc., by capitalizing all words except the first one. E.g.: isUserLoggedIn. -=NPM (Node package manager)=- NPM Is a CLI tool used by programmers to find and install tools, libraries, and frameworks to develop applications built in JavaScript / TypeScript. -=NPX=- Some NPM packages are not meant to be installed, for example, packages that allow you to set up a new project. We can use NPX to download the code and run the script without keeping it installed. -=Pair programming=- It is a technique in which two developers work together on one computer (or virtually, though it is not the same experience). It is common for junior developers to follow these practices with developers of higher seniority, but it is not the only case that can be fruitful. Senior developers can also benefit from this technique by sitting with other developers. I guess four eyes and two minds can really see and think better than the two individually. -=Parse=- It is the action of transforming data into a workable format. For example, when you retrieve data from an API, the data is transmitted as text (or string), even when the data represents a JSON object. If you want to work with that data, you must parse the string into an object. -=Plugin=- A plugin is a software, library, or module that can be added to another application, framework, or software with the end of increasing its functionality, security, or features. -=Repository (repo)=- Think of it as basically a folder that contains all the source files of a project (including its history of change), and it is stored in some location you can access to read those files. Very common when we talk about a git repository, meaning the allocated name for the project on a git server. -=Responsive Design=- When building applications or websites, we can’t ignore that nowadays, people will access them from different devices such as phones, tablets, or computers. Responsive design allows for developers to build software that adapts its contents to fit into the different screen sizes without building different applications for each. -=REST API=- Representational state transfer (REST) APIs are a way to transfer information over the HTTP protocol, following rules and conventions. -=SaaS (software as a service)=- It is a software licensing model in which software is licensed on a subscription and made available on the internet. -=Spaghetti code=- Spaghetti code is a term used to describe code that is very hard for humans to read and understand, mainly because of how the developer or developers wrote the code. It can be caused by different reasons, including changes in scope, the evolution of requirements, code written by multiple developers over long periods, lack of programming style rules, or developer experience. -=UX=- UX designs the user experience by thinking about how the user will interact with the software and making it pleasant and optimal for the target audience. -=Wireframe=- A website’s bare-bones structure can even be a sketch on a napkin. No fonts, colors, or images. This layout is the first step to testing the idea before content and design are added. -=Nested=- Functions or objects that are contained within another function or object. So, a function that exists entirely inside the directions of a separate function is nested. -=Client-Side=- Client-side is a popular term in web development. The Client-side refers to everything that an end user sees. It is quite literally the side that the clients get to see. On a web page, client-side refers to: Text Images Any other UI component visible/accessible to you Actions that your browser performs For example, the markup languages HTML and CSS are interpreted on the client side. This simply means your browser renders the web page. Opposition to the client-side is server-side. The server-side things happen remotely on a server and are inaccessible to the client. For example, when you log in to your favorite website, the authentication takes place server-side. }}
+
+{{ Nested Loops
+https://flylib.com/books/en/4.330.1.79/1/ http://www.cl72.org/070documents/C/c-primer.pdf http://spiro.fisica.unipd.it/~boschini/c/(Ebook)%20Sams%20-%20C%20%20Primer%20Plus%205Th%20Edition%202005.pdf https://zhjwpku.com/assets/pdf/books/C++.Primer.5th.Edition_2013.pdf
+
+A nested loop is one loop inside another loop. A common use for nested loops is to display data in rows and columns. One loop can handle, say, all the columns in a row, and the second loop handles the rows. Listing 6.17 shows a simple example.
+
+Listing 6.17. The rows1.c Program
+/* rows1.c -- uses nested loops */
+#include <stdio.h>
+#define ROWS 6
+#define CHARS 10
+int main(void)
+{
+ int row;
+ char ch;
+ for (row = 0; row < ROWS; row++) /* line 10 */
+ {
+ for (ch = 'A'; ch < ('A' + CHARS); ch++) /* line 12 */
+ printf("%c", ch);
+ printf("\n");
+ }
+ return 0;
+}
+
+Running the program produces this output:
+ABCDEFGHIJ
+ABCDEFGHIJ
+ABCDEFGHIJ
+ABCDEFGHIJ
+ABCDEFGHIJ
+ABCDEFGHIJ
+
+Program Discussion
+The for loop beginning on line 10 is called an outer loop, and the loop beginning on line 12 is called an inner loop because it is inside the other loop. The outer loop starts with row having a value of 0 and terminates when row reaches 6. Therefore, the outer loop goes through six cycles, with row having the values 0 through 5. The first statement in each cycle is the inner for loop. This loop goes through 10 cycles, printing the characters A through J on the same line. The second statement of the outer loop is printf("\n");. This statement starts a new line so that the next time the inner loop is run, the output is on a new line.Note that, with a nested loop, the inner loop runs through its full range of iterations for each single iteration of the outer loop. In the last example, the inner loop prints 10 characters to a row, and the outer loop creates six rows.
+
+A Nested Variation
+In the preceding example, the inner loop did the same thing for each cycle of the outer loop. You can make the inner loop behave differently each cycle by making part of the inner loop depend on the outer loop. Listing 6.18, for example, alters the last program slightly by making the starting character of the inner loop depend on the cycle number of the outer loop. It also uses the new comment style and const instead of #define to help you get comfortable with both approaches.
+
+Listing 6.18. The rows2.c Program
+// rows2.c -- using dependent nested loops
+#include <stdio.h>
+int main(void)
+{
+ const int ROWS = 6;
+ const int CHARS = 6;
+ int row;
+ char ch;
+ for (row = 0; row < ROWS; row++)
+ {
+ for (ch = ('A' + row); ch < ('A' + CHARS); ch++)
+ printf("%c", ch);
+ printf("\n");
+ }
+ return 0;
+}
+
+Here's the output this time:
+ABCDEF
+BCDEF
+CDEF
+DEF
+EF
+F
+
+Because row is added to 'A' during each cycle of the outer loop, ch is initialized in each row to one character later in the alphabet. The test condition, however, is unaltered, so each row still ends on F. This results in one fewer character being printed in each row. }}
+
+ {{ https://flylib.com/books/en/4.330.1/ https://flylib.com/books/en/4.330.1.19/1/ https://www.computerhope.com/jargon/program.htm https://hackr.io/blog/programming-terms-definitions-for-beginners https://www.techgeekbuzz.com/blog/programming-terms/ https://onlinegrad.syracuse.edu/blog/coding-terms-for-beginners/ https://code.org/curriculum/docs/k-5/glossary https://careerkarma.com/blog/programming-terminology/ https://livecodestream.dev/post/programming-terms/ https://www.codingem.com/programming-glossary/ || https://dotnet.microsoft.com/en-us/learn/csharp https://www.learncs.org/ https://www.w3schools.com/cs/index.php https://www.codecademy.com/learn/learn-c-sharp https://www.tutorialsteacher.com/csharp https://www.javatpoint.com/c-sharp-tutorial https://www.programiz.com/csharp-programming https://www.tutorialspoint.com/csharp/index.htm https://www.youtube.com/watch?v=gfkTfcpWqAY c#1hr https://www.youtube.com/watch?v=GhQdlIFylQ8 c#4hrbeg https://www.youtube.com/watch?v=q_F4PyW8GTg c#7hr }}
 
 					END OF ADHOC-CPP NOTES.
