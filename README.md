@@ -3,7 +3,7 @@
 ## xL AUX<br />
 
 ###### Started /w Java, C, C++, Visual Basic\ VBScript, Microsoft Small Basic, CSS, Liberty BASIC v4.5.1, AutoHotKey, JavaScript & now finally C# !<br />
-- [x] Learn Function Pointers\ Delegates<br />
+- [x] Learn Function Pointers Typedef\ Delegates<br />
 - [ ] Learn Singly\ Double Linked Lists
 - [ ] Learn Variadic Functions
 - [ ] Learn Bit Manipulation
