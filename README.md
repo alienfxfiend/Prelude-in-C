@@ -13,7 +13,7 @@
 - [ ] Learn Depth First Search
 - [ ] Learn KMP Algorithm for Pattern Searching
 - [ ] Learn Ternary Search [searchsortsynchro algos]
-- [ ] Learn Thunking (it's a DLL term)
+- [ ] Learn Thunking (it's a DLL\ MSDOS-era term)
 - [ ] Learn ASM e-Book least significant bit
 - [ ] Matrix Transformation\ COS Trigonometry GDev
 - [x] Nested For Loops
