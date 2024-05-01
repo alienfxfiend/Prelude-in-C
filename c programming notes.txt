@@ -1,0 +1,3137 @@
+=============================
+Introducing C
+
+C is a general-purpose programming language that has been around for nearly 50 years.
+C has been used to write everything from operating systems (including Windows and many others) to complex programs like the Python interpreter, Git, Oracle database, and more.
+The versatility of C is by design. It is a low-level language that relates closely to the way machines work while still being easy to learn.
+Understanding how computer memory works is an important aspect of the C programming language. 
+
+=============================
+=============================
+Hello World!
+
+As when learning any new language, the place to start is with the classic "Hello World!" program:
+#include <stdio.h>
+
+int main() {
+  printf("Hello, World!\n");
+  return 0;
+}
+Try It Yourself
+
+Let's break down the code to understand each line:
+#include <stdio.h> The function used for generating output is defined in stdio.h. In order to use the printf function, we need to first include the required file, also called a header file.
+
+int main() The main() function is the entry point to a program. Curly brackets { } indicate the beginning and end of a function (also called a code block). The statements inside the brackets determine what the function does when executed.
+
+=============================
+Hello World!
+
+The printf function is used to generate output:
+#include <stdio.h>
+
+int main() {
+  printf("Hello, World!\n");
+  return 0;
+}
+Try It Yourself
+
+Here, we pass the text "Hello World!" to it.
+The \n escape sequence outputs a newline character. Escape sequences always begin with a backslash \.
+The semicolon ; indicates the end of the statement. Each statement must end with a semicolon.
+
+return 0; This statement terminates the main() function and returns the value 0 to the calling process. The number 0 generally means that our program has successfully executed. Any other number indicates that the program has failed.
+
+=============================
+=============================
+Data Types
+
+C supports the following basic data types:
+int: integer, a whole number.
+float: floating point, a number with a fractional part.
+double: double-precision floating point value.
+char: single character.
+
+The amount of storage required for each of these types varies by platform.
+C has a built-in sizeof operator that gives the memory requirements for a particular data type.
+For example:
+#include <stdio.h>
+
+int main() {
+  printf("int: %ld \n", sizeof(int));
+  printf("float: %ld \n", sizeof(float));
+  printf("double: %ld \n", sizeof(double));
+  printf("char: %ld \n", sizeof(char));
+
+  return 0;
+}
+Try It Yourself
+
+The program output displays the corresponding size in bytes for each data type.
+The printf statements in this program have two arguments. The first is the output string with a format specifier (%ld), while the next argument returns the sizeof value. In the final output, the %ld (for long decimal) is replaced by the value in the second argument.
+Note that C does not have a boolean type.
+
+A printf statement can have multiple format specifiers with corresponding arguments to replace the specifiers. Format specifiers are also referred to as conversion specifiers.
+We will learn more about format specifiers in the upcoming lessons.
+
+=============================
+Variables
+
+A variable is a name for an area in memory.
+The name of a variable (also called the identifier) must begin with either a letter or an underscore and can be composed of letters, digits, and the underscore character.
+Variable naming conventions differ, however using lowercase letters with an underscore to separate words is common (snake_case).
+Variables must also be declared as a data type before they are used.
+
+The value for a declared variable is changed with an assignment statement.
+For example, the following statements declare an integer variable my_var and then assigns it the value 42: int my_var;
+my_var = 42;
+You can also declare and initialize (assign an initial value) a variable in a single statement: int my_var = 42;
+Let's define variables of different types, do a simple math operation, and output the results:
+#include <stdio.h>
+
+int main() {
+  int a, b;
+  float salary = 56.23;
+  char letter = 'Z';
+  a = 8;
+  b = 34;
+  int c = a+b;
+
+  printf("%d \n", c);
+  printf("%f \n", salary);
+  printf("%c \n", letter);
+
+  return 0;
+}
+Try It Yourself
+
+As you can see, you can declare multiple variables on a single line by separating them with a comma. Also, notice the use of format specifiers for float (%f) and char (%c) output.
+The C programming language is case-sensitive, so my_Variable and my_variable are two different identifiers.
+
+=============================
+Constants
+
+A constant stores a value that cannot be changed from its initial assignment.
+By using constants with meaningful names, code is easier to read and understand.
+To distinguish constants from variables, a common practice is to use uppercase identifiers.
+
+One way to define a constant is by using the const keyword in a variable declaration:
+#include <stdio.h>
+
+int main() {
+  const double PI = 3.14;
+  printf("%f", PI);
+    
+  return 0;
+}
+Try It Yourself
+
+The value of PI cannot be changed during program execution.
+For example, another assignment statement, such as PI = 3.141 will generate an error.
+Constants must be initialized with a value when declared.
+Another way to define a constant is with the #define preprocessor directive.
+The #define directive uses macros for defining constant values.
+For example:
+#include <stdio.h>
+
+#define PI 3.14
+
+int main() {
+  printf("%f", PI);
+  return 0;
+}
+Try It Yourself
+
+Before compilation, the preprocessor replaces every macro identifier in the code with its corresponding value from the directive. In this case, every occurrence of PI is replaced with 3.14.
+The final code sent to the compiler will already have the constant values in place.
+
+The difference between const and #define is that the former uses memory for storage and the latter does not.
+Do NOT put a semicolon character at the end of #define statements. This is a common mistake.
+We will learn more about preprocessor directives in the next modules.
+
+=============================
+=============================
+Input
+
+C supports a number of ways for taking user input.
+getchar() Returns the value of the next single character input.
+
+For example:
+#include <stdio.h>
+
+int main() {
+  char a = getchar();
+
+  printf("You entered: %c", a);
+
+  return 0;
+}
+Try It Yourself
+
+The input is stored in the variable a.
+
+The gets() function is used to read input as an ordered sequence of characters, also called a string.
+A string is stored in a char array.
+For example:
+#include <stdio.h>
+
+int main() {
+  char a[100];
+
+  gets(a); 
+
+  printf("You entered: %s", a);
+
+  return 0;
+}
+Try It Yourself
+
+Here we stored the input in an array of 100 characters.
+
+scanf() scans input that matches format specifiers.
+
+For example:
+#include <stdio.h>
+
+int main() {
+  int a;
+  scanf("%d", &a);
+
+  printf("You entered: %d", a);
+
+  return 0;
+}
+Try It Yourself
+
+The & sign before the variable name is the address operator. It gives the address, or location in memory, of a variable. This is needed because scanf places an input value at a variable address
+
+As another example, let's prompt for two integer inputs and output their sum:
+#include <stdio.h>
+
+int main() {
+  int a, b;
+  printf("Enter two numbers:");
+  scanf("%d %d", &a, &b);
+
+  printf("\nSum: %d", a+b);
+
+  return 0;
+}
+Try It Yourself
+
+scanf() stops reading as soon as it encounters a space, so text such as "Hello World" is two separate inputs for scanf().
+
+=============================
+Output
+
+We have already used the printf() function to generate output in the previous lessons. In this lesson, we cover several other functions that can be used for output.
+
+putchar() Outputs a single character.
+For example:
+#include <stdio.h>
+
+int main() {
+  char a = getchar();
+
+  printf("You entered: ");
+  putchar(a);
+
+  return 0;
+} 
+Try It Yourself
+
+The input is stored in the variable a.
+
+The puts() function is used to display output as a string.
+A string is stored in a char array.
+For example:
+#include <stdio.h>
+
+int main() {
+  char a[100];
+
+  gets(a); 
+
+  printf("You entered: ");
+  puts(a); 
+
+  return 0;
+} 
+Try It Yourself
+
+Here we stored the input in an array of 100 characters.
+
+scanf() scans input that matches format specifiers.
+
+For example:
+#include <stdio.h>
+
+int main() {
+  int a;
+  scanf("%d", &a);
+
+  printf("You entered: %d", a);
+
+  return 0;
+}
+Try It Yourself
+
+The & sign before the variable name is the address operator. It gives the address, or location in memory, of a variable. This is needed because scanf places an input value at a variable address
+
+As another example, let's prompt for two integer inputs and output their sum:
+#include <stdio.h>
+
+int main() {
+  int a, b;
+  printf("Enter two numbers:");
+  scanf("%d %d", &a, &b);
+
+  printf("\nSum: %d", a+b);
+
+  return 0;
+}
+Try It Yourself
+
+scanf() stops reading as soon as it encounters a space, so text such as "Hello World" is two separate inputs for scanf().
+
+=============================
+Formatted Input
+
+The scanf() function is used to assign input to variables. A call to this function scans input according to format specifiers that convert input as necessary.
+If input can't be converted, then the assignment isn't made.
+The scanf() statement waits for input and then makes assignments:
+int x;
+float num;
+char text[20];
+scanf("%d %f %s", &x, &num, text); 
+Try It Yourself
+
+Typing 10 22.5 abcd and then pressing Enter assigns 10 to x, 22.5 to num, and abcd to text.
+Note that the & must be used to access the variable addresses. The & isn't needed for a string because a string name acts as a pointer.
+
+Format specifiers begin with a percent sign % and are used to assign values to corresponding arguments after the control string. Blanks, tabs, and newlines are ignored.
+A format specifier can include several options along with a conversion character:
+%[*][max_field]conversion character
+The optional * will skip the input field.
+The optional max_width gives the maximum number of characters to assign to an input field.
+The conversion character converts the argument, if necessary, to the indicated type:
+d decimal
+c character
+s string
+f float
+x hexadecimal
+
+For example:
+int x, y;
+char text[20];
+
+scanf("%2d %d %*f %5s", &x, &y, text);
+/* input: 1234  5.7  elephant */
+printf("%d  %d  %s", x, y, text);
+/* output: 12  34  eleph */ 
+
+=============================
+Formatting Output
+
+The printf function was introduced in your very first Hello World program. A call to this function requires a format string which can include escape sequences for outputting special characters and format specifiers that are replaced by values.
+For example:
+printf("The tree has %d apples.\n", 22);
+/* The tree has 22 apples. */
+
+printf("\"Hello World!\"\n");
+/* "Hello World!" */ 
+Try It Yourself
+
+Escape sequences begin with a backslash \:
+\n new line
+\t horizontal tab
+\\ backslash
+\b backspace
+\' single quote
+\" double quote
+
+Format specifiers begin with a percent sign % and are replaced by corresponding arguments after the format string. A format specifier can include several options along with a conversion character: %[-][width].[precision]conversion character 
+The optional - specifies left alignment of the data in the string.
+The optional width gives the minimum number of characters for the data.
+The period . separates the width from the precision.
+The optional precision gives the number of decimal places for numeric data. If s is used as the conversion character, then precision determines the number of characters to print.
+The conversion character converts the argument, if necessary, to the indicated type:
+d decimal
+c character
+s string
+f float
+e scientific notation
+x hexadecimal
+
+For example:
+printf("Color: %s, Number: %d, float: %5.2f \n", "red", 42, 3.14159);
+/* Color: red, Number: 42, float:  3.14  */
+
+printf("Pi = %3.2f", 3.14159); 
+/* Pi = 3.14 */
+
+printf("Pi = %8.5f", 3.14159); 
+/* Pi =   3.14159 */
+
+printf("Pi = %-8.5f", 3.14159); 
+/* Pi = 3.14159 */
+
+printf("There are %d %s in the tree.", 22, "apples");
+/* There are 22 apples in the tree. */ 
+Try It Yourself
+
+To print the % symbol, use %% in the format string.
+
+=============================
+=============================
+Comments
+
+Comments are explanatory information that you can include in a program to benefit the reader of your code. The compiler ignores comments, so they have no affect on a program.
+A comment starts with a slash asterisk /* and ends with an asterisk slash */ and can be anywhere in your code.
+Comments can be on the same line as a statement, or they can span several lines.
+For example:
+#include <stdio.h>
+
+/* A simple C program
+ *  Version 1.0
+ */
+int main() {
+  /* Output a string */
+  printf("Hello World!");
+  return 0;
+}
+Try It Yourself
+
+As you can see, comments clarify the program's intent to the reader. Use comments to clarify the purpose and logic behind segments of code.
+
+=============================
+Single-line Comments
+
+C++ introduced a double slash comment // as a way to comment single lines. Some C compilers also support this comment style.
+For example:
+#include <stdio.h>
+
+int main() {
+  int x = 42; //int for a whole number
+    
+  //%d is replaced by x
+  printf("%d", x);
+    
+  return 0;
+}
+Try It Yourself
+
+Adding comments to your code is good programming practice. It facilitates a clear understanding of the code for you and for others who read it.
+
+=============================
+=============================
+Arithmetic Operators
+
+C supports arithmetic operators + (addition), - (subtraction), * (multiplication), / (division), and % (modulus division).
+Operators are often used to form a numeric expression such as 10 + 5, which in this case contains two operands and the addition operator.
+Numeric expressions are often used in assignment statements.
+For example:
+#include <stdio.h>
+
+int main() {
+  int length = 10;
+  int width = 5;
+  int area;
+
+  area = length * width;
+  printf("%d \n", area);  /* 50 */
+
+  return 0;
+}
+Try It Yourself
+
+Division
+C has two division operators: / and %.
+The division / operator performs differently depending on the data types of the operands. When both operands are int data types, integer division, also called truncated division, removes any remainder to result in an integer. When one or both operands are real numbers (float or double), the result is a real number.
+The % operator returns only the remainder of integer division. It is useful for many algorithms, including retrieving digits from a number. Modulus division cannot be performed on floats or doubles.
+The following example demonstrates division:
+#include <stdio.h>
+
+int main() {
+  int i1 = 10;
+  int i2 = 3;
+  int quotient, remainder;
+  float f1 = 4.2;
+  float f2 = 2.5;
+  float result;
+
+  quotient = i1 / i2; // 3
+  remainder = i1 % i2; // 1
+  result = f1 / f2; // 1.68
+
+  return 0;
+}
+
+=============================
+Operator Precedence
+
+C evaluates a numeric expression based on operator precedence.
+The + and – are equal in precedence, as are *, /, and %.
+The *, /, and % are performed first in order from left to right and then + and -, also in order from left to right.
+You can change the order of operations by using parentheses ( ) to indicate which operations are to be performed first.
+For example, the result of 5 + 3 * 2 is 11, where the result of (5 + 3) * 2 is 16.
+
+For example:
+#include <stdio.h>
+
+int main() {
+  int a = 6;
+  int b = 4;
+  int c = 2;
+  int result;
+  result = a - b + c; // 4
+  printf("%d \n", result);
+ 
+  result = a + b / c; // 8
+  printf("%d \n", result);
+  
+  result = (a + b) / c; // 5
+  printf("%d \n", result);
+
+  return 0;
+}
+Try It Yourself
+
+C may not evaluate a numeric expression as desired when the associative property allows any order. For example, x*y*z may be evaluated as (x * y) * z or as x * (y * z). If order is important, break the expression into separate statements.
+
+=============================
+Type Conversion
+
+When a numeric expression contains operands of different data types, they are automatically converted as necessary in a process called type conversion.
+For example, in an operation involving both floats and ints, the compiler will convert the int values to float values.
+In the following program, the increase variable is automatically converted to a float:
+#include <stdio.h>
+
+int main() {
+  float price = 6.50;
+  int increase = 2;
+  float new_price;
+
+  new_price = price + increase;
+  printf("New price is %4.2f", new_price);
+  /* Output: New price is 8.50 */
+
+  return 0;
+}
+Try It Yourself
+
+Note the format specifier includes 4.2 to indicate the float is to be printed in a space at least 4 characters wide with 2 decimal places.
+When you want to force the result of an expression to a different type you can perform explicit type conversion by type casting, as in the statements:
+float average;
+int total = 23;
+int count = 4;
+
+average = (float) total / count;
+/* average = 5.75 */
+Try It Yourself
+
+Without the type casting, average will be assigned 5.
+Explicit type conversion, even when the compiler may do automatic type conversion, is considered good programming style.
+
+=============================
+Assignment Operators
+
+An assignment statement evaluates the expression on the right side of the equal sign first and then assigns that value to the variable on the left side of the =. This makes it possible to use the same variable on both sides of an assignment statement, which is frequently done in programming.
+For example: int x = 3;
+x = x + 1;  /* x is now 4 */
+To shorten this type of assignment statement, C offers the += assignment operator. The statement above can be written as x += 1;  /* x = x + 1 */
+Many C operators have a corresponding assignment operator. The program below demonstrates the arithmetic assignment operators:
+int x = 2;
+
+x += 1;  // 3
+x -= 1;  // 2
+x *= 3;  // 6
+x /= 2;  // 3
+x %= 2;  // 1
+x += 3 * 2;  // 7
+Try It Yourself
+
+Look carefully at the last assignment statement. The entire expression on the right is evaluated and then added to x before being assigned to x. You can think of the statement as x = x + (3 * 2).
+
+=============================
+Increment & Decrement
+
+Adding 1 to a variable can be done with the increment operator ++. Similarly, the decrement operator -- is used to subtract 1 from a variable.
+For example: z--;  /* decrement z by 1 */
+y++; /* increment y by 1 */
+The increment and decrement operators can be used either prefix (before the variable name) or postfix (after the variable name). Which way you use the operator can be important in an assignment statement, as in the following example.
+z = 3;
+x = z--;  /* assign 3 to x, then decrement z to 2 */
+y = 3;
+x = ++y;  /* increment y to 4, then assign 4 to x */
+Try It Yourself
+
+The prefix form increments/decrements the variable and then uses it in the assignment statement.
+The postfix form uses the value of the variable first, before incrementing/decrementing it.
+
+=============================
+=============================
+=============================
+Conditionals
+
+Conditionals are used to perform different computations or actions depending on whether a condition evaluates to true or false.
+
+The if Statement
+The if statement is called a conditional control structure because it executes statements when an expression is true. For this reason, the if is also known as a decision structure. It takes the form: if (expression)
+  statements
+The expression evaluates to either true or false, and statements can be a single statement or a code block enclosed by curly braces { }.
+For example:
+#include <stdio.h>
+
+int main() {
+  int score = 89;
+  
+  if (score > 75)
+    printf("You passed.\n");
+    
+  return 0;
+}
+Try It Yourself
+
+In the code above we check whether the score variable is greater than 75, and print a message if the condition is true.
+
+=============================
+Relational Operators
+
+There are six relational operators that can be used to form a Boolean expression, which returns true or false:
+< less than
+<= less than or equal to
+> greater than
+>= greater than or equal to
+== equal to
+!= not equal to
+
+For example:
+int num = 41;
+num += 1;
+if (num == 42) {
+   printf("You won!");
+}
+Try It Yourself
+
+An expression that evaluates to a non-zero value is considered true.
+For example:
+int in_stock = 20;
+if (in_stock)
+  printf("Order received.\n"); 
+
+=============================
+The if-else Statement
+
+The if statement can include an optional else clause that executes statements when an expression is false.
+For example, the following program evaluates the expression and then executes the else clause statement:
+#include <stdio.h>
+
+int main() {
+  int score = 89;
+  
+  if (score >= 90)
+    printf("Top 10%%.\n");
+  else
+    printf("Less than 90.\n");
+    
+  return 0;
+}
+
+=============================
+Conditional Expressions
+
+Another way to form an if-else statement is by using the ?: operator in a conditional expression. The ?: operator can have only one statement associated with the if and the else.
+For example:
+#include <stdio.h>
+
+int main() {
+  int y;
+  int x = 3;
+
+  y = (x >= 5) ?  5 : x;
+
+/* This is equivalent to:
+  if (x >= 5)
+    y = 5;
+  else
+    y = x;
+*/
+
+  return 0;
+}
+
+=============================
+=============================
+Nested if Statements
+
+An if statement can include another if statement to form a nested statement. Nesting an if allows a decision to be based on further requirements.
+Consider the following statement:
+if (profit > 1000)
+  if (clients > 15)
+    bonus = 100;
+  else
+    bonus = 25; 
+Try It Yourself
+
+Appropriately indenting nested statements will help clarify the meaning to a reader. However, be sure to understand that an else clause is associated with the closest if unless curly braces { } are used to change the association.
+For example:
+if (profit > 1000) {
+  if (clients > 15)
+    bonus = 100;
+}
+else
+  bonus = 25;
+
+=============================
+The if-else if Statement
+
+When a decision among three or more actions is needed, the if-else if statement can be used.
+There can be multiple else if clauses and the last else clause is optional.
+For example:
+int score = 89;
+  
+if (score >= 90)
+  printf("%s", "Top 10%\n");
+else if (score >= 80)
+  printf("%s", "Top 20%\n");
+else if (score > 75)
+  printf("%s", "You passed.\n");
+else
+  printf("%s", "You did not pass.\n"); 
+Try It Yourself
+
+Carefully consider the logic involved when developing an if-else if statement. Program flow branches to the statements associated with the first true expression and none of the remaining expressions will be tested.
+Although indents won't affect the compiled code, the logic of the if-else if will be easier to understand by a reader when the else clauses are aligned.
+When possible, an if-else if statement is preferred over nested if statements for clarity. 
+
+=============================
+=============================
+The switch Statement
+
+The switch statement branches program control by matching the result of an expression with a constant case value.
+
+The switch statement often provides a more elegant solution to if-else if and nested if statements.
+The switch takes the form: switch (expression) {
+  case val1:
+    statements
+  break;
+  case val2:
+    statements
+  break;
+  default:
+    statements
+}
+For example, the following program outputs "Three":
+int num = 3;
+
+  switch (num) {
+  case 1:
+    printf("One\n");
+    break;   
+  case 2:
+    printf("Two\n");
+    break;   
+  case 3:
+    printf("Three\n");
+    break;   
+  default:
+    printf("Not 1, 2, or 3.\n");
+}
+
+=============================
+The switch Statement
+
+There can be multiple cases with unique labels.
+The optional default case is executed when no other matches are made.
+A break statement is needed in each case to branch to the end of the switch statement.
+Without the break statement, program execution falls through to the next case statement. This can be useful when the same statement is needed for several cases. Consider the following switch statement:
+switch (num) {
+  case 1:
+  case 2:
+  case 3:
+    printf("One, Two, or Three.\n");
+    break;   
+  case 4:
+  case 5:
+  case 6:
+    printf("Four, Five, or Six.\n");
+    break;
+  default:
+    printf("Greater than Six.\n");
+}
+Try It Yourself
+
+Caution must be used when constructing the switch this way. Modifications later can lead to unexpected outcomes.
+
+=============================
+=============================
+Logical Operators
+
+Logical operators && and || are used to form a compound Boolean expression that tests multiple conditions. A third logical operator is ! used to reverse the state of a Boolean expression.
+
+The && Operator
+The logical AND operator && returns a true result only when both expressions are true.
+For example:
+if (n > 0 && n <= 100)
+  printf("Range (1 - 100).\n"); 
+Try It Yourself
+
+The statement above joins just two expressions, but logical operators can be used to join multiple expressions.
+A compound Boolean expression is evaluated from left to right. Evaluation stops when no further test is needed for determining the result, so be sure to consider the arrangement of operands when one result affects the outcome of a later result.
+
+=============================
+The || Operator
+
+The logical OR operator || returns a true result when any one expression or both expressions are true.
+For example:
+if (n == 'x' || n == 'X')
+  printf("Roman numeral value 10.\n"); 
+Try It Yourself
+
+Any number of expressions can be joined by && and ||.
+For example:
+if (n == 999 || (n > 0 && n <= 100))
+  printf("Input valid.\n"); 
+Try It Yourself
+
+Parentheses are used for clarity even though && has higher precedence than || and will be evaluated first.
+
+=============================
+The ! Operator
+
+The logical NOT operator ! returns the reverse of its value.
+NOT true returns false, and NOT false returns true.
+
+For example:
+if (!(n == 'x' || n == 'X'))
+  printf("Roman numeral is not 10.\n"); 
+Try It Yourself
+
+In C, any non-zero value is considered true and a 0 is false. The logical NOT operator therefore, converts a true value to 0 and a false value to 1.
+
+=============================
+=============================
+The while Loop
+
+The while statement is called a loop structure because it executes statements repeatedly while an expression is true, looping over and over again. It takes the form: while (expression) {
+  statements
+}
+The expression evaluates to either true or false, and statements can be a single statement or, more commonly, a code block enclosed by curly braces { }.
+For example:
+#include <stdio.h>
+
+int main() {
+  int count = 1;
+  
+  while (count < 8) {
+    printf("Count = %d\n", count);
+    count++;
+  }
+    
+  return 0;
+}
+Try It Yourself
+
+The code above will output the count variable 7 times.
+
+The while loop evaluates a condition before the loop is entered, making it possible that the while statements never execute.
+An infinite loop is one that continues indefinitely because the loop condition never evaluates to false. This may cause a run-time error.
+
+=============================
+The do-while Loop
+
+The do-while loop executes the loop statements before evaluating the expression to determine if the loop should be repeated.
+It takes the form: do {
+  statements
+} while (expression);
+The expression evaluates to either true or false, and statements can be a single statement or a code block enclosed by curly braces { }.
+For example:
+#include <stdio.h>
+
+int main() {
+  int count = 1;
+  
+  do {
+    printf("Count = %d\n", count);
+    count++;
+  } while (count < 8);
+    
+  return 0;
+}
+Try It Yourself
+
+Note the semicolon after the while statement.
+The do-while loop always executes at least once, even if the expression evaluates to false.
+
+=============================
+break and continue
+
+The break statement was introduced for use in the switch statement. It is also useful for immediately exiting a loop.
+For example, the following program uses a break to exit a while loop:
+int num = 5;
+  
+while (num > 0) {
+  if (num == 3)
+    break;
+  printf("%d\n", num);
+  num--;
+}
+Try It Yourself
+
+This program displays:
+5
+4
+and then exits the loop.
+
+When you want to remain in the loop, but skip ahead to the next iteration, you use the continue statement.
+For example:
+int num = 5;
+  
+while (num > 0) {
+  num--;
+  if (num == 3)
+    continue;
+      
+  printf("%d\n", num);
+}
+Try It Yourself
+
+The program output displays:
+4
+2
+1
+0
+As you can see, the value 3 is skipped.
+
+In the code above, if num was decremented after the continue statement an infinite loop would be created.
+Although the break and continue statements can be convenient, they should not be a substitute for a better algorithm.
+
+=============================
+=============================
+The for Loop
+
+The for statement is a loop structure that executes statements a fixed number of times.
+It takes the form: for (initvalue; condition; increment) {
+  statements;
+}
+The initvalue is a counter set to an initial value. This part of the for loop is performed only once.
+The condition is a Boolean expression that compares the counter to a value before each loop iteration, stopping the loop when false is returned.
+The increment increases (or decreases) the counter by a set value.
+
+For example, the program below displays 0 through 9:
+int i;
+int max = 10;
+  
+for (i = 0; i < max; i++) {
+  printf("%d\n", i);
+}
+
+
+=============================
+The for Loop
+
+The for loop can contain multiple expressions separated by commas in each part.
+For example:for (x = 0, y = num; x < y; i++, y--) { 
+  statements; 
+}
+Also, you can skip the initvalue, condition and/or increment.
+For example:
+int i=0;
+int max = 10;
+for (; i < max; i++) {
+  printf("%d\n", i);
+}
+Try It Yourself
+
+Loops can also be nested.
+When writing a program this way, there is an outer loop and an inner loop. For each iteration of the outer loop the inner loop repeats its entire cycle.
+In the following example, nested for loops are used to output a multiplication table:
+int i, j;
+int table = 10;
+int max = 12;
+
+for (i = 1; i <= table; i++) {
+  for (j = 0; j <= max; j++) {
+    printf("%d x %d = %d\n", i, j, i*j);
+  }
+  printf("\n"); /* blank line between tables */ 
+}
+Try It Yourself
+
+A break in an inner loop exits that loop and execution continues with the outer loop.
+A continue statement works similarly in nested loops. 
+
+{ For Loop: Initializer, Condition, Modifier }
+
+=============================
+=============================
+=============================
+Functions in C
+
+Functions are central to C programming and are used to accomplish a program solution as a series of subtasks.
+By now you know that every C program contains a main() function. And you're familiar with the printf() function.
+
+You can also create your own functions.
+A function:
+• is a block of code that performs a specific task
+• is reusable
+• makes a program easier to test
+• can be modified without changing the calling program
+
+Even a simple program is easier to understand when main() is broken down into subtasks that are implemented with functions.
+For example, it's clear that the goal of this program is to calculate the square of a number: int main() {
+  int x, result;
+  
+  x = 5;
+  result = square(x);
+  printf("%d squared is %d\n", x, result);
+    
+  return 0;
+}
+In order to use the square function, we need to declare it.
+Declarations usually appear above the main() function and take the form: return_type function_name(parameters); 
+The return_type is the type of value the function sends back to the calling statement. The function_name is followed by parentheses. Optional parameter names with type declarations are placed inside the parentheses.
+A function is not required to return a value, but a return type must still be in the declaration. In this case, the keyword void is used.
+For example, the display_message function declaration indicates the function does not return a value: void display_message();
+
+=============================
+Functions in C
+
+When the parameter types and names are included in a declaration, the declaration is called a function prototype.
+
+For example, the square function prototype appears above main(): #include <stdio.h>
+
+/* declaration */
+int square (int num); 
+
+int main() {
+  int x, result;
+  
+  x = 5;
+  result = square(x);
+  printf("%d squared is %d\n", x, result);
+    
+  return 0;
+} 
+Our square function returns an integer and takes one parameter of type int.
+
+The last step is actually defining the function. Function definitions usually appear after the main() function.
+The complete program below shows the square function declaration and definition:
+#include <stdio.h>
+
+/* declaration */
+int square (int num); 
+
+int main() {
+  int x, result;
+  
+  x = 5;
+  result = square(x);
+  printf("%d squared is %d\n", x, result);
+    
+  return 0;
+}
+
+/* definition */
+int square (int num) {
+  int y;
+
+  y = num * num;
+
+  return(y);
+} 
+Try It Yourself
+
+As you can see, the square function calculates and returns the square of its parameter.
+A function can take multiple parameters - in this case they must be separated by commas.
+The return statement is used to send a value back to the calling statement.
+
+=============================
+Function Parameters
+
+A function's parameters are used to receive values required by the function. Values are passed to these parameters as arguments through the function call.
+By default, arguments are passed by value, which means that a copy of data is given to the parameters of the called function. The actual variable isn't passed into the function, so it won't change.
+Arguments passed to a function are matched to parameters by position. Therefore, the first argument is passed to the first parameter, the second to the second parameter, and so on.
+The following program demonstrates parameters passed by value:
+#include <stdio.h>
+
+int sum_up (int x, int y); 
+
+int main() {
+  int x, y, result;
+  
+  x = 3;
+  y = 12;
+  result = sum_up(x, y);
+  printf("%d + %d = %d", x, y, result);
+    
+  return 0;
+}
+
+int sum_up (int x, int y) { 
+  x += y;
+  return(x);
+} 
+Try It Yourself
+
+The program output is: 3 + 12 = 15
+The values of x and y were passed to sum_up. Note that even though the value of parameter x was changed in sum_up, the value of argument x in main() was not changed because only its value was passed into the parameter x.
+The parameters in a function declaration are the formal parameters. The values passed to these parameters are the arguments, sometimes called the actual parameters.
+
+=============================
+Variable Scope
+
+Variable scope refers to the visibility of variables within a program.
+Variables declared in a function are local to that block of code and cannot be referred to outside the function.
+Variables declared outside all functions are global to the entire program.
+For example, constants declared with a #define at the top of a program are visible to the entire program.
+The following program uses both local and global variables:
+#include <stdio.h>
+
+int global1 = 0; 
+
+int main() {    
+  int local1, local2;
+  
+  local1 = 5;
+  local2 = 10;
+  global1 = local1 + local2;
+  printf("%d \n", global1);  /* 15 */
+    
+  return 0;
+} 
+Try It Yourself
+
+When arguments are passed to function parameters, the parameters act as local variables. Upon exiting a function, parameters and any local variables in the function are destroyed.
+Use global variables with caution. They should be initialized before using to avoid unexpected results. And because they can be changed anywhere in a program, global variables can lead to hard to detect errors.
+
+=============================
+Static Variables
+
+Static variables have a local scope but are not destroyed when a function is exited. Therefore, a static variable retains its value for the life of the program and can be accessed every time the function is re-entered.
+A static variable is initialized when declared and requires the prefix static.
+The following program uses a static variable:
+#include <stdio.h>
+
+void say_hello();
+
+int main() {    
+  int i;
+
+  for (i = 0; i < 5; i++) {
+    say_hello();
+  }
+   
+  return 0;
+}
+
+void say_hello() {
+  static int num_calls = 1;
+
+  printf("Hello number %d\n", num_calls);
+  num_calls++;
+
+} 
+Try It Yourself
+
+The program output is:
+Hello number 1
+Hello number 2
+Hello number 3
+Hello number 4
+Hello number 5
+
+=============================
+=============================
+Recursive Functions
+
+An algorithm for solving a problem may be best implemented using a process called recursion. Consider the factorial of a number, which is commonly written as 5! = 5 * 4 * 3 * 2 * 1.
+This calculation can also be thought of as repeatedly calculating num * (num -1) until num is 1.
+
+A recursive function is one that calls itself and includes a base case, or exit condition, for ending the recursive calls. In the case of computing a factorial, the base case is num equal to 1.
+For example:
+#include <stdio.h>
+
+//function declaration
+int factorial(int num);
+
+int main() {    
+  int x = 5;
+
+  printf("The factorial of %d is %d\n", x, factorial(x));
+ 
+  return 0;
+}
+
+//function definition
+int factorial(int num) {
+  
+  if (num == 1)  /* base case */
+    return (1);
+  else
+    return (num * factorial(num - 1));
+} 
+Try It Yourself
+
+The program output is: The factorial of 5 is 120
+
+Recursion works by "stacking" calls until the base case is executed. At that point, the calls are completed from newest to oldest. The factorial call stack can be thought of as:
+2*factorial(1)
+3*factorial(2)
+4*factorial(3)
+5*factorial(4)
+
+When the base case is reached, the return value 1 triggers the completion of the stacked calls. The return values from newest to oldest creates the following calculations, with the final calculation (5 * 24) being returned to the calling function main():
+2 * 1
+3 * 2
+4 * 6
+5 * 24
+A recursive solution requires a base case to prevent an infinite loop.
+
+=============================
+=============================
+Arrays in C
+
+An array is a data structure that stores a collection of related values that are all the same type.
+Arrays are useful because they can represent related data with one descriptive name rather than using separate variables that each must be named uniquely.
+For example, the array test_scores[25] can hold 25 test scores.
+An array declaration includes the type of the values it stores, an identifier, and square brackets [ ] with a number that indicates the array size.
+For example: int test_scores[25]; /* An array size 25 */ 
+You can also initialize an array when it is declared, as in the following statement: float prices[5] = {3.2, 6.55, 10.49, 1.25, 0.99}; 
+Note that initial values are separated by commas and placed inside curly braces { }.
+An array can be partially initialized, as in: float prices[5] = {3.2, 6.55}; 
+Missing values are set to 0.
+An array is stored in contiguous memory locations and cannot change size after being declared.
+
+=============================
+Accessing Array Elements
+
+The contents of an array are called elements with each element accessible by an index number.
+In C, index numbers start at 0.
+An array with 5 elements will have index numbers 0, 1, 2, 3, and 4. Consider an array x: int x[5] = {20, 45, 16, 18, 22}; 
+It can be thought of as:
+0 => [20]
+1 => [45]
+2 => [16]
+3 => [18]
+4 => [22]
+
+To access an array element, refer to its index number.
+For example:
+int x[5] = {20, 45, 16, 18, 22};
+printf("The second element is %d\n", x[1]); /* 45 */ 
+Try It Yourself
+
+The value of an array element can be changed through an assignment statement, which also requires using the array name and index:
+int x[5] = {20, 45, 16, 18, 22};
+x[1] = 260;
+printf("The second element is %d\n", x[1]); /* 260 */ 
+Try It Yourself
+
+The index of an array is also referred to as the subscript.
+
+=============================
+Using Loops with Arrays
+
+Many algorithms require accessing every element of an array to check for data, store information, and other tasks. This can be done in a process called traversing the array, which is often implemented with a for loop because the loop control variable naturally corresponds to array indexes.
+Consider the following program:
+float purchases[3] = {10.99, 14.25, 90.50};
+float total = 0;
+int k;
+
+/* total the purchases */
+for (k = 0; k < 3; k++) {
+  total += purchases[k];
+}
+   
+printf("Purchases total is %6.2f\n", total);
+/* Output:  Purchases total is 115.74 */ 
+Try It Yourself
+
+The loop control variable iterates from 0 to one less than the number of elements to match index values.
+Loops are also useful for assignment.
+For example:
+int a[10];
+int k;
+
+for (k = 0; k < 10; k++) {
+  a[k] = k * 10;
+}
+
+=============================
+=============================
+Two-Dimensional Arrays
+
+A two-dimensional array is an array of arrays and can be thought of as a table. You can also think of a two-dimensional array as a grid for representing a chess board, city blocks, and much more.
+
+A two-dimensional array declaration indicates the number of number rows and the number of columns.
+For example: int a[2][3]; /* A 2 x 3 array */ 
+Nested curly braces are used to initialize elements row by row, as in the following statement: int a[2][3] = {
+  {3, 2, 6},
+  {4, 5, 20}
+}; 
+The same statement can also take the form: int a[2][3] = { {3, 2, 6}, {4, 5, 20} }; 
+The former statement offers more clarity with visualizing the structure of the array.
+An array can have more than two dimensions. For example, a[5][3][4] is an array that has 5 elements that each store 3 elements that each store 4 elements.
+
+=============================
+Accessing Two-Dimensional Arrays
+
+To access an element of a two-dimensional array, both the row index and column index are required.
+For example, the following statements display the value of an element and then assign a new value:
+int a[2][3] = {
+  {3, 2, 6},
+  {4, 5, 20}
+};
+printf("Element 3 in row 2 is %d\n", a[1][2]); /* 20 */
+a[1][2] = 25;
+printf("Element 3 in row 2 is %d\n", a[1][2]); /* 25 */ 
+Try It Yourself
+
+Just as a for loop is used to iterate through a one-dimensional array, nested for loops are used to traverse a two-dimensional array:
+int a[2][3] = {
+  {3, 2, 6},
+  {4, 5, 20}
+};
+int k, j;
+/* display array contents */
+for (k = 0; k < 2; k++) {
+  for (j = 0; j < 3; j++) {
+    printf(" %d", a[k][j]);
+  }
+  printf("\n");
+}
+
+=============================
+=============================
+Using Memory
+
+C is designed to be a low-level language that can easily access memory locations and perform memory-related operations.
+For instance, the scanf() function places the value entered by the user at the location, or address, of the variable. This is accomplished by using the & symbol.
+
+For Example:
+int num;
+printf("Enter a number: ");
+
+scanf("%d", &num);
+
+printf("%d", num);
+Try It Yourself
+
+&num is the address of variable num.
+
+A memory address is given as a hexadecimal number. Hexadecimal, or hex, is a base-16 number system that uses digits 0 through 9 and letters A through F (16 characters) to represent a group of four binary digits that can have a value from 0 to 15.
+It's much easier to read a hex number that is 8 characters long for 32 bits of memory than to try to decipher 32 1s and 0s in binary.
+The following program displays the memory addresses for variables i and k:
+void test(int k);
+
+int main() {
+  int i = 0;
+    
+  printf("The address of i is %x\n", &i);
+  test(i);
+  printf("The address of i is %x\n", &i);
+  test(i);
+
+  return 0;
+}
+
+void test(int k) {
+  printf("The address of k is %x\n", &k);
+}
+Try It Yourself
+
+In the printf statement, %x is the hex format specifier.
+Program output varies from run to run, but looks similar to: The address of i is 846dd754
+The address of k is 846dd758
+The address of i is 846dd754
+The address of k is 846dd758
+The address of a variable stays the same from the time it is declared until the end of its scope.
+
+=============================
+What is a Pointer?
+
+Pointers are very important in C programming because they allow you to easily work with memory locations.
+They are fundamental to arrays, strings, and other data structures and algorithms.
+A pointer is a variable that contains the address of another variable. In other words, it "points" to the location assigned to a variable and can indirectly access the variable.
+Pointers are declared using the * symbol and take the form: pointer_type *identifier 
+pointer_type is the type of data the pointer will be pointing to. The actual pointer data type is a hexadecimal number, but when declaring a pointer, you must indicate what type of data it will be pointing to.
+Asterisk * declares a pointer and should appear next to the identifier used for the pointer variable.
+The following program demonstrates variables, pointers, and addresses:
+int j = 63;
+int *p = NULL;
+p = &j; 
+
+printf("The address of j is %x\n", &j);
+printf("p contains address %x\n", p);
+printf("The value of j is %d\n", j);
+printf("p is pointing to the value %d\n", *p); 
+Try It Yourself
+
+There are several things to notice about this program:
+• Pointers should be initialized to NULL until they are assigned a valid location.
+• Pointers can be assigned the address of a variable using the ampersand & sign.
+• To see what a pointer is pointing to, use the * again, as in *p. In this case the * is called the indirection or dereference operator. The process is called dereferencing.
+
+The program output is similar to: The address of j is ff3652cc
+p contains address ff3652cc
+The value of j is 63
+p is pointing to the value 63 
+Some algorithms use a pointer to a pointer. This type of variable declaration uses **, and can be assigned the address of another pointer, as in:
+int x = 12;
+int *p = NULL
+int **ptr = NULL;
+p = &x;
+ptr = &p;
+
+=============================
+Pointers in Expressions
+
+Pointers can be used in expressions just as any variable. Arithmetic operators can be applied to whatever the pointer is pointing to.
+For example:
+int x = 5;
+int y;
+int *p = NULL;
+p = &x;
+
+y = *p + 2; /* y is assigned 7 */
+y += *p;     /* y is assigned 12 */
+*p = y;       /* x is assigned 12 */
+(*p)++;      /* x is incremented to 13 */
+
+printf("p is pointing to the value %d\n", *p); 
+Try It Yourself
+
+Note that parentheses are required for the ++ operator to increment the value being pointed to. The same is true when using the -- operator.
+
+=============================
+=============================
+Pointers and Arrays
+
+Pointers are especially useful with arrays. An array declaration reserves a block of contiguous memory addresses for its elements. With pointers, we can point to the first element and then use address arithmetic to traverse the array:
++ is used to move forward to a memory location
+- is used to move backward to a memory location
+
+Consider the following program:
+int a[5] = {22, 33, 44, 55, 66};
+int *ptr = NULL;
+int i;
+
+ptr = a;
+for (i = 0; i < 5; i++) {
+  printf("%d ", *(ptr + i));
+}
+Try It Yourself
+
+The program output is: 22 33 44 55 66
+
+An important concept with arrays is that an array name acts as a pointer to the first element of the array. Therefore, the statement ptr = a can be thought of as ptr = &a[0].
+Consider the following statement, which prints the first element of the array: printf("%d ", *a);
+
+=============================
+More Address Arithmetic
+
+Address arithmetic can also be thought of as pointer arithmetic because the operations involve pointers.
+Besides using + and – to refer to the next and previous memory locations, you can use the assignment operators to change the address the pointer contains.
+
+For example:
+int a[5] = {22, 33, 44, 55, 66};
+int *ptr = NULL;
+
+ptr = a;  /* point to the first array element */
+printf("%d  %x\n", *ptr, ptr);  /* 22 */
+ptr++;
+printf("%d  %x\n", *ptr, ptr);  /* 33 */
+ptr += 3;
+printf("%d  %x\n", *ptr, ptr);  /* 66 */
+ptr--;
+printf("%d  %x\n", *ptr, ptr);  /* 55 */
+ptr -= 2;
+printf("%d  %x\n", *ptr, ptr);  /* 33 */ 
+Try It Yourself
+
+Program output is similar to: 22 febd4760
+33 febd4764
+66 febd4770
+55 febd476c
+33 febd4764 
+When a pointer is incremented, the memory address increases by the number of bytes being pointed to. In the program above, the pointer increases by 4 when the increment operator is used (ptr++) because the pointer is pointing to an int.
+You can also use the ==, <, and > operators to compare pointer addresses.
+
+=============================
+Pointers and Functions
+
+Pointers greatly expand the possibilities for functions. No longer are we limited to returning one value. With pointer parameters, your functions can alter actual data rather than a copy of data.
+To change the actual values of variables, the calling statement passes addresses to pointer parameters in a function.
+For example, the following program swaps two values:
+void swap (int *num1, int *num2);
+
+int main() {
+  int x = 25;
+  int y = 100;
+
+  printf("x is %d, y is %d\n", x, y); 
+  swap(&x, &y);
+  printf("x is %d, y is %d\n", x, y); 
+
+  return 0;
+}
+ 
+void swap (int *num1, int *num2) {
+  int temp;
+
+  temp = *num1;
+  *num1 = *num2;
+  *num2 = temp;
+}
+Try It Yourself
+
+The program swaps the actual values of the variables, as the function accesses them by address using pointers.
+
+=============================
+=============================
+Functions with Array Parameters
+
+An array cannot be passed by value to a function. However, an array name is a pointer, so just passing an array name to a function is passing a pointer to the array.
+
+Consider the following program:
+int add_up (int *a, int num_elements);
+
+int main() {
+  int orders[5] = {100, 220, 37, 16, 98};
+
+  printf("Total orders is %d\n", add_up(orders, 5)); 
+
+  return 0;
+}
+
+int add_up (int *a, int num_elements) {
+  int total = 0;
+  int k;
+
+  for (k = 0; k < num_elements; k++) {
+    total += a[k];
+  }
+
+  return (total);
+} 
+Try It Yourself
+
+Program output is: "Total orders is 471"
+
+=============================
+Functions that Return an Array
+
+Just as a pointer to an array can be passed into a function, a pointer to an array can be returned, as in the following program:
+int * get_evens();
+
+int main() {
+  int *a;
+  int k;
+
+  a = get_evens(); /* get first 5 even numbers */
+  for (k = 0; k < 5; k++)
+    printf("%d\n", a[k]); 
+
+  return 0;
+}
+
+int * get_evens() {
+  static int nums[5];
+  int k;
+  int even = 0;
+
+  for (k = 0; k < 5; k++) {
+    nums[k] = even += 2;
+  }
+
+  return (nums);
+}
+Try It Yourself
+
+Note that a pointer, not an array, is declared to store the value returned by the function. Also note that when a local variable is being passed out of a function, you need to declare it as static in the function.
+
+Keep in mind that a[k] is the same as *(a + k).
+
+=============================
+=============================
+=============================
+Strings
+
+A string in C is an array of characters that ends with a NULL character '\0'.
+A string declaration can be made in several ways, each with its own considerations.
+For example: char str_name[str_len] = "string"; 
+This creates a string named str_name of str_len characters and initializes it to the value "string".
+When you provide a string literal to initialize the string, the compiler automatically adds a NULL character '\0' to the char array.
+For this reason, you must declare the array size to be at least one character longer than the expected string length.
+The statements below creates strings that include the NULL character. If the declaration does not include a char array size, then it will be calculated based on the length of the string in the initialization plus one for '\0':
+char str1[6] = "hello";
+char str2[ ] = "world";  /* size 6 */
+Try It Yourself
+
+A string can also be declared as a set of characters:
+char str3[6] = {'h', 'e', 'l', 'l', 'o', '\0'};
+
+char str4[ ] = {'h', 'e', 'l', 'l', 'o', '\0'}; /* size 6 */ 
+Try It Yourself
+
+With this approach, the NULL character must be added explicitly. Note that the characters are enclosed in single quotation marks.
+As with any array, the name of a string acts as a pointer.
+A string literal is a text enclosed in double quotation marks.
+A character, such as 'b', is indicated by single quotation marks and cannot be treated as a string.
+
+A string pointer declaration such as char *str = "stuff"; is considered a constant and cannot be changed from its initial value.
+
+To safely and conveniently operate with strings, you can use the Standard Library string functions shown below. Don't forget to include <string.h>.
+strlen() - get length of a string
+strcat() - merge two strings
+strcpy() - copy one string to another
+strlwr() - convert string to lower case
+strupr() - conver string to upper case
+strrev() - reverse string
+strcmp() - compare two strings
+String functions and string pointers are covered in later lessons.
+
+=============================
+String Input
+
+Programs are often interactive, asking the user for input.
+To retrieve a line of text or other string from the user, C provides the scanf(), gets(), and fgets() functions.
+You can use scanf() to read input according to the format specifiers.
+For example:
+char first_name[25];
+int age;
+printf("Enter your first name and age: \n");
+scanf("%s %d", first_name, &age); 
+Try It Yourself
+
+When scanf() is used to read a string, there is no need for & to access the variable address because an array name acts as a pointer.
+scanf() stops reading input when it reaches a space. To read a string with spaces, use the gets() function. It reads input until a terminating newline is reached (the Enter key is pressed).
+For example:
+char full_name[50];
+printf("Enter your full name: ");
+gets(full_name);
+Try It Yourself
+
+A safer alternative to gets() is fgets(), which reads up to a specified number of characters. This approach helps prevent a buffer overflow, which happens when the string array isn't big enough for the typed text.
+For example:
+char full_name[50];
+printf("Enter your full name: ");
+fgets(full_name, 50, stdin);
+Try It Yourself
+
+The fgets() arguments are the string name, the number of characters to read, and a pointer to where you want to read the string from. stdin means to read from the standard input, which is the keyboard.
+Another difference between gets and fgets is that the newline character is stored by fgets.
+fgets() reads only n-1 characters from stdin because there must be room for '\0'.
+
+=============================
+String Output
+
+String output is handled with the fputs(), puts(), and printf() functions.
+The fputs() requires the name of the string and a pointer to where you want to print the string. To print to the screen, use stdout which refers to the standard output.
+For example:
+#include <stdio.h>
+int main()
+{
+  char city[40];
+  printf("Enter your favorite city: ");
+  gets(city);
+  // Note: for safety, use
+  // fgets(city, 40, stdin);
+
+  fputs(city, stdout);
+  printf(" is a fun city.");
+
+  return 0;
+}
+Try It Yourself
+
+The puts() function takes only a string argument and can also be used to display output. However, it adds a newline to output.
+For example:
+#include <stdio.h>
+int main()
+{
+  char city[40];
+  printf("Enter your favorite city: ");
+  gets(city);
+  // Note: for safety, use
+  // fgets(city, 40, stdin);
+
+  puts(city);
+
+  return 0;
+}
+
+=============================
+=============================
+The sprintf and sscanf Functions
+
+A formatted string can be created with the sprintf() function. This is useful for building a string from other data types.
+
+For example:
+#include <stdio.h>
+int main()
+{
+  char info[100];
+  char dept[ ] = "HR";
+  int emp = 75;
+  sprintf(info, "The %s dept has %d employees.", dept, emp);
+  printf("%s\n", info);
+
+  return 0;
+}
+Try It Yourself
+
+Another useful function is sscanf() for scanning a string for values. The function reads values from a string and stores them at the corresponding variable addresses.
+For example:
+#include <stdio.h>
+int main()
+{
+  char info[ ] = "Snoqualmie WA 13190";
+  char city[50];
+  char state[50];
+  int population;
+  sscanf(info, "%s %s %d", city, state, &population);
+  printf("%d people live in %s, %s.", population, city, state);
+
+  return 0;
+}
+
+=============================
+The string.h Library
+
+The string.h library contains numerous string functions.
+The statement #include <string.h> at the top of your program gives you access to the following:
+strlen(str) Returns the length of the string stored in str, not including the NULL character.
+strcat(str1, str2) Appends (concatenates) str2 to the end of str1 and returns a pointer to str1.
+strcpy(str1, str2) Copies str2 to str1. This function is useful for assigning a string a new value.
+
+The program below demonstrates string.h functions:
+#include <stdio.h>
+#include <string.h>
+
+int main()
+{
+  char s1[ ] = "The grey fox";
+  char s2[ ] = " jumped.";
+    
+  strcat(s1, s2);
+  printf("%s\n", s1);
+  printf("Length of s1 is %d\n", strlen(s1));
+  strcpy(s1, s2);
+  printf("s1 is now %s \n", s1);
+
+  return 0;
+}
+Try It Yourself
+
+Additional string.h functions include:
+strncat(str1, str2, n) Appends (concatenates) first n characters of str2 to the end of str1 and returns a pointer to str1.
+strncpy(str1, str2, n) Copies the first n characters of str2 to str1.
+strcmp(str1, str2) Returns 0 when str1 is equal to str2, less than 0 when str1 < str2, and greater than 0 when str1 > str2.
+strncmp(str1, str2, n) Returns 0 when the first n characters of str1 is equal to the first n characters of str2, less than 0 when str1 < str2, and greater than 0 when str1 > str2.
+strchr(str1, c) Returns a pointer to the first occurrence of char c in str1, or NULL if character not found.
+strrchr(str1, c) Searches str1 in reverse and returns a pointer to the position of char c in str1, or NULL if character not found.
+strstr(str1, str2) Returns a pointer to the first occurrence of str2 in str1, or NULL if str2 not found.
+
+=============================
+Converting a String to a Number
+
+Converting a string of number characters to a numeric value is a common task in C programming and is often used to prevent a run-time error.
+Reading a string is less error-prone than expecting a numeric value, only to have the user accidentally type an "o" rather than a "0" (zero).
+
+The stdio.h library contains the following functions for converting a string to a number:
+int atoi(str) Stands for ASCII to integer. Converts str to the equivalent int value. 0 is returned if the first character is not a number or no numbers are encountered.
+double atof(str) Stands for ASCII to float. Converts str to the equivalent double value. 0.0 is returned if the first character is not a number or no numbers are encountered.
+long int atol(str) Stands for ASCII to long int. Converts str to the equivalent long integer value. 0 is returned if the first character is not a number or no numbers are encountered.
+
+The following program demonstrates atoi.
+#include <stdio.h>
+int main()
+{
+  char input[10];
+  int num;
+    
+  printf("Enter a number: ");
+  gets(input);
+  num = atoi(input);
+
+  return 0;
+}
+Try It Yourself
+
+Note, that atoi() lacks error handling, and it is recommended to use strtol() if you want to make sure that proper error handling is done.
+
+=============================
+Array of Strings
+
+A two-dimensional array can be used to store related strings.
+Consider the following statement which declares an array with 3 elements, each holding 15 characters: char trip[3][15] = {
+  "suitcase",
+  "passport",
+  "ticket"
+};
+Although the string lengths vary, it is necessary to declare a size large enough to hold the longest string. Additionally, it can be very cumbersome to access the elements.
+Referring to trip[0] for "suitcase" is error-prone. Instead, you must think of the element at [0][0] as 's', the element at [2][3] as 'k', and so on.
+
+An easier, more intuitive way to deal with a collection of related strings is with an array of pointers, as in the following program:
+char *trip[ ] = {
+  "suitcase",
+  "passport",
+  "ticket"
+};
+
+printf("Please bring the following:\n");
+for (int i = 0; i < 3; i++) {
+  printf("%s\n", trip[ i ]);
+}
+Try It Yourself
+
+Because each element can vary in length, the array of string pointers has a more ragged structure as opposed to a two-dimensional grid structure.
+With this approach, there is no limit to the string length. And more importantly, items can be referred to by a pointer to the first character of each string.
+
+Keep in mind that a declaration like char *items[3]; only reserves space for three pointers; the actual strings are being referenced by those pointers.
+
+=============================
+=============================
+Function Pointers
+
+Since pointers can point to an address in any memory location, they can also point to the start of executable code.
+Pointers to functions, or function pointers, point to executable code for a function in memory. Function pointers can be stored in an array or passed as arguments to other functions.
+
+A function pointer declaration uses the * just as you would with any pointer: return_type (*func_name)(parameters) 
+The parentheses around (*func_name) are important. Without them, the compiler will think the function is returning a pointer.
+
+After declaring the function pointer, you must assign it to a function. The following short program declares a function, declares a function pointer, assigns the function pointer to the function, and then calls the function through the pointer:
+#include <stdio.h>
+void say_hello(int num_times); /* function */
+
+int main() {
+  void (*funptr)(int);  /* function pointer */
+  funptr = say_hello;  /* pointer assignment */
+  funptr(3);  /* function call */
+    
+  return 0;
+}
+
+void say_hello(int num_times) {
+  int k;
+  for (k = 0; k < num_times; k++)
+    printf("Hello\n");
+}
+Try It Yourself
+
+A function name points to the start of executable code, just as an array name points to its first element. Therefore, although statements such as funptr = &say_hello and (*funptr)(3) are correct, it isn't necessary to include the address operator & and the indirection operator * in the function assignment and function call.
+
+=============================
+Array of Function Pointers
+
+An array of function pointers can replace a switch or an if statement for choosing an action, as in the following program:
+#include <stdio.h>
+
+int add(int num1, int num2);
+int subtract(int num1, int num2);
+int multiply(int num1, int num2);
+int divide(int num1, int num2);
+
+int main() 
+{
+  int x, y, choice, result;
+  int (*op[4])(int, int);
+
+  op[0] = add;
+  op[1] = subtract;
+  op[2] = multiply;
+  op[3] = divide;
+  printf("Enter two integers: ");
+  scanf("%d%d", &x, &y);
+  printf("Enter 0 to add, 1 to subtract, 2 to multiply, or 3 to divide: ");
+  scanf("%d", &choice);
+  result = op[choice](x, y);
+  printf("%d", result);
+    
+  return 0;
+}
+
+int add(int x, int y) {
+  return(x + y);
+}
+
+int subtract(int x, int y) {
+  return(x - y);
+}
+
+int multiply(int x, int y) {
+  return(x * y);
+}
+
+int divide(int x, int y) {
+  if (y != 0)
+    return (x / y);
+  else
+    return 0;
+}
+Try It Yourself
+
+The statement int (*op[4])(int, int); declares the array of function pointers. Each array element must have the same parameters and return type. In this case, the functions assigned to the array have two int parameters and return an int. The statement result = op[choice](x, y); executes the appropriate function based on the user's choice. The previously entered integers are the arguments passed to the function.
+
+=============================
+=============================
+The void Pointer
+
+A void pointer is used to refer to any address type in memory and has a declaration that looks like:
+void *ptr;
+
+The following program uses the same pointer for three different data types:
+int x = 33;
+float y = 12.4;
+char c = 'a';
+void *ptr;
+  
+ptr = &x;
+printf("void ptr points to %d\n", *((int *)ptr));
+ptr = &y;
+printf("void ptr points to %f\n", *((float *)ptr));
+ptr = &c;
+printf("void ptr points to %c", *((char *)ptr));
+Try It Yourself
+
+When dereferencing a void pointer, you must first type cast the pointer to the appropriate data type before dereferencing with *.
+You cannot perform pointer arithmetic with void pointers.
+
+=============================
+Functions Using void Pointers
+
+Void pointers are often used for function declarations.
+For example:void * square (const void *); 
+Using a void * return type allows for any return type. Similarly, parameters that are void * accept any argument type. If you want to use the data passed in by the parameter without changing it, you declare it const.
+
+You can leave out the parameter name to further insulate the declaration from its implementation. Declaring a function this way allows the definition to be customized as needed without having to change the declaration.
+
+Consider the following program:
+#include <stdio.h>
+
+void* square (const void* num);
+
+int main() {
+  int x, sq_int;
+  x = 6;
+  sq_int = square(&x);
+  printf("%d squared is %d\n", x, sq_int);
+
+  return 0;
+}
+
+void* square (const void *num) {
+  int result;
+  result = (*(int *)num) * (*(int *)num);
+  return result;
+}
+Try It Yourself
+
+This square function has been written to multiply ints, which is why the num void pointer is cast to an int. If the implementation were to be changed to allow square() to multiply floats, then only the definition need be changed without having to make changes to the declaration.
+
+=============================
+Function Pointers as Arguments
+
+Another way to use a function pointer is to pass it as an argument to another function.
+A function pointer used as an argument is sometimes referred to as a callback function because the receiving function "calls it back".
+The qsort() function in the stdlib.h header file uses this technique.
+
+Quicksort is a widely used algorithm for sorting an array. To implement the sort in your program, you need only include the stdlib.h file and then write a compare function that matches the declaration used in qsort:void qsort(void *base, size_t num, size_t width, int (*compare)(const void *, const void *)) 
+To breakdown the qsort declaration:
+void *base A void pointer to the array.
+size_t num The number of elements in the array.
+size_t width The size of an element.
+int (*compare (const void *, const void *) A function pointer which has two arguments and returns 0 when the arguments have the same value, <0 when arg1 comes before arg2, and >0 when arg1 comes after arg2.
+
+The actual implementation of the compare function is up to you. It doesn't even need to have the name "compare". You have the opportunity to designate a sort from high to low or low to high, or if an array contains structure elements, you can compare member values.
+
+The following program sorts an array of ints from low to high using qsort:
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare (const void *, const void *); 
+
+int main() {
+  int arr[5] = {52, 23, 56, 19, 4};
+  int num, width, i;
+  
+  num = sizeof(arr)/sizeof(arr[0]);
+  width = sizeof(arr[0]);
+  qsort((void *)arr, num, width, compare);
+  for (i = 0; i < 5; i++)
+    printf("%d ", arr[ i ]);
+    
+  return 0;
+}
+
+int compare (const void *elem1, const void *elem2) {
+  if ((*(int *)elem1) == (*(int *)elem2))
+    return 0;
+  else if ((*(int *)elem1) < (*(int *)elem2))
+    return -1;
+  else
+    return 1;
+}
+Try It Yourself
+
+We used the function name in the qsort call because a function name acts as a pointer.
+
+=============================
+=============================
+=============================
+Structures
+
+A structure is a user-defined data type that groups related variables of different data types.
+
+A structure declaration includes the keyword struct, a structure tag for referencing the structure, and curly braces { } with a list of variable declarations called members.
+For example:struct course {
+  int id;
+  char title[40];
+  float hours; 
+}; 
+This struct statement defines a new data type named course that has three members.
+Structure members can be of any data type, including basic types, strings, arrays, pointers, and even other structures, as you will learn in a later lesson.
+Do not forget to put a semicolon after structure declaration.
+A structure is also called a composite or aggregate data type. Some languages refer to structures as records.
+
+=============================
+Declarations Using Structures
+
+To declare variables of a structure data type, you use the keyword struct followed by the struct tag, and then the variable name.
+For example, the statements below declares a structure data type and then uses the student struct to declare variables s1 and s2:
+struct student {
+  int age;
+  int grade;
+  char name[40];
+};
+
+/* declare two variables */
+struct student s1;
+struct student s2; 
+Try It Yourself
+
+A struct variable is stored in a contiguous block of memory. The sizeof operator must be used to get the number of bytes needed for a struct, just as with the basic data types.
+
+=============================
+Declarations Using Structures
+
+A struct variable can also be initialized in the declaration by listing initial values in order inside curly braces:
+struct student s1 = {19, 9, "John"};
+struct student s2 = {22, 10, "Batman"};
+Try It Yourself
+
+If you want to initialize a structure using curly braces after declaration, you will also need to type cast, as in the statements:
+struct student s1;
+s1 = (struct student) {19, 9, "John"};
+Try It Yourself
+
+You can use named member initialization when initializing a structure to initialize corresponding members:
+struct student s1 
+= { .grade = 9, .age = 19, .name = "John"}; 
+Try It Yourself
+
+In the example above, .grade refers to the grade member of the structure. Similarly, .age and .name refer to the age and name members.
+
+=============================
+Accessing Structure Members
+
+You access the members of a struct variable by using the . (dot operator) between the variable name and the member name.
+For example, to assign a value to the age member of the s1 struct variable, use a statement like:
+s1.age = 19;
+You can also assign one structure to another of the same type:
+struct student s1 = {19, 9, "Jason"};
+struct student s2;
+//....
+s2 = s1; 
+Try It Yourself
+
+The following code demonstrates using a structure:
+#include <stdio.h>
+#include <string.h>
+
+struct course {
+  int id;
+  char title[40];
+  float hours; 
+};
+
+int main() {
+  struct course cs1 = {341279, "Intro to C++", 12.5};
+  struct course cs2;
+
+  /* initialize cs2 */
+  cs2.id = 341281;
+  strcpy(cs2.title, "Advanced C++");
+  cs2.hours = 14.25;
+   
+  /* display course info */
+  printf("%d\t%s\t%4.2f\n", cs1.id, cs1.title, cs1.hours);
+  printf("%d\t%s\t%4.2f\n", cs2.id, cs2.title, cs2.hours);
+  
+  return 0;
+}
+Try It Yourself
+
+String assignment requires strcpy() from the string.h library.
+Also note the format specifiers %4.2f include width and precision options.
+
+=============================
+Using typedef
+
+The typedef keyword creates a type definition that simplifies code and makes a program easier to read.
+typedef is commonly used with structures because it eliminates the need to use the keyword struct when declaring variables.
+For example:
+typedef struct {
+  int id;
+  char title[40];
+  float hours; 
+} course;
+
+course cs1;
+course cs2; 
+Try It Yourself
+
+Note that a structure tag is no longer used, instead a typedef name appears before the struct declaration.
+Now the word struct is no longer required in variable declarations, making the code cleaner and easier to read.
+
+=============================
+=============================
+Structures with Structures
+
+The members of a structure may also be structures.
+For example, consider the following statements:
+typedef struct {
+  int x;
+  int y;
+} point;
+
+typedef struct {
+  float radius;
+  point center;
+} circle; 
+Try It Yourself
+
+Nested curly braces are used to initialize members that are structs. The dot operator is used twice to access members of members, as in the statements:
+circle c = {4.5, {1, 3}};
+printf("%3.1f %d,%d", c.radius, c.center.x, c.center.y);
+/* 4.5  1,3 */
+ 
+Try It Yourself
+
+A struct definition must appear before it can be used inside another struct.
+
+=============================
+Pointers to Structures
+
+Just like pointers to variables, pointers to structures can also be defined.
+
+struct myStruct *struct_ptr;
+defines a pointer to the myStruct structure.
+
+struct_ptr = &struct_var;
+stores the address of the structure variable struct_var in the pointer struct_ptr.
+
+struct_ptr -> struct_mem;
+accesses the value of the structure member struct_mem.
+
+For example:
+struct student{
+  char name[50];
+  int number;
+  int age;
+};
+
+// Struct pointer as a function parameter
+void showStudentData(struct student *st) {
+  printf("\nStudent:\n");
+  printf("Name: %s\n", st->name);
+  printf("Number: %d\n", st->number);
+  printf("Age: %d\n", st->age);
+}
+
+struct student st1 = {"Krishna", 5, 21};
+showStudentData(&st1);
+Try It Yourself
+
+The -> operator allows to access members of the struct though the pointer.
+(*st).age is the same as st->age.
+Also, when a typedef has been used to name the struct, then a pointer is declared using only the typedef name along with * and the pointer name.
+
+=============================
+Structures as Function Parameters
+
+A function can have structure parameters that accept arguments by value when a copy of the structure variable is all that is needed.
+For a function to change the actual values in a struct variable, pointer parameters are required.
+
+For example:
+#include <stdio.h>
+#include <string.h>
+
+typedef struct {
+  int id;
+  char title[40];
+  float hours; 
+} course;
+
+void update_course(course *class);
+void display_course(course class);
+
+int main() {
+  course cs2;
+  update_course(&cs2);
+  display_course(cs2);
+  return 0;
+}
+
+void update_course(course *class) {
+  strcpy(class->title, "C++ Fundamentals");
+  class->id = 111;
+  class->hours = 12.30;
+}
+
+void display_course(course class) {
+  printf("%d\t%s\t%3.2f\n", class.id, class.title, class.hours);
+}
+Try It Yourself
+
+As you can see, update_course() takes a pointer as the parameter, while display_course() takes the structure by value.
+
+=============================
+Array of Structures
+
+An array can store elements of any data type, including structures.
+After declaring an array of structures, an element is accessible with the index number.
+The dot operator is then used to access members of the element, as in the program:
+#include <stdio.h>
+
+typedef struct {
+  int h;
+  int w;
+  int l;
+} box;
+
+int main() {
+  box boxes[3] = {{2, 6, 8}, {4, 6, 6}, {2, 6, 9}};
+  int k, volume;
+  
+  for (k = 0; k < 3; k++) {
+    volume = boxes[k].h*boxes[k].w*boxes[k].l;
+    printf("box %d volume %d\n", k, volume);
+  }
+  return 0;
+}
+Try It Yourself
+
+Arrays of structures are used for data structures such as linked lists, binary trees, and more.
+
+=============================
+=============================
+Unions
+
+A union allows to store different data types in the same memory location.
+It is like a structure because it has members. However, a union variable uses the same memory location for all its member's and only one member at a time can occupy the memory location.
+
+A union declaration uses the keyword union, a union tag, and curly braces { } with a list of members.
+
+Union members can be of any data type, including basic types, strings, arrays, pointers, and structures.
+For example:
+union val {
+  int int_num;
+  float fl_num;
+  char str[20];
+};
+Try It Yourself
+
+After declaring a union, you can declare union variables. You can even assign one union to another of the same type:
+union val u1;
+union val u2;
+u2 = u1;
+Try It Yourself
+
+Unions are used for memory management. The largest member data type is used to determine the size of the memory to share and then all members use this one location. This process also helps limit memory fragmentation. Memory management is discussed in a later lesson.
+
+=============================
+Accessing Union Members
+
+You access the members of a union variable by using the . dot operator between the variable name and the member name.
+When assignment is performed, the union memory location will be used for that member until another member assignment is performed.
+
+Trying to access a member that isn't occupying the memory location gives unexpected results.
+
+The following program demonstrates accessing union members:
+union val {
+  int int_num;
+  float fl_num;
+  char str[20]; 
+};
+  
+union val test;
+
+test.int_num = 123;
+test.fl_num = 98.76;
+strcpy(test.str, "hello");
+
+printf("%d\n", test.int_num);
+printf("%f\n", test.fl_num);
+printf("%s\n", test.str);
+Try It Yourself
+
+The last assignment overrides previous assignments, which is why str stores a value and accessing int_num and fl_num is meaningless.
+
+=============================
+Structures With Unions
+
+Unions are often used within structures because a structure can have a member to keep track of which union member stores a value.
+For example, in the following program, a vehicle struct uses either a vehicle identification number (VIN) or an assigned id, but not both:
+typedef struct {
+  char make[20];
+  int model_year;
+  int id_type; /* 0 for id_num, 1 for VIN */
+  union {
+    int id_num;
+    char VIN[20]; 
+  } id;
+} vehicle;
+
+vehicle car1;
+strcpy(car1.make, "Ford");
+car1.model_year = 2017;
+car1.id_type = 0;
+car1.id.id_num = 123098; 
+Try It Yourself
+
+Note that the union was declared inside the structure. When doing this, a union name was required at the end of the declaration.
+A union with a union tag could have been declared outside the structure, but with such a specific use, the union within the struct provides easier to understand the code.
+
+Note also the dot operator is used twice to access union members of struct members.
+
+The id_type keeps track of which union member stores a value. The following statements display car1 data, using the id_type to determine which union member to read:
+/* display vehicle data */
+printf("Make: %s\n", car1.make);
+printf("Model Year: %d\n", car1.model_year);
+if (car1.id_type == 0)
+  printf("ID: %d\n", car1.id.id_num);
+else
+  printf("ID: %s\n", car1.id.VIN); 
+Try It Yourself
+
+A union can also contain a structure.
+
+=============================
+=============================
+Pointers to Unions
+
+A pointer to a union points to the memory location allocated to the union.
+A union pointer is declared by using the keyword union and the union tag along with * and the pointer name.
+For example, consider the following statements:
+union val {
+  int int_num;
+  float fl_num;
+  char str[20]; 
+};
+
+union val info;
+union val *ptr = NULL;
+ptr = &info;
+ptr->int_num = 10;
+printf("info.int_num is %d", info.int_num); 
+Try It Yourself
+
+When you want to access the union members through a pointer, the -> operator is required.
+(*ptr).int_num is the same as ptr->int_num.
+
+=============================
+Unions as Function Parameters
+
+A function can have union parameters that accept arguments by value when a copy of the union variable is all that is needed.
+
+For a function to change the actual value in a union memory location, pointer parameters are required.
+For example:
+union id {
+  int id_num;
+  char name[20]; 
+};
+
+void set_id(union id *item) {
+  item->id_num = 42;
+}
+
+void show_id(union id item) {
+  printf("ID is %d", item.id_num);
+} 
+
+=============================
+Array of Unions
+
+An array can store elements of any data type, including unions.
+With unions, it is important to keep in mind that only one member of the union can store data for each array element.
+
+After declaring an array of unions, an element is accessible with the index number. The dot operator is then used to access members of the union, as in the program:
+union val {
+  int int_num;
+  float fl_num;
+  char str[20]; 
+};
+
+union val nums[10];
+int k;
+
+for (k = 0; k < 10; k++) {
+  nums[k].int_num = k;
+}
+
+for (k = 0; k < 10; k++) {
+  printf("%d  ", nums[k].int_num);
+} 
+Try It Yourself
+
+An array is a data structure that stores collection values that are all the same type. Arrays of unions allow storing values of different types.
+For example:
+union type {
+  int i_val;
+  float f_val;
+  char ch_val;
+};
+union type arr[3];
+arr[0].i_val = 42;
+arr[1].f_val = 3.14;
+arr[2].ch_val = 'x'; 
+
+=============================
+=============================
+=============================
+Memory Management
+
+Understanding memory is an important aspect of C programming. When you declare a variable using a basic data type, C automatically allocates space for the variable in an area of memory called the stack.
+
+An int variable, for example, is typically allocated 4 bytes when declared. We know this by using the sizeof operator:
+int x;
+printf("%d", sizeof(x)); /* output: 4 */
+Try It Yourself
+
+As another example, an array with a specified size is allocated contiguous blocks of memory with each block the size for one element:
+int arr[10];
+printf("%d", sizeof(arr)); /* output: 40 */
+Try It Yourself
+
+So long as your program explicitly declares a basic data type or an array size, memory is automatically managed. However, you have probably already been wishing to implement a program where the array size is undecided until runtime.
+
+Dynamic memory allocation is the process of allocating and freeing memory as needed. Now you can prompt at runtime for the number of array elements and then create an array with that many elements. Dynamic memory is managed with pointers that point to newly allocated blocks of memory in an area called the heap.
+In addition to automatic memory management using the stack and dynamic memory allocation using the heap, there is statically managed data in main memory for variables that persist for the lifetime of the program.
+
+=============================
+Memory Management Functions
+
+The stdlib.h library includes memory management functions.
+The statement #include <stdlib.h> at the top of your program gives you access to the following:
+
+malloc(bytes) Returns a pointer to a contiguous block of memory that is of size bytes.
+
+calloc(num_items, item_size) Returns a pointer to a contiguous block of memory that has num_items items, each of size item_size bytes. Typically used for arrays, structures, and other derived data types. The allocated memory is initialized to 0.
+
+realloc(ptr, bytes) Resizes the memory pointed to by ptr to size bytes. The newly allocated memory is not initialized.
+
+free(ptr) Releases the block of memory pointed to by ptr.
+When you no longer need a block of allocated memory, use the function free() to make the block available to be allocated again.
+
+=============================
+=============================
+The malloc Function
+
+The malloc() function allocates a specified number of contiguous bytes in memory.
+
+For example:
+#include <stdlib.h>
+
+int *ptr;
+/* a block of 10 ints */
+ptr = malloc(10 * sizeof(*ptr));
+
+if (ptr != NULL) {
+  *(ptr + 2) = 50;  /* assign 50 to third int */
+}
+Try It Yourself
+
+malloc returns a pointer to the allocated memory.
+Notice that sizeof was applied to *ptr instead of int, making the code more robust should the *ptr declaration be changed to a different data type later.
+
+=============================
+The malloc Function
+
+The allocated memory is contiguous and can be treated as an array. Instead of using brackets [ ] to refer to elements, pointer arithmetic is used to traverse the array. You are advised to use + to refer to array elements. Using ++ or += changes the address stored by the pointer.
+
+If the allocation is unsuccessful, NULL is returned. Because of this, you should include code to check for a NULL pointer.
+A simple two-dimensional array requires (rows*columns)*sizeof(datatype) bytes of memory.
+
+=============================
+The free Function
+
+The free() function is a memory management function that is called to release memory. By freeing memory, you make more available for use later in your program.
+
+For example:
+int* ptr = malloc(10 * sizeof(*ptr));
+if (ptr != NULL)
+  *(ptr + 2) = 50;  /* assign 50 to third int */
+printf("%d\n", *(ptr + 2));
+
+free(ptr);
+
+=============================
+=============================
+The calloc Function
+
+The calloc() function allocates memory based on the size of a specific item, such as a structure.
+The program below uses calloc to allocate memory for a structure and malloc to allocate memory for the string within the structure:
+typedef struct {
+  int num;
+  char *info;
+} record;
+
+record *recs;
+int num_recs = 2;
+int k;
+char str[ ] = "This is information";
+
+recs = calloc(num_recs, sizeof(record));
+if (recs != NULL) {
+  for (k = 0; k < num_recs; k++) {
+    (recs+k)->num = k;
+    (recs+k)->info = malloc(sizeof(str));
+    strcpy((recs+k)->info, str);
+  }
+} 
+Try It Yourself
+
+calloc allocates blocks of memory within a contiguous block of memory for an array of structure elements. You can navigate from one structure to the next with pointer arithmetic.
+
+After allocating room for a structure, memory must be allocated for the string within the structure. Using a pointer for the info member allows any length string to be stored.
+
+Dynamically allocated structures are the basis of linked lists and binary trees as well as other data structures.
+
+=============================
+The realloc Function
+
+The realloc() function expands a current block to include additional memory.
+For example:
+int *ptr;
+ptr = malloc(10 * sizeof(*ptr));  
+if (ptr != NULL) {
+  *(ptr + 2) = 50;  /* assign 50 to third int */
+}
+ptr = realloc(ptr, 100 * sizeof(*ptr)); 
+*(ptr + 30) = 75; 
+Try It Yourself
+
+realloc leaves the original content in memory and expands the block to allow for more storage.
+
+=============================
+=============================
+Allocating Memory for Strings
+
+When allocating memory for a string pointer, you may want to use string length rather than the sizeof operator for calculating bytes.
+Consider the following program:
+char str20[20];
+char *str = NULL;
+
+strcpy(str20, "12345");
+str = malloc(strlen(str20) + 1); 
+strcpy(str, str20);
+printf("%s", str); 
+Try It Yourself
+
+This approach is better memory management because you aren’t allocating more space than is needed to a pointer. When using strlen to determine the number of bytes needed for a string, be sure to include one extra byte for the NULL character '\0'.
+A char is always one byte, so there is no need to multiply the memory requirements by sizeof(char).
+
+=============================
+Dynamic Arrays
+
+Many algorithms implement a dynamic array because this allows the number of elements to grow as needed.
+Because elements are not allocated all at once, dynamic arrays typically use a structure to keep track of current array size, current capacity, and a pointer to the elements, as in the following program.
+typedef struct {
+  int *elements;
+  int size;
+  int cap;
+} dyn_array;
+
+dyn_array arr;
+
+/* initialize array */
+arr.size = 0;
+arr.elements = calloc(1, sizeof(*arr.elements) );
+arr.cap = 1;  /* room for 1 element */ 
+Try It Yourself
+
+To expand by more elements:
+arr.elements = realloc(arr.elements, (5 + arr.cap) * sizeof(*arr.elements));
+if (arr.elements != NULL)
+  arr.cap += 5; /* increase capacity */ 
+Try It Yourself
+
+Adding an element to the array increases its size:
+if (arr.size < arr.cap) {
+  arr.elements[arr.size] = 50;
+  arr.size++;
+} else {
+  printf("Need to expand the array.");
+}
+Try It Yourself
+
+The entire program is written in main() for demonstration purposes. To properly implement a dynamic array, sub-tasks should be broken down into functions such as init_array(), increase_array(), add_element(), and display_array(). The error checking was also skipped to keep the demo short.
+
+=============================
+=============================
+=============================
+Accessing Files
+
+An external file can be opened, read from, and written to in a C program. For these operations, C includes the FILE type for defining a file stream. The file stream keeps track of where reading and writing last occurred.
+
+The stdio.h library includes file handling functions:
+FILE Typedef for defining a file pointer.
+
+fopen(filename, mode) Returns a FILE pointer to file filename which is opened using mode. If a file cannot be opened, NULL is returned.
+Mode options are:
+- r open for reading (file must exist)
+- w open for writing (file need not exist)
+- a open for append (file need not exist)
+- r+ open for reading and writing from beginning
+- w+ open for reading and writing, overwriting file
+- a+ open for reading and writing, appending to file
+
+fclose(fp) Closes file opened with FILE fp, returning 0 if close was successful. EOF (end of file) is returned if there is an error in closing.
+
+The following program opens a file for writing and then closes it:
+#include <stdio.h>
+
+int main() {  
+  FILE *fptr;
+  
+  fptr = fopen("myfile.txt", "w");
+  if (fptr == NULL) {
+    printf("Error opening file.");
+    return -1;
+  }
+  fclose(fptr);
+  return 0;
+} 
+Try It Yourself
+
+When a string literal is used to specify a filename, the escape sequence \\ indicates a single backslash. In this program, if there is an error when opening the file, a -1 error code is returned to the system. Error handling is explained in a future lesson.
+Closing a file when you are done using it is a good programming practice.
+
+=============================
+Reading from a File
+
+The stdio.h library also includes functions for reading from an open file. A file can be read one character at a time or an entire string can be read into a character buffer, which is typically a char array used for temporary storage.
+
+fgetc(fp) Returns the next character from the file pointed to by fp. If the end of the file has been reached, then EOF is returned.
+
+fgets(buff, n, fp) Reads n-1 characters from the file pointed to by fp and stores the string in buff. A NULL character '\0' is appended as the last character in buff. If fgets encounters a newline character or the end of file before n-1 characters is reached, then only the characters up to that point are stored in buff.
+
+fscanf(fp, conversion_specifiers, vars) Reads characters from the file pointed to by fp and assigns input to a list of variable pointers vars using conversion_specifiers. As with scanf, fscanf stops reading a string when a space or newline is encountered.
+
+The following program demonstrates reading from a file:
+#include <stdio.h>
+
+int main() {  
+  FILE *fptr;
+  int c, stock;
+  char buffer[200], item[10];
+  float price;
+
+  /* myfile.txt: Inventory\n100 Widget 0.29\nEnd of List */
+
+  fptr = fopen("myfile.txt", "r");
+
+  fgets(buffer, 20, fptr);    /* read a line */
+  printf("%s\n", buffer);
+
+  fscanf(fptr, "%d%s%f", &stock, item, &price); /* read data */
+  printf("%d  %s  %4.2f\n", stock, item, price);
+
+  while ((c = getc(fptr)) != EOF) /* read the rest of the file */
+    printf("%c", c);
+
+  fclose(fptr);
+  return 0;
+} 
+Try It Yourself
+
+The gets() function reads up until the newline. fscanf() reads data according to conversion specifiers. And then the while loop reads one character at a time until the end of file. Checking for a problem when opening the file (a NULL pointer) was left out to shorten the example.
+
+=============================
+Writing to a File
+
+The stdio.h library also includes functions for writing to a file. When writing to a file, newline characters '\n' must be explicitly added.
+
+fputc(char, fp) Writes character char to the file pointed to by fp.
+
+fputs(str, fp) Writes string str to the file pointed to by fp.
+
+fprintf(fp, str, vars) Prints string str to the file pointed to by fp. str can optionally include format specifiers and a list of variables vars.
+
+The following program demonstrates writing to a file:
+FILE *fptr;
+char filename[50];
+printf("Enter the filename of the file to create: ");
+gets(filename);
+fptr = fopen(filename, "w");
+
+/* write to file */
+fprintf(fptr, "Inventory\n");
+fprintf(fptr, "%d %s %f\n", 100, "Widget", 0.29);
+fputs("End of List", fptr); 
+Try It Yourself
+
+The "w" argument defines "writing mode" for the fopen function.
+
+=============================
+=============================
+Binary File I/O
+
+Writing only characters and strings to a file can become tedious when you have an array or structure. To write entire blocks of memory to a file, there are the following binary functions:
+
+Binary file mode options for the fopen() function are:
+- rb open for reading (file must exist)
+- wb open for writing (file need not exist)
+- ab open for append (file need not exist)
+- rb+ open for reading and writing from beginning
+- wb+ open for reading and writing, overwriting file
+- ab+ open for reading and writing, appending to file
+
+fwrite(ptr, item_size, num_items, fp) Writes num_items items of item_size size from pointer ptr to the file pointed to by file pointer fp.
+
+fread(ptr, item_size, num_items, fp) Reads num_items items of item_size size from the file pointed to by file pointer fp into memory pointed to by ptr.
+
+fclose(fp) Closes file opened with file fp, returning 0 if close was successful. EOF is returned if there is an error in closing.
+feof(fp) Returns 0 when the end of the file stream has been reached.
+
+=============================
+Binary File I/O
+
+The following program demonstrates writing to and reading from binary files:
+FILE *fptr;
+int arr[10];
+int x[10];
+int k;
+
+/* generate array of numbers */
+for (k = 0; k < 10; k++)
+  arr[k] = k;
+
+/* write array to file */
+fptr = fopen("datafile.bin", "wb");
+fwrite(arr, sizeof(arr[0]), sizeof(arr)/sizeof(arr[0]), fptr);
+fclose(fptr);
+
+/* read array from file */
+fptr = fopen("datafile.bin", "rb");
+fread(x, sizeof(arr[0]), sizeof(arr)/sizeof(arr[0]), fptr);
+fclose(fptr);
+
+/* print array */
+for (k = 0; k < 10; k++)
+  printf("%d", x[k]); 
+Try It Yourself
+
+This program wrote an array of ints to a file, but an array of structures could just as easily have been written to a file. Notice that the item size and number of items were determined by using the size of an element and the size of the entire variable.
+
+File extensions alone do not determine the format of data in a file, but they are useful for indicating the type of data to expect. For example, a .txt extension indicates a text file, .bin is for binary data, .csv indicates comma separated values, and .dat is a data file.
+
+=============================
+Controlling the File Pointer
+
+There are functions in stdio.h for controlling the location of the file pointer in a binary file:
+ftell(fp) Returns a long int value corresponding to the fp file pointer position in number of bytes from the start of the file.
+
+fseek(fp, num_bytes, from_pos) Moves the fp file pointer position by num_bytes bytes relative to position from_pos, which can be one of the following constants:
+- SEEK_SET start of file
+- SEEK_CUR current position
+- SEEK_END end of file
+
+The following program reads a record from a file of structures:
+typedef struct {
+  int id;
+  char name[20];
+} item;
+
+int main() { 
+  FILE *fptr;
+  item first, second, secondf;
+
+  /* create records */
+  first.id = 10276;
+  strcpy(first.name, "Widget");
+  second.id = 11786;
+  strcpy(second.name, "Gadget");
+  
+  /* write records to a file */
+  fptr = fopen("info.dat", "wb");
+  fwrite(&first, 1, sizeof(first), fptr);
+  fwrite(&second, 1, sizeof(second), fptr);
+  fclose(fptr); 
+
+  /* file contains 2 records of type item */
+  fptr = fopen("info.dat", "rb");
+
+  /* seek second record */
+  fseek(fptr, 1*sizeof(item), SEEK_SET);
+  fread(&secondf, 1, sizeof(item), fptr);
+  printf("%d  %s\n", secondf.id, secondf.name);
+  fclose(fptr);
+  return 0;
+} 
+Try It Yourself
+
+This program wrote two item records to a file. To read just the second record, fseek() moved the file pointer to 1*sizeof(item) bytes from the start of the file. For example, if you wanted to move the pointer to the fourth record, then you seek to 3*sizeof(item) from the beginning of the file (SEEK_SET).
+
+=============================
+=============================
+Exception Handling
+
+Central to good programming practices is using error handling techniques. Even the most solid coding skills may not keep a program from crashing should you forget to include exception handling.
+
+An exception is any situation that causes your program to stop normal execution. Exception handling, also called error handling, is an approach to processing runtime errors.
+
+C does not explicitly support exception handling, but there are ways to manage errors:
+- Write code to prevent the errors in the first place. You can't control user input, but you can check to be sure that the user entered valid input. When performing division, take the extra step to ensure that division by 0 won't occur.
+- Use the exit statement to gracefully end program execution. You may not be able to control if a file is available for reading, but you don't need to allow the problem to crash your program.
+Use errno, perror(), and strerror() to identify errors through error codes.
+
+=============================
+The exit Command
+
+The exit command immediately stops the execution of a program and sends an exit code back to the calling process. For example, if a program is called by another program, then the calling program may need to know the exit status.
+
+Using exit to avoid a program crash is a good practice because it closes any open file connections and processes.
+
+You can return any value through an exit statement, but 0 for success and -1 for failure are typical. The predefined stdlib.h macros EXIT_SUCCESS and EXIT_FAILURE are also commonly used.
+For example:
+int x = 10;
+int y = 0;
+
+if (y != 0)
+  printf("x / y = %d", x/y);
+else {
+  printf("Divisor is 0. Program exiting.");
+  exit(EXIT_FAILURE);
+} 
+
+=============================
+=============================
+Using errno
+
+Some library functions, such as fopen(), set an error code when they do not execute as expected. The error code is set in a global variable named errno, which is defined in the errno.h header file. When using errno you should set it to 0 before calling a library function.
+
+To output the error code stored in errno, you use fprintf to print to the stderr file stream, the standard error output to the screen. Using stderr is a matter of convention and a good programming practice.
+
+You can output the errno through other means, but it will be easier to keep track of your exception handling if you only use stderr for error messages.
+
+To use errno, you need to declare it with the statement extern int errno; at the top of your program (or you can include the errno.h header file).
+For example:
+#include <stdio.h>
+#include <stdlib.h>
+// #include <errno.h>
+
+extern int errno;
+
+int main() {
+  FILE *fptr;
+
+  errno = 0;
+  fptr = fopen("c:\\nonexistantfile.txt", "r");
+  if (fptr == NULL) {
+    fprintf(stderr, "Error opening file. Error code: %d\n", errno);
+    exit(EXIT_FAILURE);
+  }
+
+  fclose(fptr);
+  return 0;
+} 
+
+=============================
+The perror and strerror Functions
+
+When a library function sets errno, a cryptic error number is assigned. For a more descriptive message about the error, you can use perror(). You can also obtain the message using strerror() in the string.h header file, which returns a pointer to the message text.
+
+perror() must include a string that will precede the actual error message. Typically, there is no need for both perror() and strerror() for the same error, but both are used in the program below for demonstration purposes:
+FILE *fptr;
+errno = 0;
+
+fptr = fopen("c:\\nonexistantfile.txt", "r");
+if (fptr == NULL) {
+  perror("Error");
+  fprintf(stderr, "%s\n", strerror(errno));
+  exit(EXIT_FAILURE);
+} 
+Try It Yourself
+
+There are more than a hundred error codes. Use these statements to list them:
+for (int x = 0; x < 135; x++)
+  fprintf(stderr, "%d: %s\n", x, strerror(x));
+
+=============================
+EDOM and ERANGE Error Codes
+
+Some of the mathematical functions in the math.h library set errno to the defined macro value EDOM when a domain is out of range.
+Similarly, the ERANGE macro value is used when there is a range error.
+For example:
+float k = -5;
+float num = 1000;
+float result;
+
+errno = 0;
+result = sqrt(k);
+if (errno == 0)
+  printf("%f ", result);
+else if (errno == EDOM)
+  fprintf(stderr, "%s\n", strerror(errno));
+
+errno = 0;
+result = exp(num);
+if (errno == 0)
+  printf("%f ", result);
+else if (errno == ERANGE)
+  fprintf(stderr, "%s\n", strerror(errno));
+
+=============================
+The feof and ferror Functions
+
+In addition to checking for a NULL file pointer and using errno, the feof() and ferror() functions can be used for determining file I/O errors:
+feof(fp) Returns a nonzero value if the end of stream has been reached, 0 otherwise. feof also sets EOF.
+ferror(fp) Returns a nonzero value if there is an error, 0 for no error.
+
+The following program incorporates several exception handling techniques:
+FILE *fptr;
+int c;
+
+errno = 0;
+
+fptr = fopen("myfile.txt", "r");
+if (fptr == NULL) {
+  fprintf(stderr, "Error opening file. %s\n", strerror(errno));
+  exit(EXIT_FAILURE);
+}
+
+while ((c = getc(fptr)) != EOF) /* read the rest of the file */
+  printf("%c", c);
+
+if (ferror(fptr)) {
+  printf("I/O error reading file.");
+  exit(EXIT_FAILURE);
+}
+else if (feof(fptr)) {
+  printf("End of file reached.");
+} 
+Try It Yourself
+
+Program output will vary. But if the file opens properly and the program completes reading the entire file, then the following message displays: "End of file reached."
+
+=============================
+=============================
+=============================
+Preprocessor Directives
+
+The C preprocessor uses the # directives to make substitutions in program source code before compilation.
+For example, the line #include <stdio.h> is replaced by the contents of the stdio.h header file before a program is compiled.
+
+Preprocessor directives and their uses:
+
+#include Including header files.
+
+#define, #undef Defining and undefining macros.
+
+#ifdef, #ifndef, #if, #else, #elif, #endif Conditional compilation.
+
+#pragma Implementation and compiler specific.
+
+#error, #warning Output an error or warning message An error halts compilation.
+Do NOT put a semicolon character at the end of a # directive.
+
+=============================
+The #include Directive
+
+The #include directive is for including header files in a program. A header file declares a collection of functions and macros for a library, a term that comes from the way the collection of code can be reused.
+
+Some useful C libraries are:
+stdio input/output functions, including printf and file operations.
+stdlib memory management and other utilities
+string functions for handling strings
+errno errno global variable and error code macros
+math common mathematical functions
+time time/date utilities
+
+Corresponding header files for the libraries end with .h by convention. The #include directive expects brackets <> around the header filename if the file should be searched for in the compiler include paths.
+
+A user-defined header file is also given the .h extension, but is referred to with quotation marks, as in "myutil.h". When quotation marks are used, the file is searched for in the source code directory.
+For example:#include <stdio.h>
+#include “myutil.h” 
+Some developers use .hpp extension for header files.
+
+=============================
+The #define Directive
+
+The #define directive is used to create object-like macros for constants based on values or expressions.
+#define can also be used to create function-like macros with arguments that will be replaced by the preprocessor.
+
+Be cautious with function-like definitions. Keep in mind that the preprocessor does a direct replacement without any calculations, which can lead to unexpected results, as demonstrated with the following program:
+#include <stdio.h>
+#define PI 3.14
+#define AREA(r) (PI*r*r)
+
+int main() {
+  float radius = 2;
+  printf("%3.2f\n", PI);
+  printf("Area is %5.2f\n", AREA(radius));
+  printf("Area with radius + 1: %5.2f\n", AREA(radius+1));
+  return 0;
+} 
+Try It Yourself
+
+Before compilation, the preprocessor expands every macro identifier. In this case, every occurrence of PI is replaced with 3.14 and AREA(arg) is replaced with the expression PI*arg*arg. The final code sent to the compiler will already have the constant values in place.
+
+Not what we may expect! However, if you consider that #define works strictly by replacing text, you will see that AREA(radius+1) becomes PI*radius+1*radius+1, which is 3.14*2+1*2+1.
+
+The solution to this is to enclose each parameter in parentheses to obtain the correct order of operations.
+For example:
+#define AREA(r) (PI*(r)*(r)) 
+Try It Yourself
+
+The code produces the output: Area with radius + 1: 28.26.
+
+=============================
+Formatting Preprocessor Directives
+
+When using preprocessor directives, the # must be the first character on a line. But there can be any amount of white space before # and between the # and the directive.
+
+If a # directive is lengthy, you can use the \ continuation character to extend the definition over more than one line.
+
+For example:
+#define VERY_LONG_CONSTANT \
+23.678901
+
+#define MAX 100
+#define MIN 0
+#    define SQUARE(x) \
+    x*x 
+Try It Yourself
+
+There can be any amount of white space before # and between the # and the directive.
+
+=============================
+Predefined Macro Definitions
+
+In addition to defining your own macros, there are several standard predefined macros that are always available in a C program without requiring the #define directive:
+__DATE__ The current date as a string in the format Mm dd yyyy
+__TIME__ The current time as a string in the format hh:mm:ss
+__FILE__ The current filename as a string
+__LINE__ The current line number as an int value
+__STDC__ 1
+
+For example:
+char curr_time[10];
+char curr_date[12];
+int std_c;
+
+strcpy(curr_time, __TIME__);
+strcpy(curr_date, __DATE__);
+printf("%s %s\n", curr_time, curr_date);
+printf("This is line %d\n", __LINE__);    
+std_c = __STDC__;
+printf("STDC is %d", std_c); 
+
+=============================
+=============================
+The #ifdef, #ifndef, and #undef Directives
+
+The #ifdef, #ifndef, and #undef directives operate on macros created with #define.
+For example, there will be compilation problems if the same macro is defined twice, so you can check for this with an #ifdef directive. Or if you may want to redefine a macro, you first use #undef.
+
+The program below demonstrates these directives:
+#include <stdio.h>
+
+#define RATE 0.08
+#ifndef TERM
+  #define TERM 24
+#endif
+
+int main() {
+  #ifdef RATE  /* this branch will be compiled */
+    #undef RATE  
+    printf("Redefining RATE\n");
+    #define RATE 0.068
+  #else  /* this branch will not be compiled */
+    #define RATE 0.068
+  #endif
+
+  printf("%f  %d\n", RATE, TERM);
+
+  return 0;
+} 
+Try It Yourself
+
+Because RATE is defined at the top, only the #ifdef clause will be compiled. The optional #else branch compiles when #ifdef RATE is false during preprocessing.
+An #endif is required to close the block of code.
+An #elif directive is like an else if and can be used to provide additional alternatives after #else.
+
+=============================
+Conditional Compilation Directives
+
+Conditional compilation of segments of code is controlled by a set of directives: #if, #else, #elif, and #endif.
+
+For example:
+#define LEVEL 4
+
+int main() {
+  #if LEVEL > 6
+    /* do something */
+  #elif LEVEL > 5
+    /* else if branch */
+  #elif LEVEL > 4
+    /* another else if */
+  #else
+    /* last option here */
+  #endif
+
+  return 0;
+} 
+Try It Yourself
+
+There are instances where such conditional compilation can be useful, but this type of code should be used sparingly.
+The defined() preprocessor operator can be used with #if, as in:#if !defined(LEVEL)
+  /* statements */
+#endif
+The #if and if statement are not interchangeable. The #if is evaluated using data available to the preprocessor, which then sends only the true branch for compilation.
+An if statement uses data provided at runtime with the possibility of branching to any else clause.
+
+=============================
+=============================
+Preprocessor Operators
+
+The C preprocessor provides the following operators.
+
+The # Operator
+The # macro operator is called the stringification or stringizing operator and tells the preprocessor to convert a parameter to a string constant.
+White space on either side of the argument are ignored and escape sequences are recognized.
+
+For example:
+#define TO_STR(x) #x
+
+printf("%s\n", TO_STR( 123\\12 ));
+
+=============================
+The ## Operator
+
+The ## operator is also called the token pasting operator because it appends, or "pastes", tokens together.
+
+For example:
+#define VAR(name, num) name##num
+
+int x1 = 125;
+int x2 = 250;
+int x3 = 500;  
+
+printf("%d\n", VAR(x, 3));
+=============================
