@@ -1,2 +1,33 @@
 CWindows Linux POSIX LFS NTFS Computer Architecture:
 RISC, CISC Virii and Malware Authoring TSR Terminate and stay Resident COM Boot Sector MBR Polymorphic Permuted Cryptography Phishing Scam Social Engineering System Programming LKM LKD K-Dev IDS, Firewall and Honeypots MS-DOS DoS POD Fragmented Attack DoS Attacks (SYN Flooding, Socket Exhaustion): tcpdump, iptables, and Rawsocket Tutorial DNS spoofing Cross-site scripting Phreaking Session Hijacking Man-in-the Middle Hacker Manifesto ARP Cache Poisoning DLL Injection IAT Patching WriteProcessMemory() CreateRemoteThread() Service (API Hookiing methods) Packet Sniffing Wireless Cracking 802.11g Hardware [Stealth] Rootkits Internet Daemons Exploits Buffer Overflows Race Conditions Critical Sections Atomic Spinlocks 8 Queens Problem How Computers Work Data Compression Data Structures and Algorithms (Search, Sort, Synchro Recursion Iteration Branching, Decision Making(?) Linked Lists, Binary Trees  Signal Processing [A]PIC Microprocessors Commodore 64 ARM Arduino 8086 Assembly Machine Language Java Visual Basic .NET MS Small Basic [LitDev] PERL CGI CSS NIC Driver source code Game Dev Winsock WPF Novell Netware MIPS YFunnel Pro Yahoo Ace NIC source, Minix, & Yah Mini VDAT 1.6 Bioinformatics Neural Networks Quantum Computing SIMD Parralel Processing Multi-Threaded Programming Java Bots Aggragators Matlab VHDL Verilog Overclocking E-Zines Shellcode BIOS internals Monitor RAM Spidering bot hacks (filetype:PDF,[..] Samba Outdial OOP (to hide private members) UML Module Visual C++ (MFC, ATL, STL) DDK (Driver Programming) SDK .htaccess hacking Code obfuscation Network Auditing\ Vulnerability Scanner Tools NETBIOS\nbtstat\netsh firewall\ hacking Windows 8.1 Tricks\ Man pages PROLOG Artificial Intelligence TCP/IP Wrappers (in Ruby) IPv4\ IPv6 Active X\ COM  RFC Botnet Eggdrop bots William Gibson Cyberpunk Open GL Direct X Glide Shader programs Pointer Arithmetic RIP PE\ COFF ELF DHCP IP Forcer Bibliography: Mastering Visual Basic 6 by Evangelos Petroutsos Sams TYVB (24 hours) V.32 bis XERMIT-Modem (X2?) Fuzzy Logic Machine Learning AJAX UPX p-trade e-trade bruteforce dictionary attack Format String Bug GDI Acer (Worlds thinnest laptop) running on Intel m7 Processor Hrm .. Links: Milw0rm, Anti-Online, Packetstorm, Slashdot, Techcrunch, Metasploit SCADA Systems VM notebook Kali Linux MDK3 RAD (Rapid Application Development (Visual Basic)) DDE(Dynamic Data Exchange) Named Pipes Writing to port ADO, Multidimensional Arrays OpenSSH jQuery Offensive Security DEC PDP-11, BCPL, “spaghetti code”, DLL, OCX\ VBX’s Polymorphic scripting, Python tigers, Fuse java scripts, etc. Byte Code DMA Direct Memory Access IETF (Internet Engineering Task Force) Subroutine Bipolar Junction Diode Field-Effect Transistors Operational Amplifiers  Instrumentation Amplifier  Power Amplifiers  Digital Circuits  Analog to Digital Converters  BJT Circuits CMOS Circuits  JFET Circuits  MOSFET Circuits  Communications Systems  Comparator Circuits  Transistor Circuits  Diode Circuits  DSP Books  Electronics Laboratory  Filter Design  Digital Filters  IC Design Logic Circuits Logic Design  MicroProcessors Microcontroller Application  Microcontroller  PIC  Oscilloscopes  Power Electronics  Motor Control  Power Control  Diac Triac  SMPS  Thyristors  Power Semiconductors  PWM  RFIC  Solid State Devices  Verilog  VHDL  VLSI  ASIC  FPGA stepper motor tomcat netcat VIA UART ISA Thyristor Bootkits Near Field Communication NFC Ember.JS makes your code manageable NFS BOOTP TFTP UEFI The Leap to Objects, Getting and Setting Properties, Constructors, Instances and Inheritance ALU\ Latch Bit Mask steganography DATA ENCRYPTION STANDARD – DES Message Digest Orange Book C2 Security Level Banner Grabbing Kerberos Network Authentication protocol DrvSpace compression advapi32 QoS CDDI\FDDI concentrator SMB Tunnel adapter sniffer soft [comp] arch Web Security Code testing docsis data over cable service interface specification VX engine semaphores round robin
+
+#List 20 or more sentences used to describe code for example "takes a pointer\ two arguments" and "returns an integer" —coding speak basically.
+#List all sentences used to describe code for example "takes a pointer" and "returns an integer" coding speak basically.
+
+Sure, here are some sentences used to describe code:
+
+1. This code declares a variable of type integer.
+2. The function takes in two parameters, a string and an integer.
+3. This if statement checks if the value of x is greater than 5.
+4. The for loop iterates over the length of the array.
+5. The switch statement evaluates the value of the variable and executes the corresponding case.
+6. The try-catch block catches any possible exceptions thrown by the code within the try block.
+7. The while loop executes as long as the condition is true.
+8. The code uses recursion to solve the problem.
+9. The function returns a boolean value of true or false.
+10. The class is instantiated with a constructor that takes in two parameters.
+11. The method calculates the average of the input array.
+12. The code block defines a new class that inherits from another class.
+13. The constructor sets the initial value of the instance variables.
+14. The function takes a pointer to an integer as a parameter.
+15. The code initializes an array with preset values.
+16. The pointer is dereferenced to access the actual value stored in memory.
+17. The function returns a pointer to an object of the specified class.
+18. The code creates a new instance of the class.
+19. The if-else statement checks for multiple conditions and executes the appropriate code block.
+20. The code implements a binary search algorithm to find the index of a specific value in an array.
+21. The catch block handles the exception thrown by the try block.
+22. The method sorts the elements in the array in ascending order.
+23. The function takes an array of strings and returns the length of the longest string.
+24. The code block creates an object of the specified class and initializes it with values passed in as parameters.
+|| retrieves the position & size, calculates, checks condition, magnitude, scales, assigns, removes click event listener for the canvas (summary code analysis ^^)
