@@ -1,4 +1,4 @@
-For use /w AutoHotkey 1.1
+For use /w AutoHotkey 1.1 (needs 1.1 to be installed (not v2)) ~~> https://www.autohotkey.com/
 Edit .AHK in TextEditor & change "filepath" to the path of your SumatraPDF Settings TextFile
 Double-click entry or select & hit Apply. Escape to close.
 Shows count of themes configured.
