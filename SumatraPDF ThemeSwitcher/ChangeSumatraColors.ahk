@@ -50,6 +50,7 @@ themes["Maroon-Yellow-Alt2"] := { "TextColor": "#cfba28", "BackgroundColor": "#2
 themes["TedNPad-Coral-Pink"] := { "TextColor": "#ff80c0", "BackgroundColor": "#a04644" }
 themes["GreenRed-HighContrast"] := { "TextColor": "#C51B1B", "BackgroundColor": "#79FB0E" }
 themes["Gold"] := { "TextColor": "#400000", "BackgroundColor": "#B99350" }
+themes["3.5Preset DullBlu"] := { "TextColor": "#b9c8cf", "BackgroundColor": "#2c3b42" }
 themes["Default"] := { "TextColor": "#000000", "BackgroundColor": "#ffffff" }
 
 ; Path to the settings file that will be updated.
