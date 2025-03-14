@@ -19,7 +19,7 @@ Sleep, 50  ; Small delay to ensure resources are freed
 ; In each theme the keys "TextColor" and "BackgroundColor" hold the desired values.
 themes := {}
 themes["IndigoOnPink"] := { "TextColor": "#ee3f86", "BackgroundColor": "#1B0032" }
-; Add more themes as needed. Example: hotfudgesundae #f39900 #cfba28 | MP #2c013c CX #3a1c13 BL #000000 Gold #B99350 Violet #400080 + darkred #FB490E reddish #800000 + brown #400000
+; Add more themes as needed. Example: hotfudgesundae #f39900 #cfba28 | MP #2c013c CX #3a1c13 BL #000000 Gold #B99350 Violet #400080 + darkred #FB490E reddish #800000 + brown #400000 indigo=#4B0082 orangered=#FF4500 hotpink=#ff084a darkgrey=#4c4e50 lightgray=#5f6264 extradarkgray=#262728
 themes["Sepia"] := { "TextColor": "#5F4B32", "BackgroundColor": "#cda882" }
 themes["Orangey Red"] := { "TextColor": "#8a0000", "BackgroundColor": "#e7a212" }
 themes["Dracula"] := { "TextColor": "#dcdc30", "BackgroundColor": "#21222c" }
@@ -51,6 +51,7 @@ themes["TedNPad-Coral-Pink"] := { "TextColor": "#ff80c0", "BackgroundColor": "#a
 themes["GreenRed-HighContrast"] := { "TextColor": "#C51B1B", "BackgroundColor": "#79FB0E" }
 themes["Gold"] := { "TextColor": "#400000", "BackgroundColor": "#B99350" }
 themes["3.5Preset DullBlu"] := { "TextColor": "#b9c8cf", "BackgroundColor": "#2c3b42" }
+themes["NeonGreenLuminesce"] := { "TextColor": "#262728", "BackgroundColor": "#2CFF05" } ;#4B0082-indigo
 themes["Default"] := { "TextColor": "#000000", "BackgroundColor": "#ffffff" }
 
 ; Path to the settings file that will be updated.
