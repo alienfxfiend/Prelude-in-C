@@ -52,6 +52,7 @@ themes["GreenRed-HighContrast"] := { "TextColor": "#C51B1B", "BackgroundColor": 
 themes["Gold"] := { "TextColor": "#400000", "BackgroundColor": "#B99350" }
 themes["3.5Preset DullBlu"] := { "TextColor": "#b9c8cf", "BackgroundColor": "#2c3b42" }
 themes["NeonGreenLuminesce"] := { "TextColor": "#262728", "BackgroundColor": "#2CFF05" } ;#4B0082-indigo
+themes["Green-Adhoc-Dull"] := { "TextColor": "#8bcb4f", "BackgroundColor": "#282c00" }
 themes["Default"] := { "TextColor": "#000000", "BackgroundColor": "#ffffff" }
 
 ; Path to the settings file that will be updated.
