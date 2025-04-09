@@ -1213,7 +1213,7 @@ void ProcessNamedResourceEntry(const IMAGE_RESOURCE_DIRECTORY_ENTRY& entry,
     int level, PIMAGE_RESOURCE_DIRECTORY baseResourceDir,
     const PEAnalyzer& analyzer) {
 
-    auto nameEntry = (PIMAGE_RESOURCE_DIR_STRING_U)((BYTE*)baseResourceDir + entry.NameOffset);
+    auto nameEntry = (PIMAGE_RESOURCE_DIR_STRING_U)((BYTE*)baseResourceDir + (entry.NameOffset & 0x7FFFFFFF));
     if (!IsBadReadPtr(nameEntry, sizeof(IMAGE_RESOURCE_DIR_STRING_U))) {
         std::vector<wchar_t> resourceName(nameEntry->Length + 1);
         wcsncpy_s(resourceName.data(), nameEntry->Length + 1,
@@ -1253,7 +1253,7 @@ void ProcessResourceSubdirectory(const IMAGE_RESOURCE_DIRECTORY_ENTRY& entry,
     PIMAGE_RESOURCE_DIRECTORY baseResourceDir,
     const PEAnalyzer& analyzer) {
 
-    auto nextDir = (PIMAGE_RESOURCE_DIRECTORY)((BYTE*)baseResourceDir + entry.OffsetToDirectory);
+    auto nextDir = (PIMAGE_RESOURCE_DIRECTORY)((BYTE*)baseResourceDir + (entry.OffsetToDirectory & 0x7FFFFFFF));
     if (!IsBadReadPtr(nextDir, sizeof(IMAGE_RESOURCE_DIRECTORY))) {
         ProcessResourceDirectory(nextDir, level + 1,
             level == 0 ? RESOURCE_TYPES[min(entry.Id, 15)] : type,
@@ -1266,7 +1266,7 @@ void ProcessResourceData(const IMAGE_RESOURCE_DIRECTORY_ENTRY& entry,
     PIMAGE_RESOURCE_DIRECTORY baseResourceDir,
     const PEAnalyzer& analyzer) {
 
-    auto dataEntry = (PIMAGE_RESOURCE_DATA_ENTRY)((BYTE*)baseResourceDir + entry.OffsetToData);
+    auto dataEntry = (PIMAGE_RESOURCE_DATA_ENTRY)((BYTE*)baseResourceDir + (entry.OffsetToData & 0x7FFFFFFF));
     if (!IsBadReadPtr(dataEntry, sizeof(IMAGE_RESOURCE_DATA_ENTRY))) {
         for (int indent = 0; indent < level + 1; indent++) {
             OUTPUT("\t");
@@ -1357,7 +1357,159 @@ void ProcessCodeViewDebugInfo(const IMAGE_DEBUG_DIRECTORY& debugEntry, const PEA
     }
 }
 
+//new with sanity checks
 void ProcessRSDSDebugInfo(const IMAGE_DEBUG_DIRECTORY& debugEntry, DWORD* pCVHeader,
+    const PEAnalyzer& analyzer) {
+
+    if (debugEntry.SizeOfData >= (sizeof(DWORD) + sizeof(GUID) + sizeof(DWORD) + 1)) {
+        auto pCVData = (char*)(pCVHeader + 1);
+        if (!IsBadReadPtr(pCVData + 16, 1)) {
+            auto guid = (GUID*)pCVData;
+            DWORD age = *(DWORD*)(pCVData + 16);
+            const char* pdbPath = pCVData + 20;
+
+            // Ensure we do not read beyond allocated memory
+            int pdbPathLength = debugEntry.SizeOfData - (sizeof(DWORD) + sizeof(GUID) + sizeof(DWORD));
+            if (pdbPathLength <= 0 || IsBadReadPtr(pdbPath, 1)) {
+                OUTPUT("\tPDB Information:\n");
+                OUTPUT("\tGUID: {%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}\n",
+                    guid->Data1, guid->Data2, guid->Data3,
+                    guid->Data4[0], guid->Data4[1], guid->Data4[2], guid->Data4[3],
+                    guid->Data4[4], guid->Data4[5], guid->Data4[6], guid->Data4[7]);
+                OUTPUT("\tAge: %d\n", age);
+                OUTPUT("\tPDB Path: N/A (Not Found)\n\n");
+                return;
+            }
+
+            // Convert the extracted PDB path safely
+            std::string pdbPathStr(pdbPath, pdbPathLength);
+            size_t nullTerminator = pdbPathStr.find('\0');
+            if (nullTerminator != std::string::npos) {
+                pdbPathStr = pdbPathStr.substr(0, nullTerminator); // Trim at null terminator
+            }
+
+            std::wstring pdbPathW = AnsiToWide(pdbPathStr.c_str());
+
+            OUTPUT("\tPDB Information:\n");
+            OUTPUT("\tGUID: {%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}\n",
+                guid->Data1, guid->Data2, guid->Data3,
+                guid->Data4[0], guid->Data4[1], guid->Data4[2], guid->Data4[3],
+                guid->Data4[4], guid->Data4[5], guid->Data4[6], guid->Data4[7]);
+            OUTPUT("\tAge: %d\n", age);
+            OUTPUT("\tPDB Path: %ls\n\n", pdbPathW.empty() ? L"N/A (Not Found)" : pdbPathW.c_str());
+        }
+    }
+}
+
+//new with fixed n/a + other sanity checks
+void ProcessNB10DebugInfo(const IMAGE_DEBUG_DIRECTORY& debugEntry, DWORD* pCVHeader,
+    const PEAnalyzer& analyzer) {
+    // Ensure there's enough data: three DWORDs (offset, timestamp, age) plus at least one byte for the PDB path.
+    if (debugEntry.SizeOfData < (sizeof(DWORD) * 3 + 1)) {
+        OUTPUT("\tPDB Information (NB10): Insufficient data\n\n");
+        return;
+    }
+
+    // pCVHeader points to the start of the NB10 record.
+    const char* pNB10Data = reinterpret_cast<const char*>(pCVHeader + 1);
+    DWORD offset = *reinterpret_cast<const DWORD*>(pNB10Data);
+    DWORD timestamp = *reinterpret_cast<const DWORD*>(pNB10Data + 4);
+    DWORD age = *reinterpret_cast<const DWORD*>(pNB10Data + 8);
+
+    // The PDB path starts at offset 12 in the NB10 record.
+    const char* pdbPath = pNB10Data + 12;
+    int pdbPathBytes = debugEntry.SizeOfData - 12;
+    if (pdbPathBytes <= 0 || IsBadReadPtr(pdbPath, 1)) {
+        OUTPUT("\tPDB Information (NB10):\n");
+        OUTPUT("\tOffset: 0x%X\n", offset);
+        OUTPUT("\tTimestamp: 0x%X\n", timestamp);
+        OUTPUT("\tAge: %d\n", age);
+        OUTPUT("\tPDB Path: N/A (Not Found)\n\n");
+        return;
+    }
+
+    // Construct an ANSI string from the exact number of bytes.
+    std::string pdbPathStr(pdbPath, pdbPathBytes);
+    // Trim at the first null terminator (if any).
+    size_t nullPos = pdbPathStr.find('\0');
+    if (nullPos != std::string::npos) {
+        pdbPathStr = pdbPathStr.substr(0, nullPos);
+    }
+
+    // Convert the ANSI string to a wide string.
+    std::wstring pdbPathW = AnsiToWide(pdbPathStr.c_str());
+    // If the conversion yields an empty string, treat it as missing.
+    if (pdbPathW.empty()) {
+        pdbPathW = L"N/A (Not Found)";
+    }
+    else {
+        // Check if the file exists on disk.
+        DWORD attr = GetFileAttributesW(pdbPathW.c_str());
+        if (attr == INVALID_FILE_ATTRIBUTES) {
+            pdbPathW = L"N/A (Not Found)";
+        }
+    }
+
+    OUTPUT("\tPDB Information (NB10):\n");
+    OUTPUT("\tOffset: 0x%X\n", offset);
+    OUTPUT("\tTimestamp: 0x%X\n", timestamp);
+    OUTPUT("\tAge: %d\n", age);
+    OUTPUT("\tPDB Path: %ls\n\n", pdbPathW.c_str());
+}
+
+
+//this fix does not take into account n/a not found
+/* void ProcessNB10DebugInfo(const IMAGE_DEBUG_DIRECTORY& debugEntry, DWORD* pCVHeader,
+    const PEAnalyzer& analyzer) {
+    // Ensure we have enough data: 3 DWORDs (offset, timestamp, age) plus at least 1 byte for the PDB path.
+    if (debugEntry.SizeOfData < (sizeof(DWORD) * 3 + 1)) {
+        OUTPUT("\tPDB Information (NB10): Insufficient data\n\n");
+        return;
+    }
+
+    // pCVHeader points to the start of the NB10 data record.
+    const char* pNB10Data = reinterpret_cast<const char*>(pCVHeader + 1);
+    DWORD offset = *reinterpret_cast<const DWORD*>(pNB10Data);
+    DWORD timestamp = *reinterpret_cast<const DWORD*>(pNB10Data + 4);
+    DWORD age = *reinterpret_cast<const DWORD*>(pNB10Data + 8);
+
+    // The PDB path starts at offset 12 in the NB10 record.
+    const char* pdbPath = pNB10Data + 12;
+    int pdbPathBytes = debugEntry.SizeOfData - 12;  // Remaining bytes available for the PDB path
+
+    // Validate that we have a readable PDB path.
+    if (pdbPathBytes <= 0 || IsBadReadPtr(pdbPath, 1)) {
+        OUTPUT("\tPDB Information (NB10):\n");
+        OUTPUT("\tOffset: 0x%X\n", offset);
+        OUTPUT("\tTimestamp: 0x%X\n", timestamp);
+        OUTPUT("\tAge: %d\n", age);
+        OUTPUT("\tPDB Path: N/A (Not Found)\n\n");
+        return;
+    }
+
+    // Construct an ANSI string from the exact number of bytes.
+    std::string pdbPathStr(pdbPath, pdbPathBytes);
+    // Trim at the first null terminator if one exists.
+    size_t nullPos = pdbPathStr.find('\0');
+    if (nullPos != std::string::npos) {
+        pdbPathStr = pdbPathStr.substr(0, nullPos);
+    }
+
+    // Convert the ANSI string to a wide string.
+    std::wstring pdbPathW = AnsiToWide(pdbPathStr.c_str());
+    if (pdbPathW.empty()) {
+        pdbPathW = L"N/A (Not Found)";
+    }
+
+    OUTPUT("\tPDB Information (NB10):\n");
+    OUTPUT("\tOffset: 0x%X\n", offset);
+    OUTPUT("\tTimestamp: 0x%X\n", timestamp);
+    OUTPUT("\tAge: %d\n", age);
+    OUTPUT("\tPDB Path: %ls\n\n", pdbPathW.c_str());
+} */
+
+//original functions
+/* void ProcessRSDSDebugInfo(const IMAGE_DEBUG_DIRECTORY& debugEntry, DWORD* pCVHeader,
     const PEAnalyzer& analyzer) {
 
     if (debugEntry.SizeOfData >= (sizeof(DWORD) + sizeof(GUID) + sizeof(DWORD) + 1)) {
@@ -1378,6 +1530,7 @@ void ProcessRSDSDebugInfo(const IMAGE_DEBUG_DIRECTORY& debugEntry, DWORD* pCVHea
     }
 }
 
+//original functions
 void ProcessNB10DebugInfo(const IMAGE_DEBUG_DIRECTORY& debugEntry, DWORD* pCVHeader,
     const PEAnalyzer& analyzer) {
 
@@ -1394,7 +1547,7 @@ void ProcessNB10DebugInfo(const IMAGE_DEBUG_DIRECTORY& debugEntry, DWORD* pCVHea
         OUTPUT("\tAge: %d\n", age);
         OUTPUT("\tPDB Path: %ls\n\n", pdbPath);
     }
-}
+} */
 
 //colonelburton
 
@@ -2537,7 +2690,7 @@ void CreateMainWindow(HINSTANCE hInstance) {
     // Remove WS_MAXIMIZEBOX and WS_THICKFRAME from the window style
     DWORD style = (WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX) & ~WS_THICKFRAME;
     //WS_OVERLAPPEDWINDOW ~~> style
-    g_hMainWindow = CreateWindowExW(0, WINDOW_CLASS_NAME, L"PE File Analyzer v6.6",
+    g_hMainWindow = CreateWindowExW(0, WINDOW_CLASS_NAME, L"PE File Analyzer v6.7 (F1=About)",
         style, windowX, windowY, WINDOW_WIDTH, WINDOW_HEIGHT,
         nullptr, nullptr, hInstance, nullptr);
 }
@@ -2727,7 +2880,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         switch (wParam) {
         case VK_F1:
             MessageBoxW(hwnd,
-                L"PE Header Parser 6.6 GUI-based Programmed in C++ Win32 API (2834+ lines of code) by Entisoft Software (c) Evans Thorpemorton.\nFiles can be #1 Drag & Dropped #2 File Menu > Open Dialog #3 Command-Line Argument FilePath #4 Ctrl+O Hotkey",
+                L"PE Header Parser 6.7 GUI-based Programmed in C++ Win32 API (2834+ lines of code) by Entisoft Software (c) Evans Thorpemorton.\nFiles can be #1 Drag & Dropped #2 File Menu > Open Dialog #3 Command-Line Argument FilePath #4 Ctrl+O Hotkey",
                 L"About",
                 MB_OK | MB_ICONINFORMATION);
             return 0;
