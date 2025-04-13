@@ -82,15 +82,16 @@ Gui, Add, ListBox, vSelectedTheme xm+5 yp+25 w270 h130 gListBoxClick, %themeName
 ; Add this line directly after the Apply button line in the GUI SETUP section
 ;Gui, Add, Button, x+120 w80 gGuiClose, Close ;+10
 Gui, Add, Button, xm yp+140 w80 gApply +0x8000, Apply
+;Gui, Add, Button, xm yp+140 w80 gApply Default, Apply ;new code Alt#1 line (Enter KeyHandler)
 ;Gui, Add, Button, x+120 w80 gGuiClose +0x8000, Close
 Gui, Add, Button, x210 yp w80 gGuiClose +0x8000, Close
 ; Add this before showing your GUI
 Gui, +LastFound
 WinSet, Redraw  ; Force a redraw of the window
 Gui, Show, w300 h200, Theme Selector
-#If WinActive("Theme Selector") ;start new code
+#If WinActive("Theme Selector") ;start new code Alt#2 (Enter KeyHandler)
 Enter::Gosub, Apply
-#If ;end new code
+#If ;end new code Alt#2 (Enter KeyHandler)
 Return
 
 ; -------------------------------
