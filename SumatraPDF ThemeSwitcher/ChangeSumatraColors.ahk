@@ -88,9 +88,9 @@ Gui, Add, Button, x210 yp w80 gGuiClose +0x8000, Close
 Gui, +LastFound
 WinSet, Redraw  ; Force a redraw of the window
 Gui, Show, w300 h200, Theme Selector
-#If WinActive("Theme Selector")
+#If WinActive("Theme Selector") ;start new code
 Enter::Gosub, Apply
-#If
+#If ;end new code
 Return
 
 ; -------------------------------
