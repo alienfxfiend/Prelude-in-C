@@ -1,3 +1,4 @@
+; Add at the beginning of your script, right after the first few lines
 #SingleInstance Force  ; Replace old instances automatically
 SetBatchLines, -1  ; Make script run at maximum speed
 Process, Priority, , High  ; Run with higher priority
@@ -5,18 +6,20 @@ DetectHiddenWindows, On  ; Detect hidden windows
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #Persistent
-
-; Cleanup any previous GUI instances.
+;Gui, Destroy  ; Clean up any previous GUI instances before creating a new one
+; Initialize with cleanup before creating new GUI
 Gui, Destroy
 Sleep, 50  ; Small delay to ensure resources are freed
-
 
 ; -------------------------------
 ; CONFIGURATION
 ; -------------------------------
 
+; Define the preconfigured themes as an object.
+; In each theme the keys "TextColor" and "BackgroundColor" hold the desired values.
 themes := {}
 themes["IndigoOnPink"] := { "TextColor": "#ee3f86", "BackgroundColor": "#1B0032" }
+; Add more themes as needed. Example: hotfudgesundae #f39900 #cfba28 | MP #2c013c CX #3a1c13 BL #000000 Gold #B99350 Violet #400080 + darkred #FB490E reddish #800000 + brown #400000 indigo=#4B0082 orangered=#FF4500 hotpink=#ff084a darkgrey=#4c4e50 lightgray=#5f6264 extradarkgray=#262728
 themes["Sepia"] := { "TextColor": "#5F4B32", "BackgroundColor": "#cda882" }
 themes["Orangey Red"] := { "TextColor": "#8a0000", "BackgroundColor": "#e7a212" }
 themes["Dracula"] := { "TextColor": "#dcdc30", "BackgroundColor": "#21222c" }
@@ -48,130 +51,94 @@ themes["TedNPad-Coral-Pink"] := { "TextColor": "#ff80c0", "BackgroundColor": "#a
 themes["GreenRed-HighContrast"] := { "TextColor": "#C51B1B", "BackgroundColor": "#79FB0E" }
 themes["Gold"] := { "TextColor": "#400000", "BackgroundColor": "#B99350" }
 themes["3.5Preset DullBlu"] := { "TextColor": "#b9c8cf", "BackgroundColor": "#2c3b42" }
-themes["NeonGreenLuminesce"] := { "TextColor": "#262728", "BackgroundColor": "#2CFF05" }
-themes["Green-Adhoc-Dull (Zinnwaldite Brown)"] := { "TextColor": "#8bcb4f", "BackgroundColor": "#282c00" }
+themes["NeonGreenLuminesce"] := { "TextColor": "#262728", "BackgroundColor": "#2CFF05" } ;#4B0082-indigo
+themes["Green-Adhoc-Dull"] := { "TextColor": "#8bcb4f", "BackgroundColor": "#282c00" }
 themes["Default"] := { "TextColor": "#000000", "BackgroundColor": "#ffffff" }
 
-; Settings file path
+; Path to the settings file that will be updated.
 filePath := "D:\Download\DL Dir\pendrive\web content\cyberpunk ebooks\backups\Sumatra Proto\SumatraPDF-settings.txt"
+
 
 ; -------------------------------
 ; GUI SETUP
 ; -------------------------------
-
+; Count the number of themes
 themeCount := 0
 for k, v in themes
     themeCount++
 
-Gui, Font, S10, Verdana
+; Display label with theme count
 Gui, Add, Text, xm ym, Select a theme (%themeCount% available):
-
-; Build listbox item list (separated by pipe characters)
+;Gui, Add, Text, xm ym, Select a theme:
+; Create a listbox showing the available theme names (separated by | characters)
 themeNames := ""
 for k, v in themes
     themeNames .= k . "|"
-themeNames := SubStr(themeNames, 1, -1)  ; Remove trailing "|"
+themeNames := SubStr(themeNames, 1, -1)  ; remove trailing bar
 
-Gui, Add, ListBox, vSelectedTheme x10 y10 w480 h200 gListBoxClick, %themeNames%
-
-; Add multi-line Edit control to show/edit current FG/BG colors.
-Gui, Add, Edit, vColorEdit x10 y220 w480 h50,
-
-Gui, Add, Button, x10 y280 w75 h25 gApply, Apply
-GuiControl, +0x00000001, Apply ; Explicitly set the BS_PUSHBUTTON style
-Gui, Add, Button, x100 y280 w75 h25 gGuiClose -Default, Close
-
+;Gui, Add, ListBox, vSelectedTheme xm+5 yp+25 w270 h130 gApply, %themeNames% ;5,25,200,100
+Gui, Add, ListBox, vSelectedTheme xm+5 yp+25 w270 h130 gListBoxClick, %themeNames% ; Changed from gApply
+;Gui, Add, Button, xm yp+140 w80 gApply, Apply
+; Add this line directly after the Apply button line in the GUI SETUP section
+;Gui, Add, Button, x+120 w80 gGuiClose, Close ;+10
+Gui, Add, Button, xm yp+140 w80 gApply +0x8000, Apply
+;Gui, Add, Button, xm yp+140 w80 gApply Default, Apply ;new code Alt#1 line (Enter KeyHandler)
+;Gui, Add, Button, x+120 w80 gGuiClose +0x8000, Close
+Gui, Add, Button, x210 yp w80 gGuiClose +0x8000, Close
+; Add this before showing your GUI
 Gui, +LastFound
-WinSet, Redraw
-
-; Ensure the window is tall enough to show all controls.
-Gui, Show, w500 h350, Theme Selector
-
-; Initialize the textbox with current FG and BG colors from the config file.
-FileRead, fileContent, %filePath%
-FGColor := ""
-BGColor := ""
-if (!ErrorLevel) {
-    if RegExMatch(fileContent, "m)^\s*(?i)`tTextcolor\s*=\s*(\S+)", m)
-        FGColor := m1
-    if RegExMatch(fileContent, "m)^\s*(?i)`tBackgroundcolor\s*=\s*(\S+)", m)
-        BGColor := m1
-}
-
-initText := "`tTextColor = " FGColor "`n`tBackgroundColor = " BGColor
-GuiControl,, ColorEdit, %initText%
-
-#If WinActive("Theme Selector")
-Enter::GoSub, Apply
-#If
-
+WinSet, Redraw  ; Force a redraw of the window
+Gui, Show, w300 h200, Theme Selector
+#If WinActive("Theme Selector") ;start new code Alt#2 (Enter KeyHandler)
+Enter::Gosub, Apply
+#If ;end new code Alt#2 (Enter KeyHandler)
 Return
 
 ; -------------------------------
 ; EVENT HANDLERS
 ; -------------------------------
 
+; Add this new handler function:
 ListBoxClick:
-    Gui, Submit, NoHide
-    if (SelectedTheme != "") {
-        themeColors := themes[SelectedTheme]
-        newTextColor := themeColors.TextColor
-        newBackColor := themeColors.BackgroundColor
-        GuiControl,, ColorEdit, `tTextColor = %newTextColor%`n`tBackgroundColor = %newBackColor%
-    }
-
     if (A_GuiEvent = "DoubleClick") {
-        ; Optionally, you can automatically apply the changes on double-click.
         Gosub, Apply
     }
 Return
 
 Apply:
     Gui, Submit, NoHide
-
-    ; Get the text from the ColorEdit textbox
-    GuiControlGet, MultiEdit, , ColorEdit
-
-    ; Split the text into lines, handling both LF and CRLF
-    lines := StrSplit(MultiEdit, "`n", "`r")
-
-    if (lines.Length() < 2)
+    if (SelectedTheme = "")
     {
-        MsgBox, Please ensure that TextColor and BackgroundColor are both specified.
-        return
+        MsgBox, Please select a theme first.
+        Return
+    }
+   
+    ; Retrieve the chosen theme's color values
+    themeColors := themes[SelectedTheme]
+    newTextColor := themeColors.TextColor
+    newBackColor := themeColors.BackgroundColor
+
+    ; Read the entire file contents into a variable.
+    FileRead, fileContent, %filePath%
+    if (ErrorLevel) {
+        MsgBox, 16, Error, Could not read the settings file`n"%filePath%"
+        Return
     }
 
-    newFG := ""
-    newBG := ""
+    ; Replace the line that starts with "Textcolor = " (case insensitive)
+    ; We assume the line begins with the word and an equals sign, then any text.
+    fileContent := RegExReplace(fileContent, "m)^\s*(?i)Textcolor\s*=\s*.*$", "`tTextColor = " newTextColor, 1)
+    ; Replace the line that starts with "Backgroundcolor = " (case insensitive)
+    fileContent := RegExReplace(fileContent, "m)^\s*(?i)Backgroundcolor\s*=\s*.*$", "`tBackgroundColor = " newBackColor, 1)
 
-    ; Process each line to extract color values
-    for index, line in lines
-    {
-        line := Trim(line)
-        if RegExMatch(line, "i)^\s*TextColor\s*=\s*(\S+)", match)
-        {
-            newFG := Trim(match1)
-        }
-        else if RegExMatch(line, "i)^\s*BackgroundColor\s*=\s*(\S+)", match)
-        {
-            newBG := Trim(match1)
-        }
-    }
-
-    if (newFG = "" || newBG = "")
-    {
-        MsgBox, Please ensure that TextColor and BackgroundColor are both specified correctly. The format should be:`n`tTextColor = #RRGGBB`n`tBackgroundColor = #RRGGBB
-        return
-    }
-
-    ; Update the fileContent with the new colors.
-    fileContent := RegExReplace(fileContent, "m)^\s*(?i)Textcolor\s*=\s*.*$", "`tTextColor = " . newFG, 1)
-    fileContent := RegExReplace(fileContent, "m)^\s*(?i)Backgroundcolor\s*=\s*.*$", "`tBackgroundColor = " . newBG, 1)
-
-    ; Write the updated content back to file.
-;    FileWrite, %fileContent%, %filePath%, Overwrite
-
-;    MsgBox, Colors updated successfully:`nTextColor = %newFG%`nBackgroundColor = %newBG%
+    ; (Optional) Create a backup of the current settings file.
+    ;backupPath := filePath ".bak"
+    ;FileDelete, %backupPath%
+    ;FileCopy, %filePath%, %backupPath%
+    ;if ErrorLevel
+    ;{
+    ;    MsgBox, 48, Warning, Could not create a backup file.
+    ;}
 
     ; Write the modified content back to the settings file.
     FileDelete, %filePath%
@@ -181,15 +148,36 @@ Apply:
     } else {
         MsgBox, 64, Success, The theme %SelectedTheme% has been applied.
     }
-
 Return
 
+; Replace your close handlers with this
 GuiClose:
 GuiEscape:
-    SetTimer, ActuallyExit, -100
+    SetTimer, ActuallyExit, -100  ; Delay exit slightly to allow GUI to clean up
     Return
 
 ActuallyExit:
     Gui, Destroy
     Sleep, 50
     ExitApp
+
+
+; Then replace your current exit handlers with these enhanced ones:
+;GuiClose:
+;GuiEscape:
+;    Gui, Destroy  ; Properly destroy the GUI
+;    ExitApp
+;    Return
+    
+; Add this to the end of your script
+;OnExit, ExitCleanup  ; Register a cleanup handler
+
+;ExitCleanup:
+;    Gui, Destroy  ; Extra cleanup to be sure
+;    ExitApp
+
+;GuiClose:
+;    ExitApp
+    
+;GuiEscape:
+;    ExitApp
