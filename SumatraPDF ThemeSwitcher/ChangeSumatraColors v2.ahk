@@ -50,6 +50,7 @@ themes["Gold"] := { "TextColor": "#400000", "BackgroundColor": "#B99350" }
 themes["3.5Preset DullBlu"] := { "TextColor": "#b9c8cf", "BackgroundColor": "#2c3b42" }
 themes["NeonGreenLuminesce"] := { "TextColor": "#262728", "BackgroundColor": "#2CFF05" }
 themes["Green-Adhoc-Dull (Zinnwaldite Brown)"] := { "TextColor": "#8bcb4f", "BackgroundColor": "#282c00" }
+themes["Purple-Lavendar"] := { "TextColor": "#4b2547", "BackgroundColor": "#aca1b9" }
 themes["Default"] := { "TextColor": "#000000", "BackgroundColor": "#ffffff" }
 
 ; Settings file path
