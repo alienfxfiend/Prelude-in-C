@@ -108,7 +108,8 @@ Gui, +LastFound
 WinSet, Redraw
 
 ; Ensure the window is tall enough to show all controls.
-Gui, Show, w500 h350, Theme Selector
+;Gui, Show, w500 h350, Theme Selector
+Gui, Show, w500 h350, Theme Selector (%themeCount% Themes) ;Now shows ThemeCount once again
 
 ; Initialize the textbox with current FG and BG colors from the config file.
 FileRead, fileContent, %filePath%
