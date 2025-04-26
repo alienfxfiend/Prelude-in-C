@@ -2064,7 +2064,9 @@ void OnPaint() {
 void DrawScene(ID2D1RenderTarget* pRT) {
     if (!pRT) return;
 
-    pRT->Clear(D2D1::ColorF(D2D1::ColorF::LightGray)); // Background color
+    //pRT->Clear(D2D1::ColorF(D2D1::ColorF::LightGray)); // Background color
+    // Set background color to #ffffcd (RGB: 255, 255, 205)
+    pRT->Clear(D2D1::ColorF(1.0f, 1.0f, 0.803f)); // Clear with light yellow background
 
     DrawTable(pRT);
     DrawBalls(pRT);
