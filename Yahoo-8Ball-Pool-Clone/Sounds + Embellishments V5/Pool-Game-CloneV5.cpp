@@ -508,6 +508,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             // Get HINSTANCE from the window handle
             HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
             ResetGame(hInstance); // Call reset function
+        } else if (wParam == VK_F1) {
+            // Display copyright and developer message
+            MessageBox(hwnd, L"Direct2D-based StickPool game made in C++ from scratch (2717 lines of code)\n"
+                L"First successful Clone in C++ (no other sites or projects were there to glean from.) Made /w AI assist\n"
+                L"(others were in JS/ non-8-Ball in C# etc.) w/o OOP and Graphics Frameworks all in a Single file.\n"
+                L"Copyright (C) 2025 Evans Thorpemorton, Entisoft Solutions.\n"
+                L"Includes AI Difficulty Modes, Aim-Trajectory For Table Rails + Hard Angles TipShots. || F2=New Game", L"About This Game", MB_OK | MB_ICONINFORMATION);
         }
         return 0; // Indicate key was processed
 
