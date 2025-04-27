@@ -536,94 +536,114 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         Ball* cueBall = GetCueBall();
         if (!cueBall) return 0;
 
-        // Logic for dragging cue ball during ball-in-hand (corrected)
+        // Logic for dragging cue ball during ball-in-hand (unchanged)
         if (isDraggingCueBall && (currentGameState == BALL_IN_HAND_P1 || currentGameState == BALL_IN_HAND_P2 || currentGameState == PRE_BREAK_PLACEMENT)) {
-            bool behindHeadstring = (currentGameState == PRE_BREAK_PLACEMENT || currentGameState == BALL_IN_HAND_P1 || currentGameState == BALL_IN_HAND_P2);
+            bool behindHeadstring = (currentGameState == PRE_BREAK_PLACEMENT);
             if (IsValidCueBallPosition((float)ptMouse.x, (float)ptMouse.y, behindHeadstring)) {
                 cueBall->x = (float)ptMouse.x;
                 cueBall->y = (float)ptMouse.y;
                 cueBall->vx = cueBall->vy = 0; // Ensure it's stopped
             }
         }
+        // Logic for aiming drag (unchanged math, just context)
         else if (isAiming && (currentGameState == AIMING || currentGameState == BREAKING)) {
             float dx = (float)ptMouse.x - cueBall->x;
             float dy = (float)ptMouse.y - cueBall->y;
+            // Prevent setting angle if mouse is exactly on cue ball center
             if (dx != 0 || dy != 0) {
                 cueAngle = atan2f(dy, dx);
             }
+            // Calculate power based on distance pulled back from the initial click point (aimStartPoint)
             float pullDist = GetDistance((float)ptMouse.x, (float)ptMouse.y, aimStartPoint.x, aimStartPoint.y);
-            shotPower = std::min(pullDist / 10.0f, MAX_SHOT_POWER);
+            // Scale power more aggressively, maybe? Or keep scale factor 10.0
+            shotPower = std::min(pullDist / 10.0f, MAX_SHOT_POWER); // Scale power, clamp to max
         }
+        // Logic for setting english (unchanged)
         else if (isSettingEnglish) {
             float dx = (float)ptMouse.x - spinIndicatorCenter.x;
             float dy = (float)ptMouse.y - spinIndicatorCenter.y;
             float dist = GetDistance(dx, dy, 0, 0);
-            if (dist > spinIndicatorRadius) {
+            if (dist > spinIndicatorRadius) { // Clamp to edge
                 dx *= spinIndicatorRadius / dist;
                 dy *= spinIndicatorRadius / dist;
             }
-            cueSpinX = dx / spinIndicatorRadius;
+            cueSpinX = dx / spinIndicatorRadius; // Normalize to -1 to 1
             cueSpinY = dy / spinIndicatorRadius;
         }
+        // InvalidateRect is handled by WM_TIMER
         return 0;
     }
-
 
     case WM_LBUTTONDOWN: {
         ptMouse.x = LOWORD(lParam);
         ptMouse.y = HIWORD(lParam);
 
+        // Check if clicking on Spin Indicator (unchanged)
         float spinDistSq = GetDistanceSq((float)ptMouse.x, (float)ptMouse.y, spinIndicatorCenter.x, spinIndicatorCenter.y);
         if (spinDistSq < spinIndicatorRadius * spinIndicatorRadius) {
             isSettingEnglish = true;
+            // Update spin immediately on click
             float dx = (float)ptMouse.x - spinIndicatorCenter.x;
             float dy = (float)ptMouse.y - spinIndicatorCenter.y;
             cueSpinX = dx / spinIndicatorRadius;
             cueSpinY = dy / spinIndicatorRadius;
-            return 0;
+            return 0; // Don't process other clicks if setting english
         }
+
 
         Ball* cueBall = GetCueBall();
         if (!cueBall) return 0;
 
-        // Ball-in-hand placement corrected
+        // Logic for Ball-in-Hand placement click (unchanged)
         if (currentGameState == BALL_IN_HAND_P1 || currentGameState == BALL_IN_HAND_P2 || currentGameState == PRE_BREAK_PLACEMENT) {
             float distSq = GetDistanceSq(cueBall->x, cueBall->y, (float)ptMouse.x, (float)ptMouse.y);
-            if (distSq < BALL_RADIUS * BALL_RADIUS * 4) {
+            if (distSq < BALL_RADIUS * BALL_RADIUS * 4) { // Allow clicking near the ball to start drag
                 isDraggingCueBall = true;
             }
-            else {
-                bool behindHeadstring = (currentGameState == PRE_BREAK_PLACEMENT || currentGameState == BALL_IN_HAND_P1 || currentGameState == BALL_IN_HAND_P2);
+            else { // If clicking elsewhere on the table (and valid), place the ball
+                bool behindHeadstring = (currentGameState == PRE_BREAK_PLACEMENT);
                 if (IsValidCueBallPosition((float)ptMouse.x, (float)ptMouse.y, behindHeadstring)) {
                     cueBall->x = (float)ptMouse.x;
                     cueBall->y = (float)ptMouse.y;
                     cueBall->vx = cueBall->vy = 0;
                     isDraggingCueBall = false;
+                    // Transition state appropriate to ending placement
                     if (currentGameState == PRE_BREAK_PLACEMENT) {
+                        // Depends on who is breaking
                         currentGameState = BREAKING;
+                        // If AI was breaking, aiTurnPending should still be true
                     }
                     else if (currentGameState == BALL_IN_HAND_P1) {
                         currentGameState = PLAYER1_TURN;
                     }
                     else if (currentGameState == BALL_IN_HAND_P2) {
-                        currentGameState = PLAYER2_TURN;
+                        // If AI placed ball, AIMakeDecision should have been called? Or trigger now?
+                        // Assuming SwitchTurns/Respawn set aiTurnPending correctly earlier
+                        currentGameState = PLAYER2_TURN; // Ready for AI/Human P2 to aim
                     }
                 }
             }
         }
+        // --- MODIFIED: Logic for starting aim ---
         else if (currentGameState == PLAYER1_TURN || currentGameState == PLAYER2_TURN || currentGameState == BREAKING) {
+            // Allow initiating aim by clicking in a larger radius around the cue ball
             float distSq = GetDistanceSq(cueBall->x, cueBall->y, (float)ptMouse.x, (float)ptMouse.y);
-            if (distSq < BALL_RADIUS * BALL_RADIUS * 25) {
+            // Increased radius check (e.g., 5x ball radius squared)
+            if (distSq < BALL_RADIUS * BALL_RADIUS * 25) { // Click somewhat close to cue ball
                 isAiming = true;
-                aimStartPoint = D2D1::Point2F((float)ptMouse.x, (float)ptMouse.y);
-                shotPower = 0;
+                aimStartPoint = D2D1::Point2F((float)ptMouse.x, (float)ptMouse.y); // Store where aiming drag started
+                shotPower = 0; // Reset power
+                // Transition to AIMING state (if not already BREAKING)
                 if (currentGameState != BREAKING) {
                     currentGameState = AIMING;
                 }
+                // Set initial cueAngle based on click relative to ball, for immediate feedback
                 float dx = (float)ptMouse.x - cueBall->x;
                 float dy = (float)ptMouse.y - cueBall->y;
                 if (dx != 0 || dy != 0) {
                     cueAngle = atan2f(dy, dx);
+                    // If starting aim by clicking, maybe point stick towards mouse initially?
+                    // Current logic updates angle on MOUSEMOVE anyway.
                 }
             }
         }
