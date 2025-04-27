@@ -1368,8 +1368,8 @@ void ProcessShotResults() {
 
     // --- Foul Checks --- (Unchanged)
     bool turnFoul = false;
-    //if (cueBallPocketed) {
-    if (cueBallPocketed || opponentBallPocketed) {
+    if (cueBallPocketed) {
+    //if (cueBallPocketed || opponentBallPocketed) {
         foulCommitted = true;
         turnFoul = true;
     }
