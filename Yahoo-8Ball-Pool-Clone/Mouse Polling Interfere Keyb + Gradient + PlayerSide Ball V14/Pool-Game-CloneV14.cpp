@@ -2752,17 +2752,45 @@ void DrawUI(ID2D1RenderTarget* pRT) {
     if (player1Info.assignedType != BallType::NONE)
     {
         ID2D1SolidColorBrush* pBallBrush = nullptr;
-        D2D1_COLOR_F ballColor = (player1Info.assignedType == BallType::SOLID) ? D2D1::ColorF(1.0f, 1.0f, 0.0f) : D2D1::ColorF(1.0f, 0.0f, 0.0f);
+        D2D1_COLOR_F ballColor = (player1Info.assignedType == BallType::SOLID) ?
+            D2D1::ColorF(1.0f, 1.0f, 0.0f) : D2D1::ColorF(1.0f, 0.0f, 0.0f);
         pRT->CreateSolidColorBrush(ballColor, &pBallBrush);
         if (pBallBrush)
         {
-            D2D1_ELLIPSE ball = D2D1::Ellipse(
-                D2D1::Point2F(p1Rect.right + 10.0f, p1Rect.top + 20.0f),
-                10.0f, 10.0f);
+            D2D1_POINT_2F ballCenter = D2D1::Point2F(p1Rect.right + 10.0f, p1Rect.top + 20.0f);
+            float radius = 10.0f;
+            D2D1_ELLIPSE ball = D2D1::Ellipse(ballCenter, radius, radius);
             pRT->FillEllipse(&ball, pBallBrush);
             SafeRelease(&pBallBrush);
+            // Draw border around the ball
+            ID2D1SolidColorBrush* pBorderBrush = nullptr;
+            pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pBorderBrush);
+            if (pBorderBrush)
+            {
+                pRT->DrawEllipse(&ball, pBorderBrush, 1.5f); // thin border
+                SafeRelease(&pBorderBrush);
+            }
+
+            // If stripes, draw a stripe band
+            if (player1Info.assignedType == BallType::STRIPE)
+            {
+                ID2D1SolidColorBrush* pStripeBrush = nullptr;
+                pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &pStripeBrush);
+                if (pStripeBrush)
+                {
+                    D2D1_RECT_F stripeRect = D2D1::RectF(
+                        ballCenter.x - radius,
+                        ballCenter.y - 3.0f,
+                        ballCenter.x + radius,
+                        ballCenter.y + 3.0f
+                    );
+                    pRT->FillRectangle(&stripeRect, pStripeBrush);
+                    SafeRelease(&pStripeBrush);
+                }
+            }
         }
     }
+
 
     // Player 2 Info Text (Unchanged)
     std::wostringstream oss2;
@@ -2779,17 +2807,45 @@ void DrawUI(ID2D1RenderTarget* pRT) {
     if (player2Info.assignedType != BallType::NONE)
     {
         ID2D1SolidColorBrush* pBallBrush = nullptr;
-        D2D1_COLOR_F ballColor = (player2Info.assignedType == BallType::SOLID) ? D2D1::ColorF(1.0f, 1.0f, 0.0f) : D2D1::ColorF(1.0f, 0.0f, 0.0f);
+        D2D1_COLOR_F ballColor = (player2Info.assignedType == BallType::SOLID) ?
+            D2D1::ColorF(1.0f, 1.0f, 0.0f) : D2D1::ColorF(1.0f, 0.0f, 0.0f);
         pRT->CreateSolidColorBrush(ballColor, &pBallBrush);
         if (pBallBrush)
         {
-            D2D1_ELLIPSE ball = D2D1::Ellipse(
-                D2D1::Point2F(p2Rect.right + 10.0f, p2Rect.top + 20.0f),
-                10.0f, 10.0f);
+            D2D1_POINT_2F ballCenter = D2D1::Point2F(p2Rect.right + 10.0f, p2Rect.top + 20.0f);
+            float radius = 10.0f;
+            D2D1_ELLIPSE ball = D2D1::Ellipse(ballCenter, radius, radius);
             pRT->FillEllipse(&ball, pBallBrush);
             SafeRelease(&pBallBrush);
+            // Draw border around the ball
+            ID2D1SolidColorBrush* pBorderBrush = nullptr;
+            pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pBorderBrush);
+            if (pBorderBrush)
+            {
+                pRT->DrawEllipse(&ball, pBorderBrush, 1.5f); // thin border
+                SafeRelease(&pBorderBrush);
+            }
+
+            // If stripes, draw a stripe band
+            if (player2Info.assignedType == BallType::STRIPE)
+            {
+                ID2D1SolidColorBrush* pStripeBrush = nullptr;
+                pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &pStripeBrush);
+                if (pStripeBrush)
+                {
+                    D2D1_RECT_F stripeRect = D2D1::RectF(
+                        ballCenter.x - radius,
+                        ballCenter.y - 3.0f,
+                        ballCenter.x + radius,
+                        ballCenter.y + 3.0f
+                    );
+                    pRT->FillRectangle(&stripeRect, pStripeBrush);
+                    SafeRelease(&pStripeBrush);
+                }
+            }
         }
     }
+
 
     // --- MODIFIED: Current Turn Arrow (Blue, Bigger, Beside Name) ---
     ID2D1SolidColorBrush* pArrowBrush = nullptr;
