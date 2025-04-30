@@ -2918,58 +2918,123 @@ void DrawUI(ID2D1RenderTarget* pRT) {
         float arrowCenterY = p1Rect.top + uiHeight / 2.0f; // Center vertically with text box
         float arrowTipX, arrowBackX;
 
-        if (currentPlayer == 1) {
-            // Player 1: Arrow left of P1 box, pointing right
-            arrowBackX = p1Rect.left - 25.0f; // Position left of the box
-            arrowTipX = arrowBackX + arrowSizeBase * 0.75f; // Pointy end extends right
-            // Define points for right-pointing arrow
-            D2D1_POINT_2F pt1 = D2D1::Point2F(arrowTipX, arrowCenterY); // Tip
-            D2D1_POINT_2F pt2 = D2D1::Point2F(arrowBackX, arrowCenterY - arrowSizeBase / 2.0f); // Top-Back
-            D2D1_POINT_2F pt3 = D2D1::Point2F(arrowBackX, arrowCenterY + arrowSizeBase / 2.0f); // Bottom-Back
+        D2D1_RECT_F playerBox = (currentPlayer == 1) ? p1Rect : p2Rect;
+        arrowBackX = playerBox.left - 25.0f;
+        arrowTipX = arrowBackX + arrowSizeBase * 0.75f;
 
-            ID2D1PathGeometry* pPath = nullptr;
-            if (SUCCEEDED(pFactory->CreatePathGeometry(&pPath))) {
-                ID2D1GeometrySink* pSink = nullptr;
-                if (SUCCEEDED(pPath->Open(&pSink))) {
-                    pSink->BeginFigure(pt1, D2D1_FIGURE_BEGIN_FILLED);
-                    pSink->AddLine(pt2);
-                    pSink->AddLine(pt3);
-                    pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
-                    pSink->Close();
-                    SafeRelease(&pSink);
-                    pRT->FillGeometry(pPath, pArrowBrush);
-                }
-                SafeRelease(&pPath);
-            }
-        }
-        else { // Player 2
-         // Player 2: Arrow left of P2 box, pointing right (or right of P2 box pointing left?)
-         // Let's keep it consistent: Arrow left of the active player's box, pointing right.
-            arrowBackX = p2Rect.left - 25.0f; // Position left of the box
-            arrowTipX = arrowBackX + arrowSizeBase * 0.75f; // Pointy end extends right
-            // Define points for right-pointing arrow
-            D2D1_POINT_2F pt1 = D2D1::Point2F(arrowTipX, arrowCenterY); // Tip
-            D2D1_POINT_2F pt2 = D2D1::Point2F(arrowBackX, arrowCenterY - arrowSizeBase / 2.0f); // Top-Back
-            D2D1_POINT_2F pt3 = D2D1::Point2F(arrowBackX, arrowCenterY + arrowSizeBase / 2.0f); // Bottom-Back
+        float notchDepth = 12.0f;  // Increased from 6.0f to make the rectangle longer
+        float notchWidth = 10.0f;
 
-            ID2D1PathGeometry* pPath = nullptr;
-            if (SUCCEEDED(pFactory->CreatePathGeometry(&pPath))) {
-                ID2D1GeometrySink* pSink = nullptr;
-                if (SUCCEEDED(pPath->Open(&pSink))) {
-                    pSink->BeginFigure(pt1, D2D1_FIGURE_BEGIN_FILLED);
-                    pSink->AddLine(pt2);
-                    pSink->AddLine(pt3);
-                    pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
-                    pSink->Close();
-                    SafeRelease(&pSink);
-                    pRT->FillGeometry(pPath, pArrowBrush);
-                }
-                SafeRelease(&pPath);
+        float cx = arrowBackX;
+        float cy = arrowCenterY;
+
+        // Define triangle + rectangle tail shape
+        D2D1_POINT_2F tip = D2D1::Point2F(arrowTipX, cy);                           // tip
+        D2D1_POINT_2F baseTop = D2D1::Point2F(cx, cy - arrowSizeBase / 2.0f);          // triangle top
+        D2D1_POINT_2F baseBot = D2D1::Point2F(cx, cy + arrowSizeBase / 2.0f);          // triangle bottom
+
+        // Rectangle coordinates for the tail portion:
+        D2D1_POINT_2F r1 = D2D1::Point2F(cx - notchDepth, cy - notchWidth / 2.0f);   // rect top-left
+        D2D1_POINT_2F r2 = D2D1::Point2F(cx, cy - notchWidth / 2.0f);                 // rect top-right
+        D2D1_POINT_2F r3 = D2D1::Point2F(cx, cy + notchWidth / 2.0f);                 // rect bottom-right
+        D2D1_POINT_2F r4 = D2D1::Point2F(cx - notchDepth, cy + notchWidth / 2.0f);    // rect bottom-left
+
+        ID2D1PathGeometry* pPath = nullptr;
+        if (SUCCEEDED(pFactory->CreatePathGeometry(&pPath))) {
+            ID2D1GeometrySink* pSink = nullptr;
+            if (SUCCEEDED(pPath->Open(&pSink))) {
+                pSink->BeginFigure(tip, D2D1_FIGURE_BEGIN_FILLED);
+                pSink->AddLine(baseTop);
+                pSink->AddLine(r2); // transition from triangle into rectangle
+                pSink->AddLine(r1);
+                pSink->AddLine(r4);
+                pSink->AddLine(r3);
+                pSink->AddLine(baseBot);
+                pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+                pSink->Close();
+                SafeRelease(&pSink);
+                pRT->FillGeometry(pPath, pArrowBrush);
             }
+            SafeRelease(&pPath);
         }
+
+
         SafeRelease(&pArrowBrush);
     }
 
+    //original
+/*
+    // --- MODIFIED: Current Turn Arrow (Blue, Bigger, Beside Name) ---
+    ID2D1SolidColorBrush* pArrowBrush = nullptr;
+    pRT->CreateSolidColorBrush(TURN_ARROW_COLOR, &pArrowBrush);
+    if (pArrowBrush && currentGameState != GAME_OVER && currentGameState != SHOT_IN_PROGRESS && currentGameState != AI_THINKING) {
+        float arrowSizeBase = 32.0f; // Base size for width/height offsets (4x original ~8)
+        float arrowCenterY = p1Rect.top + uiHeight / 2.0f; // Center vertically with text box
+        float arrowTipX, arrowBackX;
+
+        if (currentPlayer == 1) {
+arrowBackX = p1Rect.left - 25.0f; // Position left of the box
+            arrowTipX = arrowBackX + arrowSizeBase * 0.75f; // Pointy end extends right
+            // Define points for right-pointing arrow
+            //D2D1_POINT_2F pt1 = D2D1::Point2F(arrowTipX, arrowCenterY); // Tip
+            //D2D1_POINT_2F pt2 = D2D1::Point2F(arrowBackX, arrowCenterY - arrowSizeBase / 2.0f); // Top-Back
+            //D2D1_POINT_2F pt3 = D2D1::Point2F(arrowBackX, arrowCenterY + arrowSizeBase / 2.0f); // Bottom-Back
+            // Enhanced arrow with base rectangle intersection
+    float notchDepth = 6.0f; // Depth of square base "stem"
+    float notchWidth = 4.0f; // Thickness of square part
+
+    D2D1_POINT_2F pt1 = D2D1::Point2F(arrowTipX, arrowCenterY); // Tip
+    D2D1_POINT_2F pt2 = D2D1::Point2F(arrowBackX, arrowCenterY - arrowSizeBase / 2.0f); // Top-Back
+    D2D1_POINT_2F pt3 = D2D1::Point2F(arrowBackX - notchDepth, arrowCenterY - notchWidth / 2.0f); // Square Left-Top
+    D2D1_POINT_2F pt4 = D2D1::Point2F(arrowBackX - notchDepth, arrowCenterY + notchWidth / 2.0f); // Square Left-Bottom
+    D2D1_POINT_2F pt5 = D2D1::Point2F(arrowBackX, arrowCenterY + arrowSizeBase / 2.0f); // Bottom-Back
+
+
+    ID2D1PathGeometry* pPath = nullptr;
+    if (SUCCEEDED(pFactory->CreatePathGeometry(&pPath))) {
+        ID2D1GeometrySink* pSink = nullptr;
+        if (SUCCEEDED(pPath->Open(&pSink))) {
+            pSink->BeginFigure(pt1, D2D1_FIGURE_BEGIN_FILLED);
+            pSink->AddLine(pt2);
+            pSink->AddLine(pt3);
+            pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+            pSink->Close();
+            SafeRelease(&pSink);
+            pRT->FillGeometry(pPath, pArrowBrush);
+        }
+        SafeRelease(&pPath);
+    }
+        }
+
+
+        //==================else player 2
+        else { // Player 2
+         // Player 2: Arrow left of P2 box, pointing right (or right of P2 box pointing left?)
+         // Let's keep it consistent: Arrow left of the active player's box, pointing right.
+// Let's keep it consistent: Arrow left of the active player's box, pointing right.
+arrowBackX = p2Rect.left - 25.0f; // Position left of the box
+arrowTipX = arrowBackX + arrowSizeBase * 0.75f; // Pointy end extends right
+// Define points for right-pointing arrow
+D2D1_POINT_2F pt1 = D2D1::Point2F(arrowTipX, arrowCenterY); // Tip
+D2D1_POINT_2F pt2 = D2D1::Point2F(arrowBackX, arrowCenterY - arrowSizeBase / 2.0f); // Top-Back
+D2D1_POINT_2F pt3 = D2D1::Point2F(arrowBackX, arrowCenterY + arrowSizeBase / 2.0f); // Bottom-Back
+
+ID2D1PathGeometry* pPath = nullptr;
+if (SUCCEEDED(pFactory->CreatePathGeometry(&pPath))) {
+    ID2D1GeometrySink* pSink = nullptr;
+    if (SUCCEEDED(pPath->Open(&pSink))) {
+        pSink->BeginFigure(pt1, D2D1_FIGURE_BEGIN_FILLED);
+        pSink->AddLine(pt2);
+        pSink->AddLine(pt3);
+        pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+        pSink->Close();
+        SafeRelease(&pSink);
+        pRT->FillGeometry(pPath, pArrowBrush);
+    }
+    SafeRelease(&pPath);
+}
+        }
+        */
 
     // --- MODIFIED: Foul Text (Large Red, Bottom Center) ---
     if (foulCommitted && currentGameState != SHOT_IN_PROGRESS) {
