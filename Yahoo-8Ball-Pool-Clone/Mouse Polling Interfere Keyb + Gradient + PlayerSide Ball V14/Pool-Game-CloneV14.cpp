@@ -1153,7 +1153,8 @@ void InitGame() {
     balls.push_back(eightBall); // Add 8 ball to the main vector
 
     // 2. Place the shuffled Solids and Stripes in the remaining spots
-    int otherBallIdx = 0;
+    size_t otherBallIdx = 0;
+    //int otherBallIdx = 0;
     for (int i = 0; i < 15; ++i) {
         if (i == eightBallRackIndex) continue; // Skip the 8-ball spot
 
