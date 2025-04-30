@@ -175,7 +175,8 @@ const D2D1_COLOR_F SOLID_COLOR = D2D1::ColorF(D2D1::ColorF::Yellow); // Solids =
 const D2D1_COLOR_F STRIPE_COLOR = D2D1::ColorF(D2D1::ColorF::Red);   // Stripes = Red
 const D2D1_COLOR_F AIM_LINE_COLOR = D2D1::ColorF(D2D1::ColorF::White, 0.7f); // Semi-transparent white
 const D2D1_COLOR_F FOUL_TEXT_COLOR = D2D1::ColorF(D2D1::ColorF::Red);
-const D2D1_COLOR_F TURN_ARROW_COLOR = D2D1::ColorF(D2D1::ColorF::Blue);
+const D2D1_COLOR_F TURN_ARROW_COLOR = D2D1::ColorF(0.1333f, 0.7294f, 0.7490f); //NEWCOLOR 0.1333f, 0.7294f, 0.7490f => ::Blue
+//const D2D1_COLOR_F TURN_ARROW_COLOR = D2D1::ColorF(D2D1::ColorF::Blue);
 const D2D1_COLOR_F ENGLISH_DOT_COLOR = D2D1::ColorF(D2D1::ColorF::Red);
 const D2D1_COLOR_F UI_TEXT_COLOR = D2D1::ColorF(D2D1::ColorF::Black);
 
@@ -262,6 +263,7 @@ rail CUSHION_COLOR = #5c0702 (0.3608, 0.0275, 0.0078) => ::Red
 gap = #e99d33 (0.9157, 0.6157, 0.2000) => ::Orange
 winbg = #5e8863 (0.3686, 0.5333, 0.3882) => 1.0f, 1.0f, 0.803f
 headstring = #47742f (0.2784, 0.4549, 0.1843) => ::White
+bluearrow = *#08b0a5 (0.0314, 0.6902, 0.6471) #22babf (0.1333,0.7294,0.7490) => ::Blue
 */
 
 // --- NEW Dialog Procedure ---
