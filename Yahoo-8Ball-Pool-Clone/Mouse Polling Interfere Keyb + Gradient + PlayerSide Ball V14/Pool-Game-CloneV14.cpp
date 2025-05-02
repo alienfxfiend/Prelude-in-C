@@ -150,6 +150,8 @@ bool keyboardAimingActive = false; // NEW FLAG: true when arrow keys modify aim/
 MCIDEVICEID midiDeviceID = 0; //midi func
 std::atomic<bool> isMusicPlaying(false); //midi func
 std::thread musicThread; //midi func
+void StartMidi(HWND hwnd, const TCHAR* midiPath);
+void StopMidi();
 
 // UI Element Positions
 D2D1_RECT_F powerMeterRect = { TABLE_RIGHT + CUSHION_THICKNESS + 10, TABLE_TOP, TABLE_RIGHT + CUSHION_THICKNESS + 40, TABLE_BOTTOM };
@@ -204,7 +206,7 @@ void AssignPlayerBallTypes(BallType firstPocketedType);
 void CheckGameOverConditions(bool eightBallPocketed, bool cueBallPocketed);
 Ball* GetBallById(int id);
 Ball* GetCueBall();
-void PlayGameMusic(HWND hwnd); //midi func
+//void PlayGameMusic(HWND hwnd); //midi func
 
 // Drawing Functions
 void DrawScene(ID2D1RenderTarget* pRT);
@@ -482,7 +484,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
 
     InitGame(); // Initialize game state AFTER resources are ready & mode is set
     Sleep(500); // Allow window to fully initialize before starting the countdown //midi func
-    PlayGameMusic(hwndMain); //midi func
+    StartMidi(hwndMain, TEXT("BSQ.MID")); // Replace with your MIDI filename
+    //PlayGameMusic(hwndMain); //midi func
 
     ShowWindow(hwndMain, nCmdShow);
     UpdateWindow(hwndMain);
@@ -575,6 +578,34 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 L"About This Game", MB_OK | MB_ICONINFORMATION);
             return 0; // Indicate key was processed
         }
+
+        // Check for 'M' key (uppercase or lowercase)
+            // Toggle music with "M"
+        if (wParam == 'M' || wParam == 'm') {
+            //static bool isMusicPlaying = false;
+            if (isMusicPlaying) {
+                // Stop the music
+                StopMidi();
+                isMusicPlaying = false;
+            }
+            else {
+                // Build the MIDI file path
+                TCHAR midiPath[MAX_PATH];
+                GetModuleFileName(NULL, midiPath, MAX_PATH);
+                // Keep only the directory part
+                TCHAR* lastBackslash = _tcsrchr(midiPath, '\\');
+                if (lastBackslash != NULL) {
+                    *(lastBackslash + 1) = '\0';
+                }
+                // Append the MIDI filename
+                _tcscat_s(midiPath, MAX_PATH, TEXT("BSQ.MID")); // Adjust filename if needed
+
+                // Start playing MIDI
+                StartMidi(hwndMain, midiPath);
+                isMusicPlaying = true;
+            }
+        }
+
 
         // --- Player Interaction Keys (Only if allowed) ---
         if (canPlayerControl) {
@@ -976,6 +1007,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     } // End WM_LBUTTONUP
 
     case WM_DESTROY:
+        isMusicPlaying = false;
+        if (midiDeviceID != 0) {
+            mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
+            midiDeviceID = 0;
+        }
         PostQuitMessage(0);
         return 0;
 
@@ -2401,7 +2437,26 @@ void PlayMidiInBackground(HWND hwnd, const TCHAR* midiPath) {
     }
 }
 
-void PlayGameMusic(HWND hwnd) {
+void StartMidi(HWND hwnd, const TCHAR* midiPath) {
+    if (isMusicPlaying) {
+        StopMidi();
+    }
+    isMusicPlaying = true;
+    musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);
+}
+
+void StopMidi() {
+    if (isMusicPlaying) {
+        isMusicPlaying = false;
+        if (musicThread.joinable()) musicThread.join();
+        if (midiDeviceID != 0) {
+            mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
+            midiDeviceID = 0;
+        }
+    }
+}
+
+/*void PlayGameMusic(HWND hwnd) {
     // Stop any existing playback
     if (isMusicPlaying) {
         isMusicPlaying = false;
@@ -2432,7 +2487,7 @@ void PlayGameMusic(HWND hwnd) {
     // Start the background playback
     isMusicPlaying = true;
     musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);
-}
+}*/
 //midi func = end
 
 // --- Drawing Functions ---
