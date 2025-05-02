@@ -12,7 +12,9 @@
 #include <cstdlib> // Required for srand, rand (often included by others, but good practice)
 #include <commctrl.h> // Needed for radio buttons etc. in dialog (if using native controls)
 #include <mmsystem.h> // For PlaySound
+#include <tchar.h> //midi func
 #include <thread>
+#include <atomic>
 #include "resource.h"
 
 #pragma comment(lib, "Comctl32.lib") // Link against common controls library
@@ -145,6 +147,9 @@ float pocketFlashTimer = 0.0f;
 bool cheatModeEnabled = false; // Cheat Mode toggle (G key)
 int draggingBallId = -1;
 bool keyboardAimingActive = false; // NEW FLAG: true when arrow keys modify aim/power
+MCIDEVICEID midiDeviceID = 0; //midi func
+std::atomic<bool> isMusicPlaying(false); //midi func
+std::thread musicThread; //midi func
 
 // UI Element Positions
 D2D1_RECT_F powerMeterRect = { TABLE_RIGHT + CUSHION_THICKNESS + 10, TABLE_TOP, TABLE_RIGHT + CUSHION_THICKNESS + 40, TABLE_BOTTOM };
@@ -199,6 +204,7 @@ void AssignPlayerBallTypes(BallType firstPocketedType);
 void CheckGameOverConditions(bool eightBallPocketed, bool cueBallPocketed);
 Ball* GetBallById(int id);
 Ball* GetCueBall();
+void PlayGameMusic(HWND hwnd); //midi func
 
 // Drawing Functions
 void DrawScene(ID2D1RenderTarget* pRT);
@@ -475,6 +481,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     }
 
     InitGame(); // Initialize game state AFTER resources are ready & mode is set
+    Sleep(500); // Allow window to fully initialize before starting the countdown //midi func
+    PlayGameMusic(hwndMain); //midi func
 
     ShowWindow(hwndMain, nCmdShow);
     UpdateWindow(hwndMain);
@@ -2364,6 +2372,68 @@ bool IsValidAIAimAngle(float angle) {
     // Placeholder - could check for NaN or infinity if calculations go wrong
     return isfinite(angle);
 }
+
+//midi func = start
+void PlayMidiInBackground(HWND hwnd, const TCHAR* midiPath) {
+    while (isMusicPlaying) {
+        MCI_OPEN_PARMS mciOpen = { 0 };
+        mciOpen.lpstrDeviceType = TEXT("sequencer");
+        mciOpen.lpstrElementName = midiPath;
+
+        if (mciSendCommand(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_ELEMENT, (DWORD_PTR)&mciOpen) == 0) {
+            midiDeviceID = mciOpen.wDeviceID;
+
+            MCI_PLAY_PARMS mciPlay = { 0 };
+            mciSendCommand(midiDeviceID, MCI_PLAY, 0, (DWORD_PTR)&mciPlay);
+
+            // Wait for playback to complete
+            MCI_STATUS_PARMS mciStatus = { 0 };
+            mciStatus.dwItem = MCI_STATUS_MODE;
+
+            do {
+                mciSendCommand(midiDeviceID, MCI_STATUS, MCI_STATUS_ITEM, (DWORD_PTR)&mciStatus);
+                Sleep(100); // adjust as needed
+            } while (mciStatus.dwReturn == MCI_MODE_PLAY && isMusicPlaying);
+
+            mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
+            midiDeviceID = 0;
+        }
+    }
+}
+
+void PlayGameMusic(HWND hwnd) {
+    // Stop any existing playback
+    if (isMusicPlaying) {
+        isMusicPlaying = false;
+        if (musicThread.joinable()) {
+            musicThread.join();
+        }
+        if (midiDeviceID != 0) {
+            mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
+            midiDeviceID = 0;
+        }
+    }
+
+    // Get the path of the executable
+    TCHAR exePath[MAX_PATH];
+    GetModuleFileName(NULL, exePath, MAX_PATH);
+
+    // Extract the directory path
+    TCHAR* lastBackslash = _tcsrchr(exePath, '\\');
+    if (lastBackslash != NULL) {
+        *(lastBackslash + 1) = '\0';
+    }
+
+    // Construct the full path to the MIDI file
+    static TCHAR midiPath[MAX_PATH];
+    _tcscpy_s(midiPath, MAX_PATH, exePath);
+    _tcscat_s(midiPath, MAX_PATH, TEXT("BSQ.MID"));
+
+    // Start the background playback
+    isMusicPlaying = true;
+    musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);
+}
+//midi func = end
 
 // --- Drawing Functions ---
 
