@@ -67,8 +67,9 @@ themes["(GPT4.1) Soothing Dark Blue"] := { "TextColor": "#E6EDF3", "BackgroundCo
 themes["(GPT4.1) Classic Paper Look (Light Mode)"] := { "TextColor": "#333333", "BackgroundColor": "#FFF8E7" }
 themes["(GPT4.1) Accessible High Contrast (WCAG AA/AAA)"] := { "TextColor": "#F8F8F2", "BackgroundColor": "#282A36" }
 themes["Ultimate Teal Mod"] := { "TextColor": "#008B8B", "BackgroundColor": "#004D4D" }
-themes["Fuschia Pink Explosion"] := { "TextColor": "#FFA1A1", "BackgroundColor": "##FF2B36" }
-themes["Luminous ArmyGreen"] := { "TextColor": "#8DF318", "BackgroundColor": "#93901D" }
+themes["Fuschia Pink Explosion Mod"] := { "TextColor": "#FFA1A1", "BackgroundColor": "#FF2B36" }
+themes["Luminous ArmyGreen Mod"] := { "TextColor": "#8DF318", "BackgroundColor": "#93901D" }
+themes["CyanRed Readability Mod"] := { "TextColor": "#D21016", "BackgroundColor": "#65D8B7" }
 themes["Default"] := { "TextColor": "#000000", "BackgroundColor": "#ffffff" }
 
 ; ---------------- GUI ------------------------------------------------
