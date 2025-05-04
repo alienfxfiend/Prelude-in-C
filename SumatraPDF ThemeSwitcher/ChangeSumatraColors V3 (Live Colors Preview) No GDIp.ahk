@@ -3,7 +3,7 @@
 SetBatchLines, -1
 Process, Priority, , High  ; Run with higher priority
 DetectHiddenWindows, On  ; Detect hidden windows
-#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+;#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #Persistent
 
