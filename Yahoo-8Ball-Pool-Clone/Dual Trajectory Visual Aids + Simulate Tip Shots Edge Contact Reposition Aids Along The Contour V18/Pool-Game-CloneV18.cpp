@@ -3271,14 +3271,22 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
     // Create reflection brush (e.g., lighter shade or different color)
     hr = pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::LightCyan, 0.6f), &pReflectBrush);
     if FAILED(hr) { SafeRelease(&pBrush); SafeRelease(&pGhostBrush); SafeRelease(&pCueBrush); SafeRelease(&pReflectBrush); return; }    
-    // Create a Light Blue brush for primary and secondary lines
-    D2D1::ColorF indigoColor(75.0f / 255.0f, 0.0f, 130.0f / 255.0f);
-    ID2D1SolidColorBrush* pIndigoBrush = nullptr;
-    hr = pRT->CreateSolidColorBrush(indigoColor, &pIndigoBrush);
+    // Create a Cyan brush for primary and secondary lines //orig(75.0f / 255.0f, 0.0f, 130.0f / 255.0f);indigoColor
+    D2D1::ColorF cyanColor(0.0, 255.0, 255.0, 255.0f);
+    ID2D1SolidColorBrush* pCyanBrush = nullptr;
+    hr = pRT->CreateSolidColorBrush(cyanColor, &pCyanBrush);
     if (FAILED(hr)) {
-        SafeRelease(&pIndigoBrush);
+        SafeRelease(&pCyanBrush);
         // handle error if needed
     }
+    // Create a Purple brush for primary and secondary lines
+    D2D1::ColorF purpleColor(255.0f, 0.0f, 255.0f, 255.0f);
+    ID2D1SolidColorBrush* pPurpleBrush = nullptr;
+    hr = pRT->CreateSolidColorBrush(purpleColor, &pPurpleBrush);
+    if (FAILED(hr)) {
+        SafeRelease(&pPurpleBrush);
+        // handle error if needed
+    }    
 
     if (pFactory) {
         D2D1_STROKE_STYLE_PROPERTIES strokeProps = D2D1::StrokeStyleProperties();
@@ -3485,18 +3493,18 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
         {
             // Straight: secondary behind primary
                     // secondary behind primary {pDashedStyle param at end}
-            pRT->DrawLine(secondaryStart, secondaryEnd, pIndigoBrush, 2.0f);
+            pRT->DrawLine(secondaryStart, secondaryEnd, pPurpleBrush, 2.0f);
             //pRT->DrawLine(secondaryStart, secondaryEnd, pGhostBrush, 1.0f);
-            pRT->DrawLine(targetStartPoint, primaryEnd, pIndigoBrush, 2.0f);
+            pRT->DrawLine(targetStartPoint, primaryEnd, pCyanBrush, 2.0f);
             //pRT->DrawLine(targetStartPoint, primaryEnd, pBrush, 1.0f);
         }
         else
         {
             // Cut shot: both visible
                     // both visible for cut shot
-            pRT->DrawLine(secondaryStart, secondaryEnd, pIndigoBrush, 2.0f);
+            pRT->DrawLine(secondaryStart, secondaryEnd, pPurpleBrush, 2.0f);
             //pRT->DrawLine(secondaryStart, secondaryEnd, pGhostBrush, 1.0f);
-            pRT->DrawLine(targetStartPoint, primaryEnd, pIndigoBrush, 2.0f);
+            pRT->DrawLine(targetStartPoint, primaryEnd, pCyanBrush, 2.0f);
             //pRT->DrawLine(targetStartPoint, primaryEnd, pBrush, 1.0f);
         }
         // End improved trajectory logic
@@ -3547,7 +3555,8 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
     SafeRelease(&pGhostBrush);
     SafeRelease(&pCueBrush);
     SafeRelease(&pReflectBrush); // Release new brush
-    SafeRelease(&pIndigoBrush);
+    SafeRelease(&pCyanBrush);
+    SafeRelease(&pPurpleBrush);
     SafeRelease(&pDashedStyle);
 }
 
