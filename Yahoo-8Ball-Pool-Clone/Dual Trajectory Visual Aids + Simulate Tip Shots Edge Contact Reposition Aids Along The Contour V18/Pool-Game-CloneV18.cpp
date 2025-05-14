@@ -1733,7 +1733,7 @@ void RespawnCueBall(bool behindHeadstring) { // 'behindHeadstring' only relevant
             // This case might need review depending on exact initial setup flow,
             // but the foul logic above should now be correct.
             // Let's ensure initial state is PRE_BREAK_PLACEMENT if behindHeadstring is true.*/
-            currentGameState = PRE_BREAK_PLACEMENT;
+            //currentGameState = PRE_BREAK_PLACEMENT;
         }
     }
 //}
