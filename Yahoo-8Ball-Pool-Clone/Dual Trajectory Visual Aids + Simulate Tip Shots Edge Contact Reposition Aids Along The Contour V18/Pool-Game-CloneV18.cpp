@@ -1460,25 +1460,25 @@ void GameUpdate() {
                 // Step 1: AI places the cue ball.
                 AIPlaceCueBall();
                 // Step 2: Transition to thinking state for shot decision.
-                currentGameState = AI_THINKING;
+                currentGameState = AI_THINKING; //newcode5
                 // Step 3: Consume the pending flag for the placement phase.
                 //         AIMakeDecision will handle shot planning now.
-                aiTurnPending = false;
+                aiTurnPending = false; //newcode5
                 // Step 4: AI immediately decides the shot from the new position.
-                AIMakeDecision();
+                AIMakeDecision(); //newcode5
             }
             // **2) Opening break** special break shot logic
             else if (isOpeningBreakShot && currentGameState == PRE_BREAK_PLACEMENT) {
                 AIBreakShot();
             }
-            else if (currentGameState == PLAYER2_TURN || currentGameState == BREAKING) {
+            else if (currentGameState == PLAYER2_TURN || currentGameState == BREAKING) { //newcode5
                 // General turn for AI to think (not ball-in-hand, not initial break placement)
-                currentGameState = AI_THINKING;
-                aiTurnPending = false; // Consume the flag
-                AIMakeDecision();
+                currentGameState = AI_THINKING; //newcode5
+                aiTurnPending = false; // Consume the flag //newcode5
+                AIMakeDecision(); //newcode5
             }
             // **3) Otherwise** normal shot planning
-            /*else {
+            /*else { //orig uncommented oldcode5
                 currentGameState = AI_THINKING;
                 aiTurnPending = false;
                 AIMakeDecision();
