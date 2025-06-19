@@ -97,6 +97,7 @@ themes["latest-PaleFaded"] := { "TextColor": "#646F16", "BackgroundColor": "#9CB
 themes["latest-PaleGreenPink"] := { "TextColor": "#E8B7DF", "BackgroundColor": "#317C71" }
 themes["latest-BlueResplendence"] := { "TextColor": "#0D7409", "BackgroundColor": "#43C0EF" }
 themes["latest-DarkLimeGreen"] := { "TextColor": "#85E555", "BackgroundColor": "#0B1C10" }
+themes["latest-BlueVariated"] := { "TextColor": "#15F7CE", "BackgroundColor": "#072366" }
 themes["Default"] := { "TextColor": "#000000", "BackgroundColor": "#ffffff" }
 
 ; ---------------- GUI ------------------------------------------------
