@@ -67,9 +67,36 @@ themes["(GPT4.1) Soothing Dark Blue"] := { "TextColor": "#E6EDF3", "BackgroundCo
 themes["(GPT4.1) Classic Paper Look (Light Mode)"] := { "TextColor": "#333333", "BackgroundColor": "#FFF8E7" }
 themes["(GPT4.1) Accessible High Contrast (WCAG AA/AAA)"] := { "TextColor": "#F8F8F2", "BackgroundColor": "#282A36" }
 themes["Ultimate Teal Mod"] := { "TextColor": "#008B8B", "BackgroundColor": "#004D4D" }
+themes["Ultimate Teal Mod BrightFix"] := { "TextColor": "#00aaaa", "BackgroundColor": "#004D4D" }
 themes["Fuschia Pink Explosion Mod"] := { "TextColor": "#FFA1A1", "BackgroundColor": "#FF2B36" }
 themes["Luminous ArmyGreen Mod"] := { "TextColor": "#8DF318", "BackgroundColor": "#93901D" }
 themes["CyanRed Readability Mod"] := { "TextColor": "#D21016", "BackgroundColor": "#65D8B7" }
+themes["PinkLust Mod"] := { "TextColor": "#1E2D35", "BackgroundColor": "#F108F0" }
+themes["Edge ReadMode Mod"] := { "TextColor": "#621F56", "BackgroundColor": "#62BB92" }
+themes["GreenBlue Mod"] := { "TextColor": "#104421", "BackgroundColor": "#7873E3" }
+themes["Yellow Mod"] := { "TextColor": "#0939B0", "BackgroundColor": "#EBCE71" }
+themes["LightLime Mod"] := { "TextColor": "#06C127", "BackgroundColor": "#B5E597" }
+themes["StarkGreen Mod"] := { "TextColor": "#837F1E", "BackgroundColor": "#A2CC1E" }
+themes["PurpleCyan Mod"] := { "TextColor": "#64CCF9", "BackgroundColor": "#662DD6" }
+themes["CyanPurple Mod"] := { "TextColor": "#510A52", "BackgroundColor": "#5C97E1" }
+themes["RoyalVelvet Mod"] := { "TextColor": "#B242B5", "BackgroundColor": "#220210" }
+themes["SkyBlueMod"] := { "TextColor": "#1CD1B5", "BackgroundColor": "#0C3DD6" }
+themes["YellowOnIndigoMod"] := { "TextColor": "#1F0954", "BackgroundColor": "#C4BB45" }
+themes["RedOnPinkMod"] := { "TextColor": "#ff0000", "BackgroundColor": "#ff00ff" }
+themes["Green BrightGlow"] := { "TextColor": "#39DFC4", "BackgroundColor": "#101F18" }
+themes["Green BrightGlow2"] := { "TextColor": "#39B378", "BackgroundColor": "#10190F" }
+themes["Green BrightGlow3"] := { "TextColor": "#38b479", "BackgroundColor": "#182617" }
+themes["Dracula-DansLeRush-PurpleGPT"] := { "TextColor": "#B19CD9", "BackgroundColor": "#21222c" }
+themes["Rosewood (Brown) Inverted Dark"] := { "TextColor": "#F5F0E1", "BackgroundColor": "#4B3C30" }
+themes["latest-Green"] := { "TextColor": "#C7FBBA", "BackgroundColor": "#4E774F" }
+themes["latest-LightBlue"] := { "TextColor": "#210150", "BackgroundColor": "#0951FE" }
+themes["latest-LightPurple"] := { "TextColor": "#92D996", "BackgroundColor": "#370C9F" }
+themes["latest-LimeyGreen"] := { "TextColor": "#136227", "BackgroundColor": "#98C021" }
+themes["latest-PaleBlue"] := { "TextColor": "#393F0D", "BackgroundColor": "#168FB6" }
+themes["latest-PaleFaded"] := { "TextColor": "#646F16", "BackgroundColor": "#9CBD93" }
+themes["latest-PaleGreenPink"] := { "TextColor": "#E8B7DF", "BackgroundColor": "#317C71" }
+themes["latest-BlueResplendence"] := { "TextColor": "#0D7409", "BackgroundColor": "#43C0EF" }
+themes["latest-DarkLimeGreen"] := { "TextColor": "#85E555", "BackgroundColor": "#0B1C10" }
 themes["Default"] := { "TextColor": "#000000", "BackgroundColor": "#ffffff" }
 
 ; ---------------- GUI ------------------------------------------------
@@ -146,8 +173,8 @@ all := RegExReplace(all
     ; -----------------------------------------------------------------
     ; show which theme has been applied
     ; -----------------------------------------------------------------
-    SelectedTheme := (LB != "") ? LB : "Custom"
-    MsgBox, 64, Success, The theme "%SelectedTheme%" has been applied.`n`nFG: %FG%`nBG: %BG%
+    ;SelectedTheme := (LB != "") ? LB : "Custom"
+    ;MsgBox, 64, Success, The theme "%SelectedTheme%" has been applied.`n`nFG: %FG%`nBG: %BG%
 return
 
 GuiClose:
@@ -221,6 +248,7 @@ RandomColors:                               ; fires when the button is clicked
     BG := GetRandomHexColor()
     GuiControl,, ColorEdit, % "`tTextColor = " FG "`n`tBackgroundColor = " BG
     RefreshSquares(FG, BG)                  ; update the little colour boxes
+    gosub Apply                             ; {xdelnewcodeaddedforautomating}
 return
 
 
@@ -231,3 +259,5 @@ GetRandomHexColor()                         ; returns something like â€œ#3A7FCDâ
     Random, b, 0, 255
     return "#" Format("{:02X}{:02X}{:02X}", r, g, b)
 }
+
+;redonpinkmod(origbroken): #692BA9 #D3E971 => #ff0000#ff0080 dark/limegreen: #85E555 #0B1C10
