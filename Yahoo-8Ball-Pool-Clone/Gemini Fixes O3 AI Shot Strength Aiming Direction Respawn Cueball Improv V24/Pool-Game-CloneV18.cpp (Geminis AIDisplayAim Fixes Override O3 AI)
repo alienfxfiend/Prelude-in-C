@@ -1962,6 +1962,7 @@ void CheckCollisions() {
 
 bool CheckPockets() {
     bool anyPocketed = false;
+    // FIX: Declare a local flag to ensure the sound only plays ONCE per function call.
     bool ballPocketedThisCheck = false;
     // For each ball not already pocketed:
     for (auto& b : balls) {
