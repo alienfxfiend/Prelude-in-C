@@ -2789,7 +2789,7 @@ void CheckAndTransitionToPocketChoice(int playerID) {
         if (playerID == 1) { // Human Player 1
             currentGameState = CHOOSING_POCKET_P1;
             pocketCallMessage = player1Info.name + L": Choose a pocket for the 8-Ball...";
-            if (calledPocketP1 == -1) calledPocketP1 = 5; // Default to bottom-right
+            if (calledPocketP1 == -1) calledPocketP1 = 2; // Default to bottom-right
         }
         else { // Player 2
             if (isPlayer2AI) {
@@ -2801,7 +2801,7 @@ void CheckAndTransitionToPocketChoice(int playerID) {
             else { // Human Player 2
                 currentGameState = CHOOSING_POCKET_P2;
                 pocketCallMessage = player2Info.name + L": Choose a pocket for the 8-Ball...";
-                if (calledPocketP2 == -1) calledPocketP2 = 5; // Default to bottom-right
+                if (calledPocketP2 == -1) calledPocketP2 = 2; // Default to bottom-right
             }
         }
     }
