@@ -125,6 +125,7 @@
     IDWriteFactory* pDWriteFactory = nullptr;
     IDWriteTextFormat* pTextFormat = nullptr;
     IDWriteTextFormat* pLargeTextFormat = nullptr; // For "Foul!"
+    IDWriteTextFormat* pBallNumFormat = nullptr;
 
     // Game State
     HWND hwndMain = nullptr;
@@ -1471,6 +1472,21 @@
             pLargeTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
         }
 
+        if (!pBallNumFormat && pDWriteFactory)
+        {
+            hr = pDWriteFactory->CreateTextFormat(
+                L"Segoe UI", nullptr,
+                DWRITE_FONT_WEIGHT_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                10.0f,                       // << small size for ball decals
+                L"en-us",
+                &pBallNumFormat);
+            if (SUCCEEDED(hr))
+            {
+                pBallNumFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+                pBallNumFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            }
+        }
+
 
         // Create Render Target (needs valid hwnd)
         if (!pRenderTarget && hwndMain) {
@@ -1501,6 +1517,7 @@
         SafeRelease(&pRenderTarget);
         SafeRelease(&pTextFormat);
         SafeRelease(&pLargeTextFormat);
+        SafeRelease(&pBallNumFormat);            // NEW
         SafeRelease(&pDWriteFactory);
         // Keep pFactory until application exit? Or release here too? Let's release.
         SafeRelease(&pFactory);
@@ -3546,9 +3563,13 @@
 
         ID2D1SolidColorBrush* pStripeBrush = nullptr;    // white stripe
         ID2D1SolidColorBrush* pBorderBrush = nullptr;    // black ring
+        ID2D1SolidColorBrush * pNumWhite = nullptr; // NEW – white circle
+        ID2D1SolidColorBrush * pNumBlack = nullptr; // NEW – digit colour
 
         pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &pStripeBrush);
         pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pBorderBrush);
+        pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &pNumWhite);
+        pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pNumBlack);
 
         for (const Ball& b : balls)
         {
@@ -3614,6 +3635,37 @@
                 }
             }
 
+            // --------------------------------------------------------
+//  Draw number decal (skip cue ball)
+// --------------------------------------------------------
+            if (b.id != 0 && pBallNumFormat && pNumWhite && pNumBlack)
+            {
+                // 1) white circle – slightly smaller on stripes so it fits
+                const float decalR = (b.type == BallType::STRIPE) ?
+                    BALL_RADIUS * 0.40f : BALL_RADIUS * 0.45f;
+
+                D2D1_ELLIPSE decal = D2D1::Ellipse(
+                    D2D1::Point2F(b.x, b.y), decalR, decalR);
+
+                pRT->FillEllipse(&decal, pNumWhite);
+                pRT->DrawEllipse(&decal, pNumBlack, 0.8f);   // thin border
+
+                // 2) digit – convert id to printable number
+                wchar_t numText[3];
+                _snwprintf_s(numText, _TRUNCATE, L"%d", b.id);
+
+                // layout rectangle exactly the diameter of the decal
+                D2D1_RECT_F layout = D2D1::RectF(
+                    b.x - decalR, b.y - decalR,
+                    b.x + decalR, b.y + decalR);
+
+                pRT->DrawText(numText,
+                    (UINT32)wcslen(numText),
+                    pBallNumFormat,
+                    &layout,
+                    pNumBlack);
+            }
+
             // Black border
             if (pBorderBrush)
                 pRT->DrawEllipse(&outer, pBorderBrush, 1.5f);
@@ -3623,6 +3675,8 @@
 
         SafeRelease(&pStripeBrush);
         SafeRelease(&pBorderBrush);
+        SafeRelease(&pNumWhite);   // NEW
+        SafeRelease(&pNumBlack);   // NEW
     }
 
     /*void DrawBalls(ID2D1RenderTarget* pRT) {
