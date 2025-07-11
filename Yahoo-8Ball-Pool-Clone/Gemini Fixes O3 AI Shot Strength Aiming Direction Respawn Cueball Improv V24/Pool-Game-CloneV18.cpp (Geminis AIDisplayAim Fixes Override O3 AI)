@@ -1,4 +1,4 @@
-﻿#define WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
 #include <d2d1.h>
@@ -131,8 +131,8 @@ HWND hwndMain = nullptr;
 GameState currentGameState = SHOWING_DIALOG; // Start by showing dialog
 std::vector<Ball> balls;
 int currentPlayer = 1; // 1 or 2
-PlayerInfo player1Info = { BallType::NONE, 0, L"Vince Woods"/*"Player 1"*/};
-PlayerInfo player2Info = { BallType::NONE, 0, L"Virtus Pro"/*"CPU"*/}; // Default P2 name
+PlayerInfo player1Info = { BallType::NONE, 0, L"Vince Woods"/*"Player 1"*/ };
+PlayerInfo player2Info = { BallType::NONE, 0, L"Virtus Pro"/*"CPU"*/ }; // Default P2 name
 bool foulCommitted = false;
 std::wstring gameOverMessage = L"";
 bool firstBallPocketedAfterBreak = false;
@@ -542,7 +542,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     if (isPlayer2AI) {
         switch (aiDifficulty) {
         case EASY: player2Info.name = L"Virtus Pro (Easy)"/*"CPU (Easy)"*/; break;
-        case MEDIUM:player2Info.name= L"Virtus Pro (Medium)"/*"CPU (Medium)"*/; break;
+        case MEDIUM:player2Info.name = L"Virtus Pro (Medium)"/*"CPU (Medium)"*/; break;
         case HARD: player2Info.name = L"Virtus Pro (Hard)"/*"CPU (Hard)"*/; break;
         }
     }
@@ -1369,7 +1369,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     if (currentGameState == PLAYER1_TURN || currentGameState == PLAYER2_TURN)
                     {
                         CheckAndTransitionToPocketChoice(currentPlayer);
-                    }                    
+                    }
                 }
                 else { /* Stay in BALL_IN_HAND state if final pos invalid */ }
             }
@@ -1962,6 +1962,7 @@ void CheckCollisions() {
 
 bool CheckPockets() {
     bool anyPocketed = false;
+    bool ballPocketedThisCheck = false;
     // For each ball not already pocketed:
     for (auto& b : balls) {
         if (b.isPocketed)
@@ -1979,8 +1980,17 @@ bool CheckPockets() {
                 }
                 b.isPocketed = true;
                 b.vx = b.vy = 0.0f;           // kill any movement
-                pocketedThisTurn.push_back(b.id);                
+                pocketedThisTurn.push_back(b.id);
                 anyPocketed = true;
+
+                // --- FIX: Insert your sound logic here ---
+                // The 'if' guard prevents multiple sounds on a multi-ball break.
+                if (!ballPocketedThisCheck) {
+                    std::thread([](const TCHAR* soundName) { PlaySound(soundName, NULL, SND_FILENAME | SND_NODEFAULT); }, TEXT("pocket.wav")).detach();
+                    ballPocketedThisCheck = true;
+                }
+                // --- End Sound Fix ---
+
                 break;  // no need to check other pockets for this ball
             }
         }
@@ -2192,20 +2202,20 @@ void ProcessShotResults() {
     pocketedThisTurn.clear();
 }
 
-    /*
-    // --- Step 3: Final State Transition ---
-    if (foulCommitted) {
-        SwitchTurns();
-        RespawnCueBall(false);
-    }
-    else if (playerContinuesTurn) {
-        CheckAndTransitionToPocketChoice(currentPlayer);
-    }
-    else {
-        SwitchTurns();
-    }
+/*
+// --- Step 3: Final State Transition ---
+if (foulCommitted) {
+    SwitchTurns();
+    RespawnCueBall(false);
+}
+else if (playerContinuesTurn) {
+    CheckAndTransitionToPocketChoice(currentPlayer);
+}
+else {
+    SwitchTurns();
+}
 
-    pocketedThisTurn.clear();
+pocketedThisTurn.clear();
 } */
 
 //  Assign groups AND optionally give the shooter his first count.
@@ -2257,10 +2267,10 @@ bool AssignPlayerBallTypes(BallType firstPocketedType, bool creditShooter /*= tr
     }
     return false; // No assignment made (e.g., 8-ball was pocketed on break)
 }*/
-    // If 8-ball was first (illegal on break generally), rules vary.
-    // Here, we might ignore assignment until a solid/stripe is pocketed legally.
-    // Or assign based on what *else* was pocketed, if anything.
-    // Simplification: Assignment only happens on SOLID or STRIPE first pocket.
+// If 8-ball was first (illegal on break generally), rules vary.
+// Here, we might ignore assignment until a solid/stripe is pocketed legally.
+// Or assign based on what *else* was pocketed, if anything.
+// Simplification: Assignment only happens on SOLID or STRIPE first pocket.
 
 
 // --- Called in ProcessShotResults() after pocket detection ---
@@ -4228,59 +4238,59 @@ if (SUCCEEDED(pFactory->CreatePathGeometry(&pPath))) {
         );
     }*/
 
-        // --- Persistent Blue 8?Ball Pocket Arrow & Prompt (once called) ---
-    /* if (calledPocketP1 >= 0 || calledPocketP2 >= 0)
-    {
-        // 1) Determine pocket index
-        int idx = (currentPlayer == 1 ? calledPocketP1 : calledPocketP2);
-        // If the other player had called but it's now your turn, still show that call
-        if (idx < 0) idx = (currentPlayer == 1 ? calledPocketP2 : calledPocketP1);
-        if (idx < 0) idx = 2; // default to top?right if somehow still unset
+    // --- Persistent Blue 8?Ball Pocket Arrow & Prompt (once called) ---
+/* if (calledPocketP1 >= 0 || calledPocketP2 >= 0)
+{
+    // 1) Determine pocket index
+    int idx = (currentPlayer == 1 ? calledPocketP1 : calledPocketP2);
+    // If the other player had called but it's now your turn, still show that call
+    if (idx < 0) idx = (currentPlayer == 1 ? calledPocketP2 : calledPocketP1);
+    if (idx < 0) idx = 2; // default to top?right if somehow still unset
 
-        // 2) Draw large blue arrow
-        ID2D1SolidColorBrush* pArrow = nullptr;
-        pRT->CreateSolidColorBrush(TURN_ARROW_COLOR, &pArrow);
-        if (pArrow) {
-            auto P = pocketPositions[idx];
-            D2D1_POINT_2F tri[3] = {
-                { P.x - 15.0f, P.y - 40.0f },
-                { P.x + 15.0f, P.y - 40.0f },
-                { P.x       , P.y - 10.0f }
-            };
-            ID2D1PathGeometry* geom = nullptr;
-            pFactory->CreatePathGeometry(&geom);
-            ID2D1GeometrySink* sink = nullptr;
-            geom->Open(&sink);
-            sink->BeginFigure(tri[0], D2D1_FIGURE_BEGIN_FILLED);
-            sink->AddLines(&tri[1], 2);
-            sink->EndFigure(D2D1_FIGURE_END_CLOSED);
-            sink->Close();
-            pRT->FillGeometry(geom, pArrow);
-            SafeRelease(&sink);
-            SafeRelease(&geom);
-            SafeRelease(&pArrow);
-        }
+    // 2) Draw large blue arrow
+    ID2D1SolidColorBrush* pArrow = nullptr;
+    pRT->CreateSolidColorBrush(TURN_ARROW_COLOR, &pArrow);
+    if (pArrow) {
+        auto P = pocketPositions[idx];
+        D2D1_POINT_2F tri[3] = {
+            { P.x - 15.0f, P.y - 40.0f },
+            { P.x + 15.0f, P.y - 40.0f },
+            { P.x       , P.y - 10.0f }
+        };
+        ID2D1PathGeometry* geom = nullptr;
+        pFactory->CreatePathGeometry(&geom);
+        ID2D1GeometrySink* sink = nullptr;
+        geom->Open(&sink);
+        sink->BeginFigure(tri[0], D2D1_FIGURE_BEGIN_FILLED);
+        sink->AddLines(&tri[1], 2);
+        sink->EndFigure(D2D1_FIGURE_END_CLOSED);
+        sink->Close();
+        pRT->FillGeometry(geom, pArrow);
+        SafeRelease(&sink);
+        SafeRelease(&geom);
+        SafeRelease(&pArrow);
+    }
 
-        // 3) Draw persistent prompt text
-        D2D1_RECT_F txt = D2D1::RectF(
-            TABLE_LEFT,
-            TABLE_BOTTOM + CUSHION_THICKNESS + 5.0f,
-            TABLE_RIGHT,
-            TABLE_BOTTOM + CUSHION_THICKNESS + 30.0f
-        );
-        pRT->DrawText(
-            L"Choose a pocket...",
-            (UINT32)wcslen(L"Choose a pocket..."),
-            pTextFormat,
-            &txt,
-            pBrush
-        );
-        // Note: no 'return'; allow foul/turn text to draw beneath if needed
-    } */
+    // 3) Draw persistent prompt text
+    D2D1_RECT_F txt = D2D1::RectF(
+        TABLE_LEFT,
+        TABLE_BOTTOM + CUSHION_THICKNESS + 5.0f,
+        TABLE_RIGHT,
+        TABLE_BOTTOM + CUSHION_THICKNESS + 30.0f
+    );
+    pRT->DrawText(
+        L"Choose a pocket...",
+        (UINT32)wcslen(L"Choose a pocket..."),
+        pTextFormat,
+        &txt,
+        pBrush
+    );
+    // Note: no 'return'; allow foul/turn text to draw beneath if needed
+} */
 
-    // new code ends here
+// new code ends here
 
-        // --- MODIFIED: Foul Text (Large Red, Bottom Center) ---
+    // --- MODIFIED: Foul Text (Large Red, Bottom Center) ---
     if (foulCommitted && currentGameState != SHOT_IN_PROGRESS) {
         ID2D1SolidColorBrush* pFoulBrush = nullptr;
         pRT->CreateSolidColorBrush(FOUL_TEXT_COLOR, &pFoulBrush);
@@ -4727,7 +4737,7 @@ void DrawPocketSelectionIndicator(ID2D1RenderTarget* pRT) {
     /*  Never show the arrow while the player is still placing the
     cue-ball (ball-in-hand) – it otherwise hides behind the
     ghost-ball and can lock the UI.                               */
-    
+
     /* Still skip the opening-break placement,
    but show the arrow during BALL-IN-HAND */
    // ? skip when no active call for the CURRENT shooter
@@ -4735,12 +4745,12 @@ void DrawPocketSelectionIndicator(ID2D1RenderTarget* pRT) {
         (currentPlayer == 2 && calledPocketP2 < 0))    return;
     /*if (currentGameState == PRE_BREAK_PLACEMENT)
         return;*/ //new ai-asked-to-disable
-    /*if (currentGameState == BALL_IN_HAND_P1 ||
-        currentGameState == BALL_IN_HAND_P2 ||
-        currentGameState == PRE_BREAK_PLACEMENT)
-    {
-        return;
-    }*/
+        /*if (currentGameState == BALL_IN_HAND_P1 ||
+            currentGameState == BALL_IN_HAND_P2 ||
+            currentGameState == PRE_BREAK_PLACEMENT)
+        {
+            return;
+        }*/
 
     int pocketToIndicate = -1;
     // Whenever EITHER player has pocketed their first 7 and has called (human or AI),
