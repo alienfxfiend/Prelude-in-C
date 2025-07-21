@@ -7,4 +7,4 @@
 * Some Visual Feedback When Targetting Wrong Player's Balls.
 * Hot Swappable Choice of Pool Table Colors in Startup Dialog Box (At Bottom (Red, Indigo, Tan, Green).)
 * Balls Rolling In Motion Effect When Struck.
-* Kibitzer Mode: Shows All Predicted Trajectory Paths Taken When Hit By Current Shot Strength & Aim.
+* Kibitzer Mode: Shows/ Traces All Predicted Trajectory Paths Taken When Hit By Current Shot Strength & Aim.
