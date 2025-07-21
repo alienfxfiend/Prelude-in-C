@@ -10,6 +10,6 @@
 * Kibitzer Mode: Shows/ Traces All Predicted Trajectory Paths Taken When Hit By Current Shot Strength & Aim.
 * Better DrawAimingAids() To Dynamically Better Reflect Tip/ Edge Angled Shots.
 * AI Should Handle Bank Shots And English Spin Better /w Better Planning/ Decision Making.
-
-_________________
+<BR />
+<HR>
 <p align="center"><img src="https://www.dropbox.com/scl/fi/6bowq3m79dxidt0e95bfq/Midnight-Pool-4.png?rlkey=9zb8v8ocowao8r3neabbp6pdi&st=4tzvy519&raw=1" alt="Yahoo Pool Game Clone" width="600" /><BR />[Current Game Screenshot]</p>
