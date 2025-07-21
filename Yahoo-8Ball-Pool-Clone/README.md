@@ -5,3 +5,4 @@
 * & Grainy Felt Texture.
 * Add a File Menu Perhaps ?
 * Some Visual Feedback When Targetting Wrong Player's Balls.
+* Hot Swappable Choice of Pool Table Colors in Startup Dialog Box (At Bottom (Red, Indigo, Tan, Green).)
