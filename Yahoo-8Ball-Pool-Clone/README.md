@@ -1,4 +1,4 @@
-### StickPool Look 'N Feel\ FormFunc (Issues Need Fixing/ Improvements Needed):::
+### StickPool Look 'N Feel\ FormFunc (Issues Need Fixing/ Improvements Needed) CheckList:::
 * 8-Ball Indicator Near PlayerInfo When 7 Balls OwnType Pocketed.
 * Realistic CueStick (Light Beige /w White Tip & Black Art On Rear.)
 * Pockets Semicircle Base (Halfway) /w V-Cut Cavity (Possibly an Inner Rim Layer to Table.)
@@ -8,3 +8,5 @@
 * Hot Swappable Choice of Pool Table Colors in Startup Dialog Box (At Bottom (Red, Indigo, Tan, Green).)
 * Balls Rolling In Motion Effect When Struck.
 * Kibitzer Mode: Shows/ Traces All Predicted Trajectory Paths Taken When Hit By Current Shot Strength & Aim.
+
+<p align="center"><img src="https://www.dropbox.com/scl/fi/6bowq3m79dxidt0e95bfq/Midnight-Pool-4.png?rlkey=9zb8v8ocowao8r3neabbp6pdi&st=4tzvy519&raw=1" alt="Yahoo Pool Game Clone" width="600" /></p>
