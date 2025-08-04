@@ -9,7 +9,7 @@
 * Kibitzer (Cheat) Mode: Shows/ Traces All Predicted Trajectory Paths Taken When Hit By Current Shot Strength & Aim.
 * Better DrawAimingAids() To Dynamically Better Reflect Tip/ Edge Angled Shots.
 * Some Visual Feedback When Targetting Wrong Player's Balls.
-* AI Should Handle Bank Shots And English Spin Better /w Better Planning/ Decision Making.
+* AI Should Handle Bank Shots And English Spin Better /w Better Shot Handling Logic/ Planning/ Decision Making.
 * In Enabling Fouls To Work In Tandem /w 'Pocket Indicator Arrow', The Foul Text Was Overriden (It Currently Does Not Display) —Needs Revamped code Fix.
 * Add Hi-Score Scoring system.
 * Add 9Ball, Rotation Pool, Straight Pool, 3 Ball, CUtThroat, 14.1 Continuous, Poker, Pocket Game, pool modes game logic (as Dropdown ListBox.)
