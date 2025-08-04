@@ -2,9 +2,9 @@
 * 8-Ball Indicator Near PlayerInfo When 7 Balls OwnType Pocketed.
 * Realistic CueStick (Light Beige /w White Tip & Black Art On Rear.)
 * Pockets Semicircle Base (Halfway) /w V-Cut Cavity (Possibly an Inner Rim Layer to Table (chamfered-shape.)) | (empty pockets holes /w Rim around Table perhaps ?)
-* default Table dither effect. & Grainy Felt Texture For Table.
 * Add a File Menu Perhaps ?
 * ✅ ~~Hot Swappable Choice of Pool Table Colors in Startup Dialog Box (At Bottom (Red, Indigo, Tan, Green).) Green Teal Tan Red Purple (as Radio Buttons or Dropdown ListBox !)~~
+* default Table dither effect. & Grainy Felt Texture For Table.
 * Balls In Motion Effect When Struck & Rolling.
 * Kibitzer (Cheat) Mode: Shows/ Traces All Predicted Trajectory Paths Taken When Hit By Current Shot Strength & Aim.
 * Better DrawAimingAids() To Dynamically Better Reflect Tip/ Edge Angled Shots.
