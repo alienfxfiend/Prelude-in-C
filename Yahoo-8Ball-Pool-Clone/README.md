@@ -13,7 +13,7 @@
 * In Enabling Fouls To Work In Tandem /w 'Pocket Indicator Arrow', The Foul Text Was Overriden (It Currently Does Not Display) —Needs Revamped code Fix.
 * Add Hi-Score Scoring system
 * (empty pockets holes /w Rim around Table perhaps ?)
-* ~~Green Teal Tan Red Purple (as Radio Buttons or Dropdown ListBox !)~~ default Table dither effect.
+* ✅ ~~Green Teal Tan Red Purple (as Radio Buttons or Dropdown ListBox !)~~ default Table dither effect.
 * Add 9Ball, Rotation Pool, Straight Pool, 3 Ball, CUtThroat, 14.1 Continuous, Poker, Pocket Game, pool modes game logic (as Dropdown ListBox)
 <BR />
 <HR>
