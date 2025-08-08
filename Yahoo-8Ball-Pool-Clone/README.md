@@ -4,12 +4,12 @@
 * ~~Pockets Semicircle Base (Halfway) /w V-Cut Cavity (Possibly an Inner Rim Layer to Table (chamfered-shape.)) | (empty pockets holes /w Rim around Table perhaps ?)~~
 * Add a File Menu Perhaps ? <!-- Cheat Mode, Mute, New Game -->
 * ✅ ~~Hot Swappable Choice of Pool Table Colors in Startup Dialog Box (At Bottom (Red, Indigo, Tan, Green).) Green Teal Tan Red Purple (as Radio Buttons or Dropdown ListBox !)~~
-* default Table dither effect. & add Grainy Felt Texture For Table.
+* ~~default Table dither effect. & add Grainy Felt Texture For Table.~~
 * Balls In Motion Effect When Struck & Rolling.
 * Kibitzer (Cheat) Mode: Shows/ Traces All Predicted Trajectory Paths Taken When Hit By Current Shot Strength & Aim.
 * Better DrawAimingAids() To Dynamically Better Reflect Contact-Ball <!-- Target Ball ? --> Tip/ Edge Angled Shots.
 * Some Visual Feedback When Targetting Wrong Player's Balls.
-* AI Should Handle Bank Shots And English Spin Better /w Better Shot Handling Logic/ Planning/ Decision Making. Enhance AI Shot-Strength for more intense heavy-impact shots!
+* ~~AI Should Handle Bank Shots And English Spin Better /w Better Shot Handling Logic/ Planning/ Decision Making. Enhance AI Shot-Strength for more intense heavy-impact shots!~~
 * In Enabling Fouls To Work In Tandem /w 'Pocket Indicator Arrow', The Foul Text Was Overriden (It Currently Does Not Display) —Needs Revamped code Fix.
 * Add Hi-Score Scoring system.
 * Add 9Ball, Rotation Pool, Straight Pool, 3 Ball, CUtThroat, 14.1 Continuous, Poker, Pocket Game, pool modes game logic (as Dropdown ListBox.) Add just Billiards & Test Mode for now (debugging purposes.) <!-- AI should ahdere to these rules -->
