@@ -1,0 +1,17 @@
+var text = document.selection.Text;
+var last_char = text.slice(-1);
+if ( last_char === "\n" )
+	text = text.slice(0, -1);
+
+if ( text.indexOf("\n") === -1 ) {
+	var lines_total = document.GetLines();
+	var line_random = Math.floor((Math.random()*lines_total)+1);
+}
+else {
+	var yTop = document.selection.GetTopPointY(eePosLogical);
+	var yBottom = document.selection.GetBottomPointY(eePosLogical);
+	if ( last_char === "\n" )
+		yBottom = yBottom - 1;
+	var line_random = Math.floor((Math.random()*(yBottom - yTop + 1)) + yTop);
+}
+document.selection.SetActivePoint(eePosLogical, 1, line_random);
