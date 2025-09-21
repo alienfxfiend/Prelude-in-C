@@ -2208,12 +2208,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         else if (wParam == VK_F1) {
             MessageBox(hwnd,
-                L"Direct2D-based StickPool game made in C++ from scratch (4827+ lines of code)\n"
+                L"Direct2D-based StickPool game made in C++ from scratch (8903+ lines of code)\n"
                 L"First successful Clone in C++ (no other sites or projects were there to glean from.) Made /w AI assist\n"
                 L"(others were in JS/ non-8-Ball in C# etc.) w/o OOP and Graphics Frameworks all in a Single file.\n"
                 L"Copyright (C) 2025 Evans Thorpemorton, Entisoft Solutions. Midnight Pool 4. 'BLISS' Game Engine/ TitanCore Vortex Engine. ClusterPipeline/ VectorFlowOptimizer/ HyperSyncOSCompiler/ NovaGridTitanVaultFS Provided by GeminiAI.\n"
-                L"Includes AI Difficulty Modes, Aim-Trajectory For Table Rails + Hard Angles TipShots. || F2=New Game",
-                L"About This Game", MB_OK | MB_ICONINFORMATION);
+                L"Includes AI Difficulty Modes, Aim-Trajectory For Table Rails + Hard Angles TipShots. || F2=New Game G=TrickShot T=TestMode M=Mute Left/Right-ArrowKeys[+Shift]=AimCueStick Up/Down-ArrowKeys=ShotPower Spacebar=Shoot",
+                L"About This Game", MB_OK | MB_ICONINFORMATION); /*4827+*/
             return 0;
         }
         if (wParam == 'M' || wParam == 'm') {
