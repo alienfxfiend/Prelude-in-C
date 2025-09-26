@@ -11,7 +11,7 @@
 * ~~Some Visual Feedback When Targetting Wrong Player's Balls.~~
 * ~~AI Should Handle Bank Shots And English Spin Better /w Better Shot Handling Logic/ Planning/ Decision Making. Enhance AI Shot-Strength for more intense heavy-impact shots!~~
 * ~~In Enabling Fouls To Work In Tandem /w 'Pocket Indicator Arrow', The Foul Text Was Overriden (It Currently Does Not Display) —Needs Revamped code Fix.~~
-* Add Hi-Score Scoring system.
+* ~~Add 'Edit Player Names' feature to Startup Dialog. + Add Hi-Score Statistics Scoring system.~~
 * Add 9Ball, Rotation Pool, Straight Pool, 3 Ball, CutThroat, 14.1 Continuous, Poker, Pocket Game, pool modes game logic (as Dropdown ListBox.) Add just Billiards & Test Mode for now (debugging purposes.) <!-- AI should ahdere to these rules -->
 <BR />
 <HR>
