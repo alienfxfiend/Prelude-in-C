@@ -2067,6 +2067,9 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
         }
         // Set the initial selection based on the loaded/default setting
         SendMessage(hCombo, CB_SETCURSEL, (WPARAM)selectedTableColor, 0);
+
+        // --- NEW: Initial display of statistics ---
+        UpdateStatsDisplay();
     }
     return (INT_PTR)TRUE;
 
@@ -4232,7 +4235,48 @@ void CheckGameOverConditions(bool eightBallPocketed, bool cueBallPocketed)
     // --- NEW: Update statistics based on game outcome ---
     if (gameMode == HUMAN_VS_AI) {
         if (legal) { // Player won
-            if (currentPlayer == 1) {
+                        // --- CORRECTED STATS LOGIC ---
+            if (currentPlayer == 1) { // Player 1 legally pockets the 8-ball and wins.
+                g_stats.p1_wins++;    // Increment Player 1's wins.
+                // AI's losses are implicitly tracked by P1's wins.
+            }
+            else { // AI legally pockets the 8-ball and wins.
+                g_stats.ai_wins++;    // Increment AI's wins.
+                g_stats.p1_losses++;  // Increment Player 1's losses.
+            }
+        }
+        else { // An illegal shot occurred, the current player loses.
+            if (currentPlayer == 1) { // Player 1 loses due to foul.
+                g_stats.p1_losses++;  // Increment Player 1's losses.
+                g_stats.ai_wins++;    // Increment AI's wins.
+            }
+            else { // AI loses due to foul (meaning Player 1 wins).
+             // Note: ai_wins tracks AI's wins, p1_wins tracks P1's wins.
+             // An AI loss is a P1 win.
+                g_stats.p1_wins++;    // Increment Player 1's wins.
+            }
+        }
+            /*// --- CORRECTED STATS LOGIC ---
+            if (currentPlayer == 1) { // Player 1 legally pockets the 8-ball and wins.
+                g_stats.p1_wins++;    // Increment Player 1's wins.
+                // AI's losses are implicitly tracked by P1's wins.
+            }
+            else { // AI legally pockets the 8-ball and wins.
+                g_stats.ai_wins++;    // Increment AI's wins.
+                g_stats.p1_losses++;  // Increment Player 1's losses.
+            }
+        }
+        else { // An illegal shot occurred, the current player loses.
+            if (currentPlayer == 1) { // Player 1 loses due to foul.
+                g_stats.p1_losses++;  // Increment Player 1's losses.
+                g_stats.ai_wins++;    // Increment AI's wins.
+            }
+            else { // AI loses due to foul.
+                g_stats.ai_wins++;    // This is AI losses, which are P1 wins.
+                g_stats.p1_wins++;    // Increment Player 1's wins.
+            }
+        }*/
+            /*if (currentPlayer == 1) {
                 g_stats.p1_wins++;
                 g_stats.ai_wins++; // AI lost to P1
             }
@@ -4250,7 +4294,7 @@ void CheckGameOverConditions(bool eightBallPocketed, bool cueBallPocketed)
                 g_stats.ai_wins++; // Should be opponent wins, AI loses
                 g_stats.p1_wins++;
             }
-        }
+        }*/
     }
     else { // Human vs Human
         g_stats.human_vs_human_games++;
