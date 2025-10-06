@@ -1827,6 +1827,7 @@ void LoadSettings(); // For deserialization
 void SaveSettings(); // For serialization
 const std::wstring SETTINGS_FILE_NAME = L"Pool-Settings.txt";
 void ResetGame(HINSTANCE hInstance); // Function to handle F2 reset
+void UpdateWindowTitle();            // <<< ADD THIS LINE
 
 // --- Forward Declaration for Window Procedure --- <<< Add this line HERE
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -2168,10 +2169,12 @@ void ShowNewGameDialog(HINSTANCE hInstance) {
             //player2Info.name = L"NetBurst-Hex™"/*"Billy Ray Cyrus"*//*"Player 2"*/;
         }
         // Update window title
-        std::wstring windowTitle = L"Midnight Pool 4"/*"Direct2D 8-Ball Pool"*/;
-        if (gameMode == HUMAN_VS_HUMAN) windowTitle += L" (Human vs Human)";
-        else windowTitle += L" (Human vs " + player2Info.name + L")";
-        SetWindowText(hwndMain, windowTitle.c_str());
+            // Update window title using the new helper
+        UpdateWindowTitle();
+        //std::wstring windowTitle = L"Midnight Pool 4"/*"Direct2D 8-Ball Pool"*/;
+        //if (gameMode == HUMAN_VS_HUMAN) windowTitle += L" (Human vs Human)";
+        //else windowTitle += L" (Human vs " + player2Info.name + L")";
+        //SetWindowText(hwndMain, windowTitle.c_str());
 
         // --- NEW: Apply the selected table color ---
         TABLE_COLOR = tableColorValues[selectedTableColor];
@@ -2254,16 +2257,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     int windowY = (screenHeight - WINDOW_HEIGHT) / 2;
 
     // --- Change Window Title based on mode ---
-    std::wstring windowTitle = L"Midnight Pool 4"/*"Direct2D 8-Ball Pool"*/;
-    if (gameMode == HUMAN_VS_HUMAN) windowTitle += L" (Human vs Human)";
-    else windowTitle += L" (Human vs " + player2Info.name + L")";
+        
+    //std::wstring windowTitle = L"Midnight Pool 4"/*"Direct2D 8-Ball Pool"*/;
+    //if (gameMode == HUMAN_VS_HUMAN) windowTitle += L" (Human vs Human)";
+    //else windowTitle += L" (Human vs " + player2Info.name + L")";
 
     DWORD dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX; // No WS_THICKFRAME, No WS_MAXIMIZEBOX
 
     hwndMain = CreateWindowEx(
-        0, L"BLISS_GameEngine"/*"Direct2D_8BallPool"*/, windowTitle.c_str(), dwStyle,
+        0, L"BLISS_GameEngine"/*"Direct2D_8BallPool"*/, L"Midnight Pool 4", dwStyle, // Create with a temporary title
         windowX, windowY, WINDOW_WIDTH, WINDOW_HEIGHT,
         NULL, NULL, hInstance, NULL
+    //hwndMain = CreateWindowEx(
+        //0, L"BLISS_GameEngine"/*"Direct2D_8BallPool"*/, windowTitle.c_str(), dwStyle,
+        //windowX, windowY, WINDOW_WIDTH, WINDOW_HEIGHT,
+        //NULL, NULL, hInstance, NULL
     );
 
     if (!hwndMain) {
@@ -2279,6 +2287,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
         CoUninitialize();
         return -1;
     }
+
+    // Set the final, correct window title after everything is ready
+    UpdateWindowTitle();
 
     InitGame(); // Initialize game state AFTER resources are ready & mode is set
     Sleep(500); // Allow window to fully initialize before starting the countdown //midi func
@@ -2315,6 +2326,25 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     CoUninitialize();
 
     return (int)msg.wParam;
+}
+
+// --- NEW HELPER FUNCTION TO UPDATE WINDOW TITLE ---
+void UpdateWindowTitle() {
+    if (!hwndMain) return;
+
+    std::wstring windowTitle = L"Midnight Pool 4";
+    if (gameMode == HUMAN_VS_HUMAN) {
+        windowTitle += L" (Human vs Human)";
+    }
+    else {
+        windowTitle += L" (Human vs " + player2Info.name + L")";
+    }
+
+    if (g_soundEffectsMuted) {
+        windowTitle += L" [Muted]";
+    }
+
+    SetWindowText(hwndMain, windowTitle.c_str());
 }
 
 // --- WndProc ---
@@ -2373,6 +2403,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             // --- FOOLPROOF Mute Toggle Logic ---
             // 1. Toggle the sound effects mute flag.
             g_soundEffectsMuted = !g_soundEffectsMuted;
+
+            // 3. Update the window title to reflect the new mute state.
+            UpdateWindowTitle();
 
             // 2. Toggle the music based on its current state.
             if (isMusicPlaying) {
