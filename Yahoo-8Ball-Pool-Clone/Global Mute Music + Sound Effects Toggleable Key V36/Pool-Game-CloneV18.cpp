@@ -2351,7 +2351,7 @@ void UpdateWindowTitle() {
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     Ball* cueBall = nullptr;
     switch (msg) {
-    case MM_MCINOTIFY:
+    /*case MM_MCINOTIFY:
         // This message is received when the MIDI file finishes playing.
         if (wParam == MCI_NOTIFY_SUCCESSFUL && isMusicPlaying) {
             // If music is still enabled, restart the track from the beginning.
@@ -2360,7 +2360,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             mciPlay.dwCallback = (DWORD_PTR)hwnd;
             mciSendCommand(midiDeviceID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)&mciPlay);
         }
-        return 0;
+        return 0;*/
     case WM_CREATE:
         return 0;
     case WM_PAINT:
@@ -2404,9 +2404,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             // 1. Toggle the sound effects mute flag.
             g_soundEffectsMuted = !g_soundEffectsMuted;
 
-            // 3. Update the window title to reflect the new mute state.
-            UpdateWindowTitle();
-
             // 2. Toggle the music based on its current state.
             if (isMusicPlaying) {
                 // If music is currently playing, stop it.
@@ -2423,6 +2420,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 std::wstring midiPathStr = midiPathBuf;
                 StartMidi(hwndMain, midiPathStr);
             }
+            // 3. Update the window title to reflect the new mute state.
+            UpdateWindowTitle();
             // --- End Mute Toggle ---
             /*g_soundEffectsMuted = !g_soundEffectsMuted; // Toggle sound effects mute
             if (isMusicPlaying) {
@@ -2954,14 +2953,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         return 0;
     }
     case WM_DESTROY:
-        isMusicPlaying = false;
+        // Correctly stops the music and cleans up resources on exit.
+        StopMidi();
+        SaveSettings();
+        PostQuitMessage(0);
+        return 0;
+        /*isMusicPlaying = false;
         if (midiDeviceID != 0) {
             mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
             midiDeviceID = 0;
             SaveSettings();
         }
         PostQuitMessage(0);
-        return 0;
+        return 0;*/
     default:
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
@@ -6624,8 +6628,127 @@ bool IsValidAIAimAngle(float angle) {
 }
 
 //midi func = start
+// midi func
+void PlayMidiInBackground(HWND hwnd, std::wstring midiPath) {
+    // This self-contained loop handles playback and looping until isMusicPlaying is false.
+    while (isMusicPlaying.load()) {
+        MCI_OPEN_PARMS mciOpen = { 0 };
+        mciOpen.lpstrDeviceType = TEXT("sequencer");
+        mciOpen.lpstrElementName = midiPath.c_str();
+
+        // Try to open the MIDI device for playback.
+        if (mciSendCommand(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_ELEMENT, (DWORD_PTR)&mciOpen) != 0) {
+            // If opening fails, wait a second before retrying to avoid errors.
+            Sleep(1000);
+            continue; // Go to the next iteration of the while loop.
+        }
+
+        // Store the device ID. It's only valid for this single playback cycle.
+        midiDeviceID = mciOpen.wDeviceID;
+
+        // Play the sound without the MCI_NOTIFY flag. We will check its status ourselves.
+        MCI_PLAY_PARMS mciPlay = { 0 };
+        mciSendCommand(midiDeviceID, MCI_PLAY, 0, (DWORD_PTR)&mciPlay);
+
+        // This is the "polling" loop. It waits here until the music finishes
+        // or until the user mutes the sound.
+        MCI_STATUS_PARMS mciStatus = { 0 };
+        mciStatus.dwItem = MCI_STATUS_MODE;
+        do {
+            // If the user mutes the music, isMusicPlaying will become false.
+            // We must break out immediately to stop the music.
+            if (!isMusicPlaying.load()) {
+                break;
+            }
+            Sleep(500); // Wait for half a second before checking the status again.
+            mciSendCommand(midiDeviceID, MCI_STATUS, MCI_STATUS_ITEM, (DWORD_PTR)&mciStatus);
+        } while (mciStatus.dwReturn == MCI_MODE_PLAY); // Loop as long as the status is "playing".
+
+        // CRITICAL: Stop and Close the device after each playback.
+        // This ensures the next loop starts cleanly from the beginning.
+        mciSendCommand(midiDeviceID, MCI_STOP, 0, NULL);
+        mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
+        midiDeviceID = 0;
+    }
+}
+/*// --- Robust looping MIDI playback (thread owns device & loops until signalled to stop) ---
+// Thread function: owns midiPath (copy) and the opened device
+// ----------------------------
+// Robust MIDI looping implementation
+// Runs in a background thread. Opens the device, loops playback by polling
+// MCI_STATUS until the track ends, then seeks to start and plays again.
+// Stops cleanly when isMusicPlaying becomes false.
+// ----------------------------
+void PlayMidiInBackground(HWND hwnd, std::wstring midiPath) {
+    // Open the MIDI device
+    MCI_OPEN_PARMS mciOpen = { 0 };
+    mciOpen.lpstrDeviceType = TEXT("sequencer");
+    mciOpen.lpstrElementName = midiPath.c_str();
+    if (mciSendCommand(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_ELEMENT, (DWORD_PTR)&mciOpen) != 0) {
+        return; // failed to open device
+    }
+
+    midiDeviceID = mciOpen.wDeviceID;
+
+    // Loop while requested
+    while (isMusicPlaying.load()) {
+        // Start playing (synchronous PLAY - we will poll status)
+        MCI_PLAY_PARMS play = { 0 };
+        if (mciSendCommand(midiDeviceID, MCI_PLAY, 0, (DWORD_PTR)&play) != 0) {
+            // can't play -> break the loop and cleanup
+            break;
+        }
+
+        // Poll playback status until it stops or we are asked to stop
+        MCI_STATUS_PARMS status = { 0 };
+        status.dwItem = MCI_STATUS_MODE;
+        while (isMusicPlaying.load()) {
+            if (mciSendCommand(midiDeviceID, MCI_STATUS, MCI_STATUS_ITEM, (DWORD_PTR)&status) != 0) {
+                // status query failed -> abort playback loop
+                break;
+            }
+            if (status.dwReturn != MCI_MODE_PLAY) break; // playback finished
+            Sleep(100); // small sleep to avoid busy-looping
+        }
+
+        if (!isMusicPlaying.load()) break;
+
+        // Seek to start for next iteration (safe to call)
+        MCI_SEEK_PARMS seek = { 0 };
+        mciSendCommand(midiDeviceID, MCI_SEEK, MCI_SEEK_TO_START, (DWORD_PTR)&seek);
+        // next loop iteration issues PLAY again
+    }
+
+    // Cleanup - make sure device is stopped and closed
+    if (midiDeviceID != 0) {
+        mciSendCommand(midiDeviceID, MCI_STOP, 0, NULL);
+        mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
+        midiDeviceID = 0;
+    }
+}*/
+/*void PlayMidiInBackground(HWND hwnd, std::wstring midiPath) {
+    // This function now runs in a short-lived thread.
+    // Its only job is to open the device and start the first playback.
+    // The device will remain open until StopMidi() is called.
+
+    MCI_OPEN_PARMS mciOpen = { 0 };
+    mciOpen.lpstrDeviceType = TEXT("sequencer");
+    mciOpen.lpstrElementName = midiPath.c_str();
+
+    // Attempt to open the MIDI device.
+    if (mciSendCommand(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_ELEMENT, (DWORD_PTR)&mciOpen) == 0) {
+        // Success! Store the device ID globally.
+        midiDeviceID = mciOpen.wDeviceID;
+
+        // Start the first playback, requesting a notification message when it finishes.
+        MCI_PLAY_PARMS mciPlay = { 0 };
+        mciPlay.dwCallback = (DWORD_PTR)hwnd; // Send MM_MCINOTIFY to our main window
+        mciSendCommand(midiDeviceID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)&mciPlay);
+    }
+    // The thread will now exit, but the music continues playing in the background.
+}*/
 // PlayMidiInBackground now takes ownership of the path (std::wstring copied into the thread)
-void PlayMidiInBackground(HWND hwnd, std::wstring midiPath) {        
+/*void PlayMidiInBackground(HWND hwnd, std::wstring midiPath) {
         // use midiPath.c_str() when calling MCI functions
         MCI_OPEN_PARMS mciOpen = { 0 };
         mciOpen.lpstrDeviceType = TEXT("sequencer");
@@ -6646,7 +6769,7 @@ void PlayMidiInBackground(HWND hwnd, std::wstring midiPath) {
         mciSendCommand(midiDeviceID, MCI_STOP, 0, NULL);
         mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
         midiDeviceID = 0;
-    }
+    }*/
     /*// --- FOOLPROOF MCI LOGIC ---
     // 1. Open the MIDI device once at the start of the thread.
     MCI_OPEN_PARMS mciOpen = { 0 };
@@ -6697,13 +6820,44 @@ void PlayMidiInBackground(HWND hwnd, std::wstring midiPath) {
     }*/
 //}
 
+// StartMidi (std::wstring) - primary start function
 void StartMidi(HWND hwnd, const std::wstring& midiPath) {
+    // If already playing, do nothing
+    if (isMusicPlaying.load()) return;
+
+    // Ensure any prior thread finished
     if (musicThread.joinable()) {
+        musicThread.join();
+    }
+
+    // Mark playing and start thread (std::wstring copied into thread)
+    isMusicPlaying.store(true);
+    musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);
+    // do NOT detach — keep joinable so StopMidi can wait on it
+}
+
+// Convenience overload for const TCHAR* call sites
+void StartMidi(HWND hwnd, const TCHAR* midiPath) {
+    if (!midiPath) return;
+    StartMidi(hwnd, std::wstring(midiPath));
+}
+/*void StartMidi(HWND hwnd, const std::wstring& midiPath) {
+    // If music is already playing (or a device is open), do nothing.
+    if (isMusicPlaying) {
+        return;
+    }
+    isMusicPlaying = true;
+    // Launch a new, short-lived thread to begin playback.
+    musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);
+    // Detach the thread, allowing it to run independently and exit when done.
+    musicThread.detach();
+}*/
+    /*if (musicThread.joinable()) {
         musicThread.join();
     }
     isMusicPlaying = true;
     // pass midiPath by value into the thread (std::thread will copy the std::wstring)
-    musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);
+    musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);*/
     /*if (musicThread.joinable()) {
         musicThread.join();
     }
@@ -6723,15 +6877,48 @@ void StartMidi(HWND hwnd, const std::wstring& midiPath) {
     }
     isMusicPlaying = true;
     musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);*/
-}
+//}
 
 void StopMidi() {
+    // Signal the thread to stop
+    if (!isMusicPlaying.load()) return;
+    isMusicPlaying.store(false);
+
+    // If a device is open, ask it to stop immediately (thread may also close it)
+    if (midiDeviceID != 0) {
+        mciSendCommand(midiDeviceID, MCI_STOP, 0, NULL);
+    }
+
+    // Wait for background thread to finish and clean up
+    if (musicThread.joinable()) {
+        musicThread.join();
+    }
+
+    // Ensure device closed
+    if (midiDeviceID != 0) {
+        mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
+        midiDeviceID = 0;
+    }
+}
+/*void StopMidi() {
+    // Check if music is supposed to be playing.
     if (isMusicPlaying) {
+        isMusicPlaying = false; // Signal to the WndProc loop to stop re-playing.
+
+        // If a device is open, stop playback and close it.
+        if (midiDeviceID != 0) {
+            mciSendCommand(midiDeviceID, MCI_STOP, 0, NULL);
+            mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
+            midiDeviceID = 0;
+        }
+    }
+}*/
+    /*if (isMusicPlaying) {
         isMusicPlaying = false; // Signal the background thread to terminate its loop.
         if (musicThread.joinable()) {
             musicThread.join(); // Wait for the thread to finish completely and clean up MCI.
         }
-    }
+    }*/
     /*if (isMusicPlaying) {
         isMusicPlaying = false;
         if (musicThread.joinable()) musicThread.join();
@@ -6740,7 +6927,7 @@ void StopMidi() {
             midiDeviceID = 0;
         }
     }*/
-}
+//}
 
 /*void PlayGameMusic(HWND hwnd) {
     // Stop any existing playback
