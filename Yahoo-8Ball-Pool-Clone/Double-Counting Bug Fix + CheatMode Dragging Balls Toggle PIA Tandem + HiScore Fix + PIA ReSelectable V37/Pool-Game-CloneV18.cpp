@@ -4520,7 +4520,39 @@ bool AssignPlayerBallTypes(BallType firstPocketedType, bool creditShooter /*= tr
 // Simplification: Assignment only happens on SOLID or STRIPE first pocket.
 
 
-// --- NEW: Centralized Game Finalization Function ---
+// --- CORRECTED: Centralized Game Finalization Function ---
+// This function is now the ONLY way a game should end. It handles the
+// game over message, statistics updates, and saving the settings file.
+void FinalizeGame(int winner, int loser, const std::wstring& reason) {
+    // 1. Set the game over message
+    PlayerInfo& winnerInfo = (winner == 1) ? player1Info : player2Info;
+    gameOverMessage = winnerInfo.name + L" Wins! " + reason;
+
+    // 2. Update statistics based on the game mode and outcome
+    if (gameMode == HUMAN_VS_AI) {
+        // --- FOOLPROOF FIX: Use a strict if/else block ---
+        // This guarantees that ONLY the winner's stats are updated.
+        if (winner == 1) { // Human (P1) is the winner
+            g_stats.p1_wins++;
+            // The AI's loss count is implicitly tracked by P1's wins.
+        }
+        else { // AI (P2) is the winner
+            g_stats.ai_wins++;
+            g_stats.p1_losses++;
+        }
+    }
+    else { // Human vs Human
+        g_stats.human_vs_human_games++;
+    }
+
+    // 3. Save the updated statistics to the file immediately
+    SaveSettings();
+
+    // 4. Set the final game state
+    currentGameState = GAME_OVER;
+}
+
+/*// --- NEW: Centralized Game Finalization Function ---
 // This function is now the ONLY way a game should end. It handles the
 // game over message, statistics updates, and saving the settings file.
 void FinalizeGame(int winner, int loser, const std::wstring& reason) {
@@ -4548,7 +4580,7 @@ void FinalizeGame(int winner, int loser, const std::wstring& reason) {
 
     // 4. Set the final game state
     currentGameState = GAME_OVER;
-}
+}*/
 
 // --- REFACTORED: Determines winner/loser and calls the centralized FinalizeGame function ---
 void CheckGameOverConditions(bool eightBallPocketed, bool cueBallPocketed)
