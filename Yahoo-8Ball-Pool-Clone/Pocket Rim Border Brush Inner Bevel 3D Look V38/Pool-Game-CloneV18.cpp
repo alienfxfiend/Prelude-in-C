@@ -170,7 +170,7 @@ HWND hwndMain = nullptr;
 GameState currentGameState = SHOWING_DIALOG; // Start by showing dialog
 std::vector<Ball> balls;
 int currentPlayer = 1; // 1 or 2
-PlayerInfo player1Info = { BallType::NONE, 0, L"Anti-Deluvian™"/*"Vince Woods"*//*"Player 1"*/};
+PlayerInfo player1Info = { BallType::NONE, 0, L"Anti-Deluvian™"/*"Vince Woods"*//*"Player 1"*/ };
 PlayerInfo player2Info = { BallType::NONE, 0, L"Virtus Pro"/*"CPU"*/ }; // Default P2 name
  // --- NEW: Global strings for customizable names ---
 std::wstring g_player1Name = L"Anti-Deluvian™";
@@ -1992,19 +1992,19 @@ INT_PTR CALLBACK EditNamesDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 
 // --- NEW Dialog Procedure ---
 INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
-       // Helper lambda to update the statistics text fields
-   auto UpdateStatsDisplay = [hDlg]() {
-       wchar_t buffer[128];
-       // P1 vs AI stats
-       swprintf_s(buffer, L"P1: %d W / %d L (vs AI)", g_stats.p1_wins, g_stats.p1_losses);
-       SetDlgItemText(hDlg, IDC_STATS_P1, buffer);
-       // P2 (Human vs Human) stats
-       swprintf_s(buffer, L"2P: %d Games Played", g_stats.human_vs_human_games);
-       SetDlgItemText(hDlg, IDC_STATS_2P, buffer);
-       // AI vs P1 stats
-       swprintf_s(buffer, L"AI: %d W / %d L (vs P1)", g_stats.ai_wins, g_stats.p1_wins);
-       SetDlgItemText(hDlg, IDC_STATS_AI, buffer);
-   };
+    // Helper lambda to update the statistics text fields
+    auto UpdateStatsDisplay = [hDlg]() {
+        wchar_t buffer[128];
+        // P1 vs AI stats
+        swprintf_s(buffer, L"P1: %d W / %d L (vs AI)", g_stats.p1_wins, g_stats.p1_losses);
+        SetDlgItemText(hDlg, IDC_STATS_P1, buffer);
+        // P2 (Human vs Human) stats
+        swprintf_s(buffer, L"2P: %d Games Played", g_stats.human_vs_human_games);
+        SetDlgItemText(hDlg, IDC_STATS_2P, buffer);
+        // AI vs P1 stats
+        swprintf_s(buffer, L"AI: %d W / %d L (vs P1)", g_stats.ai_wins, g_stats.p1_wins);
+        SetDlgItemText(hDlg, IDC_STATS_AI, buffer);
+    };
 
     switch (message) {
     case WM_INITDIALOG:
@@ -2258,7 +2258,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     int windowY = (screenHeight - WINDOW_HEIGHT) / 2;
 
     // --- Change Window Title based on mode ---
-        
+
     //std::wstring windowTitle = L"Midnight Pool 4"/*"Direct2D 8-Ball Pool"*/;
     //if (gameMode == HUMAN_VS_HUMAN) windowTitle += L" (Human vs Human)";
     //else windowTitle += L" (Human vs " + player2Info.name + L")";
@@ -2269,10 +2269,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
         0, L"BLISS_GameEngine"/*"Direct2D_8BallPool"*/, L"Midnight Pool 4", dwStyle, // Create with a temporary title
         windowX, windowY, WINDOW_WIDTH, WINDOW_HEIGHT,
         NULL, NULL, hInstance, NULL
-    //hwndMain = CreateWindowEx(
-        //0, L"BLISS_GameEngine"/*"Direct2D_8BallPool"*/, windowTitle.c_str(), dwStyle,
-        //windowX, windowY, WINDOW_WIDTH, WINDOW_HEIGHT,
-        //NULL, NULL, hInstance, NULL
+        //hwndMain = CreateWindowEx(
+            //0, L"BLISS_GameEngine"/*"Direct2D_8BallPool"*/, windowTitle.c_str(), dwStyle,
+            //windowX, windowY, WINDOW_WIDTH, WINDOW_HEIGHT,
+            //NULL, NULL, hInstance, NULL
     );
 
     if (!hwndMain) {
@@ -2352,16 +2352,16 @@ void UpdateWindowTitle() {
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     Ball* cueBall = nullptr;
     switch (msg) {
-    /*case MM_MCINOTIFY:
-        // This message is received when the MIDI file finishes playing.
-        if (wParam == MCI_NOTIFY_SUCCESSFUL && isMusicPlaying) {
-            // If music is still enabled, restart the track from the beginning.
-            mciSendCommand(midiDeviceID, MCI_SEEK, MCI_SEEK_TO_START, NULL);
-            MCI_PLAY_PARMS mciPlay = { 0 };
-            mciPlay.dwCallback = (DWORD_PTR)hwnd;
-            mciSendCommand(midiDeviceID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)&mciPlay);
-        }
-        return 0;*/
+        /*case MM_MCINOTIFY:
+            // This message is received when the MIDI file finishes playing.
+            if (wParam == MCI_NOTIFY_SUCCESSFUL && isMusicPlaying) {
+                // If music is still enabled, restart the track from the beginning.
+                mciSendCommand(midiDeviceID, MCI_SEEK, MCI_SEEK_TO_START, NULL);
+                MCI_PLAY_PARMS mciPlay = { 0 };
+                mciPlay.dwCallback = (DWORD_PTR)hwnd;
+                mciSendCommand(midiDeviceID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)&mciPlay);
+            }
+            return 0;*/
     case WM_CREATE:
         return 0;
     case WM_PAINT:
@@ -2537,19 +2537,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     }
                 }
                 break;
-            /*case VK_ESCAPE:
-                if ((currentGameState == AIMING || currentGameState == BREAKING) || shotPower > 0)
-                {
-                    shotPower = 0.0f;
-                    isAiming = false;
-                    isDraggingStick = false;
-                    keyboardAimingActive = false;
-                    if (currentGameState != BREAKING) {
-                        currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
+                /*case VK_ESCAPE:
+                    if ((currentGameState == AIMING || currentGameState == BREAKING) || shotPower > 0)
+                    {
+                        shotPower = 0.0f;
+                        isAiming = false;
+                        isDraggingStick = false;
+                        keyboardAimingActive = false;
+                        if (currentGameState != BREAKING) {
+                            currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
+                        }
                     }
-                }
-                break;*/
-                // === DEBUG: Press 'T' to set up endgame 8-ball test position ===
+                    break;*/
+                    // === DEBUG: Press 'T' to set up endgame 8-ball test position ===
             case 'T':
             case 't':
             {
@@ -2863,125 +2863,125 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         return 0;
     }
-    /*case WM_LBUTTONDOWN: {
-        ptMouse.x = LOWORD(lParam);
-        ptMouse.y = HIWORD(lParam);
-        if ((currentGameState == CHOOSING_POCKET_P1 && currentPlayer == 1) ||
-            (currentGameState == CHOOSING_POCKET_P2 && currentPlayer == 2 && !isPlayer2AI)) {
-            int clickedPocketIndex = -1;
-            for (int i = 0; i < 6; ++i) {
-                // FIXED: Use correct radius for click detection
-                float clickRadius = (i == 1 || i == 4) ? MIDDLE_HOLE_VISUAL_RADIUS : CORNER_HOLE_VISUAL_RADIUS;
-                if (GetDistanceSq((float)ptMouse.x, (float)ptMouse.y, pocketPositions[i].x, pocketPositions[i].y) < clickRadius * clickRadius * 2.25f) {
-                    clickedPocketIndex = i;
-                    break;
-                }
-            }
-            if (clickedPocketIndex != -1) {
-                if (currentPlayer == 1) calledPocketP1 = clickedPocketIndex;
-                else calledPocketP2 = clickedPocketIndex;
-                InvalidateRect(hwnd, NULL, FALSE);
-                return 0;
-            }
-            Ball* cueBall = GetCueBall();
-            int calledPocket = (currentPlayer == 1) ? calledPocketP1 : calledPocketP2;
-            if (cueBall && calledPocket != -1 && GetDistanceSq(cueBall->x, cueBall->y, (float)ptMouse.x, (float)ptMouse.y) < BALL_RADIUS * BALL_RADIUS * 25) {
-                currentGameState = AIMING;
-                pocketCallMessage = L"";
-                isAiming = true;
-                aimStartPoint = D2D1::Point2F((float)ptMouse.x, (float)ptMouse.y);
-                return 0;
-            }
-            return 0;
-        }
-        if (cheatModeEnabled) {
-            for (Ball& ball : balls) {
-                float distSq = GetDistanceSq(ball.x, ball.y, (float)ptMouse.x, (float)ptMouse.y);
-                if (distSq <= BALL_RADIUS * BALL_RADIUS * 4) {
-                    isDraggingCueBall = true;
-                    draggingBallId = ball.id;
-                    if (ball.id == 0) {
-                        if (currentPlayer == 1)
-                            currentGameState = BALL_IN_HAND_P1;
-                        else if (currentPlayer == 2 && !isPlayer2AI)
-                            currentGameState = BALL_IN_HAND_P2;
-                    }
-                    return 0;
-                }
-            }
-        }
-        Ball* cueBall = GetCueBall();
-        bool canPlayerClickInteract = ((currentPlayer == 1) || (currentPlayer == 2 && !isPlayer2AI));
-        bool canInteractState = (currentGameState == PLAYER1_TURN || currentGameState == PLAYER2_TURN ||
-            currentGameState == AIMING || currentGameState == BREAKING ||
-            currentGameState == BALL_IN_HAND_P1 || currentGameState == BALL_IN_HAND_P2 ||
-            currentGameState == PRE_BREAK_PLACEMENT);
-        if (canPlayerClickInteract && canInteractState) {
-            float spinDistSq = GetDistanceSq((float)ptMouse.x, (float)ptMouse.y, spinIndicatorCenter.x, spinIndicatorCenter.y);
-            if (spinDistSq < spinIndicatorRadius * spinIndicatorRadius * 1.2f) {
-                isSettingEnglish = true;
-                float dx = (float)ptMouse.x - spinIndicatorCenter.x;
-                float dy = (float)ptMouse.y - spinIndicatorCenter.y;
-                float dist = GetDistance(dx, dy, 0, 0);
-                if (dist > spinIndicatorRadius) { dx *= spinIndicatorRadius / dist; dy *= spinIndicatorRadius / dist; }
-                cueSpinX = dx / spinIndicatorRadius;
-                cueSpinY = dy / spinIndicatorRadius;
-                isAiming = false; isDraggingStick = false; isDraggingCueBall = false;
-                return 0;
-            }
-        }
-        if (!cueBall) return 0;
-        bool isPlacingBall = (currentGameState == BALL_IN_HAND_P1 || currentGameState == BALL_IN_HAND_P2 || currentGameState == PRE_BREAK_PLACEMENT);
-        bool isPlayerAllowedToPlace = (isPlacingBall &&
-            ((currentPlayer == 1 && currentGameState == BALL_IN_HAND_P1) ||
-                (currentPlayer == 2 && !isPlayer2AI && currentGameState == BALL_IN_HAND_P2) ||
-                (currentGameState == PRE_BREAK_PLACEMENT)));
-        if (isPlayerAllowedToPlace) {
-            float distSq = GetDistanceSq(cueBall->x, cueBall->y, (float)ptMouse.x, (float)ptMouse.y);
-            if (distSq < BALL_RADIUS * BALL_RADIUS * 9.0f) {
-                isDraggingCueBall = true;
-                isAiming = false; isDraggingStick = false;
-            }
-            else {
-                bool behindHeadstring = (currentGameState == PRE_BREAK_PLACEMENT);
-                if (IsValidCueBallPosition((float)ptMouse.x, (float)ptMouse.y, behindHeadstring)) {
-                    cueBall->x = (float)ptMouse.x; cueBall->y = (float)ptMouse.y;
-                    cueBall->vx = 0; cueBall->vy = 0;
-                    isDraggingCueBall = false;
-                    if (currentGameState == PRE_BREAK_PLACEMENT) currentGameState = BREAKING;
-                    else if (currentGameState == BALL_IN_HAND_P1) currentGameState = PLAYER1_TURN;
-                    else if (currentGameState == BALL_IN_HAND_P2) currentGameState = PLAYER2_TURN;
-                    cueAngle = 0.0f;
-                }
-            }
-            return 0;
-        }
-        bool canAim = ((currentPlayer == 1 && (currentGameState == PLAYER1_TURN || currentGameState == BREAKING)) ||
-            (currentPlayer == 2 && !isPlayer2AI && (currentGameState == PLAYER2_TURN || currentGameState == BREAKING)));
-        if (canAim) {
-            const float stickDrawLength = 150.0f * 1.4f;
-            float currentStickAngle = cueAngle + PI;
-            D2D1_POINT_2F currentStickEnd = D2D1::Point2F(cueBall->x + cosf(currentStickAngle) * stickDrawLength, cueBall->y + sinf(currentStickAngle) * stickDrawLength);
-            D2D1_POINT_2F currentStickTip = D2D1::Point2F(cueBall->x + cosf(currentStickAngle) * 5.0f, cueBall->y + sinf(currentStickAngle) * 5.0f);
-            float distToStickSq = PointToLineSegmentDistanceSq(D2D1::Point2F((float)ptMouse.x, (float)ptMouse.y), currentStickTip, currentStickEnd);
-            float stickClickThresholdSq = 36.0f;
-            float distToCueBallSq = GetDistanceSq(cueBall->x, cueBall->y, (float)ptMouse.x, (float)ptMouse.y);
-            float cueBallClickRadiusSq = BALL_RADIUS * BALL_RADIUS * 25;
-            bool clickedStick = (distToStickSq < stickClickThresholdSq);
-            bool clickedCueArea = (distToCueBallSq < cueBallClickRadiusSq);
-            if (clickedStick || clickedCueArea) {
-                isDraggingStick = clickedStick && !clickedCueArea;
-                isAiming = clickedCueArea;
-                aimStartPoint = D2D1::Point2F((float)ptMouse.x, (float)ptMouse.y);
-                shotPower = 0;
-                float dx = (float)ptMouse.x - cueBall->x;
-                float dy = (float)ptMouse.y - cueBall->y;
-                if (dx != 0 || dy != 0) cueAngle = atan2f(dy, dx);
-                if (currentGameState != BREAKING) currentGameState = AIMING;
-            }
-        }
-        return 0;
-    }*/
+                       /*case WM_LBUTTONDOWN: {
+                           ptMouse.x = LOWORD(lParam);
+                           ptMouse.y = HIWORD(lParam);
+                           if ((currentGameState == CHOOSING_POCKET_P1 && currentPlayer == 1) ||
+                               (currentGameState == CHOOSING_POCKET_P2 && currentPlayer == 2 && !isPlayer2AI)) {
+                               int clickedPocketIndex = -1;
+                               for (int i = 0; i < 6; ++i) {
+                                   // FIXED: Use correct radius for click detection
+                                   float clickRadius = (i == 1 || i == 4) ? MIDDLE_HOLE_VISUAL_RADIUS : CORNER_HOLE_VISUAL_RADIUS;
+                                   if (GetDistanceSq((float)ptMouse.x, (float)ptMouse.y, pocketPositions[i].x, pocketPositions[i].y) < clickRadius * clickRadius * 2.25f) {
+                                       clickedPocketIndex = i;
+                                       break;
+                                   }
+                               }
+                               if (clickedPocketIndex != -1) {
+                                   if (currentPlayer == 1) calledPocketP1 = clickedPocketIndex;
+                                   else calledPocketP2 = clickedPocketIndex;
+                                   InvalidateRect(hwnd, NULL, FALSE);
+                                   return 0;
+                               }
+                               Ball* cueBall = GetCueBall();
+                               int calledPocket = (currentPlayer == 1) ? calledPocketP1 : calledPocketP2;
+                               if (cueBall && calledPocket != -1 && GetDistanceSq(cueBall->x, cueBall->y, (float)ptMouse.x, (float)ptMouse.y) < BALL_RADIUS * BALL_RADIUS * 25) {
+                                   currentGameState = AIMING;
+                                   pocketCallMessage = L"";
+                                   isAiming = true;
+                                   aimStartPoint = D2D1::Point2F((float)ptMouse.x, (float)ptMouse.y);
+                                   return 0;
+                               }
+                               return 0;
+                           }
+                           if (cheatModeEnabled) {
+                               for (Ball& ball : balls) {
+                                   float distSq = GetDistanceSq(ball.x, ball.y, (float)ptMouse.x, (float)ptMouse.y);
+                                   if (distSq <= BALL_RADIUS * BALL_RADIUS * 4) {
+                                       isDraggingCueBall = true;
+                                       draggingBallId = ball.id;
+                                       if (ball.id == 0) {
+                                           if (currentPlayer == 1)
+                                               currentGameState = BALL_IN_HAND_P1;
+                                           else if (currentPlayer == 2 && !isPlayer2AI)
+                                               currentGameState = BALL_IN_HAND_P2;
+                                       }
+                                       return 0;
+                                   }
+                               }
+                           }
+                           Ball* cueBall = GetCueBall();
+                           bool canPlayerClickInteract = ((currentPlayer == 1) || (currentPlayer == 2 && !isPlayer2AI));
+                           bool canInteractState = (currentGameState == PLAYER1_TURN || currentGameState == PLAYER2_TURN ||
+                               currentGameState == AIMING || currentGameState == BREAKING ||
+                               currentGameState == BALL_IN_HAND_P1 || currentGameState == BALL_IN_HAND_P2 ||
+                               currentGameState == PRE_BREAK_PLACEMENT);
+                           if (canPlayerClickInteract && canInteractState) {
+                               float spinDistSq = GetDistanceSq((float)ptMouse.x, (float)ptMouse.y, spinIndicatorCenter.x, spinIndicatorCenter.y);
+                               if (spinDistSq < spinIndicatorRadius * spinIndicatorRadius * 1.2f) {
+                                   isSettingEnglish = true;
+                                   float dx = (float)ptMouse.x - spinIndicatorCenter.x;
+                                   float dy = (float)ptMouse.y - spinIndicatorCenter.y;
+                                   float dist = GetDistance(dx, dy, 0, 0);
+                                   if (dist > spinIndicatorRadius) { dx *= spinIndicatorRadius / dist; dy *= spinIndicatorRadius / dist; }
+                                   cueSpinX = dx / spinIndicatorRadius;
+                                   cueSpinY = dy / spinIndicatorRadius;
+                                   isAiming = false; isDraggingStick = false; isDraggingCueBall = false;
+                                   return 0;
+                               }
+                           }
+                           if (!cueBall) return 0;
+                           bool isPlacingBall = (currentGameState == BALL_IN_HAND_P1 || currentGameState == BALL_IN_HAND_P2 || currentGameState == PRE_BREAK_PLACEMENT);
+                           bool isPlayerAllowedToPlace = (isPlacingBall &&
+                               ((currentPlayer == 1 && currentGameState == BALL_IN_HAND_P1) ||
+                                   (currentPlayer == 2 && !isPlayer2AI && currentGameState == BALL_IN_HAND_P2) ||
+                                   (currentGameState == PRE_BREAK_PLACEMENT)));
+                           if (isPlayerAllowedToPlace) {
+                               float distSq = GetDistanceSq(cueBall->x, cueBall->y, (float)ptMouse.x, (float)ptMouse.y);
+                               if (distSq < BALL_RADIUS * BALL_RADIUS * 9.0f) {
+                                   isDraggingCueBall = true;
+                                   isAiming = false; isDraggingStick = false;
+                               }
+                               else {
+                                   bool behindHeadstring = (currentGameState == PRE_BREAK_PLACEMENT);
+                                   if (IsValidCueBallPosition((float)ptMouse.x, (float)ptMouse.y, behindHeadstring)) {
+                                       cueBall->x = (float)ptMouse.x; cueBall->y = (float)ptMouse.y;
+                                       cueBall->vx = 0; cueBall->vy = 0;
+                                       isDraggingCueBall = false;
+                                       if (currentGameState == PRE_BREAK_PLACEMENT) currentGameState = BREAKING;
+                                       else if (currentGameState == BALL_IN_HAND_P1) currentGameState = PLAYER1_TURN;
+                                       else if (currentGameState == BALL_IN_HAND_P2) currentGameState = PLAYER2_TURN;
+                                       cueAngle = 0.0f;
+                                   }
+                               }
+                               return 0;
+                           }
+                           bool canAim = ((currentPlayer == 1 && (currentGameState == PLAYER1_TURN || currentGameState == BREAKING)) ||
+                               (currentPlayer == 2 && !isPlayer2AI && (currentGameState == PLAYER2_TURN || currentGameState == BREAKING)));
+                           if (canAim) {
+                               const float stickDrawLength = 150.0f * 1.4f;
+                               float currentStickAngle = cueAngle + PI;
+                               D2D1_POINT_2F currentStickEnd = D2D1::Point2F(cueBall->x + cosf(currentStickAngle) * stickDrawLength, cueBall->y + sinf(currentStickAngle) * stickDrawLength);
+                               D2D1_POINT_2F currentStickTip = D2D1::Point2F(cueBall->x + cosf(currentStickAngle) * 5.0f, cueBall->y + sinf(currentStickAngle) * 5.0f);
+                               float distToStickSq = PointToLineSegmentDistanceSq(D2D1::Point2F((float)ptMouse.x, (float)ptMouse.y), currentStickTip, currentStickEnd);
+                               float stickClickThresholdSq = 36.0f;
+                               float distToCueBallSq = GetDistanceSq(cueBall->x, cueBall->y, (float)ptMouse.x, (float)ptMouse.y);
+                               float cueBallClickRadiusSq = BALL_RADIUS * BALL_RADIUS * 25;
+                               bool clickedStick = (distToStickSq < stickClickThresholdSq);
+                               bool clickedCueArea = (distToCueBallSq < cueBallClickRadiusSq);
+                               if (clickedStick || clickedCueArea) {
+                                   isDraggingStick = clickedStick && !clickedCueArea;
+                                   isAiming = clickedCueArea;
+                                   aimStartPoint = D2D1::Point2F((float)ptMouse.x, (float)ptMouse.y);
+                                   shotPower = 0;
+                                   float dx = (float)ptMouse.x - cueBall->x;
+                                   float dy = (float)ptMouse.y - cueBall->y;
+                                   if (dx != 0 || dy != 0) cueAngle = atan2f(dy, dx);
+                                   if (currentGameState != BREAKING) currentGameState = AIMING;
+                               }
+                           }
+                           return 0;
+                       }*/
     case WM_LBUTTONUP: {
         // --- Cheat-mode pocket processing: uses the exact same IsBallInPocketBlackArea() test
         if (cheatModeEnabled && draggingBallId != -1) {
@@ -3081,27 +3081,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         isDraggingCueBall = false;
                         return 0;
                     }
-                        /*// 8-ball pocketed during cheat: enforce the "called pocket" rule.
-                        int called = (currentPlayer == 1 ? calledPocketP1 : calledPocketP2);
-                        int actual = lastEightBallPocketIndex;
-                        currentGameState = GAME_OVER;
-                        if (actual == called) {
-                            gameOverMessage = (currentPlayer == 1 ? player1Info.name : player2Info.name)
-                                + L" Wins! (Called pocket: " + std::to_wstring(called)
-                                + L", Actual pocket: " + std::to_wstring(actual) + L")";
-                        }
-                        else {
-                            gameOverMessage = (currentPlayer == 1 ? player2Info.name : player1Info.name)
-                                + L" Wins! (Called: " + std::to_wstring(called)
-                                + L", Actual: " + std::to_wstring(actual) + L")";
-                        }
-                        // end the message processing immediately
-                        draggingBallId = -1;
-                        isDraggingCueBall = false;
-                        return 0;
-                    }*/
+                    /*// 8-ball pocketed during cheat: enforce the "called pocket" rule.
+                    int called = (currentPlayer == 1 ? calledPocketP1 : calledPocketP2);
+                    int actual = lastEightBallPocketIndex;
+                    currentGameState = GAME_OVER;
+                    if (actual == called) {
+                        gameOverMessage = (currentPlayer == 1 ? player1Info.name : player2Info.name)
+                            + L" Wins! (Called pocket: " + std::to_wstring(called)
+                            + L", Actual pocket: " + std::to_wstring(actual) + L")";
+                    }
+                    else {
+                        gameOverMessage = (currentPlayer == 1 ? player2Info.name : player1Info.name)
+                            + L" Wins! (Called: " + std::to_wstring(called)
+                            + L", Actual: " + std::to_wstring(actual) + L")";
+                    }
+                    // end the message processing immediately
+                    draggingBallId = -1;
+                    isDraggingCueBall = false;
+                    return 0;
+                }*/
 
-                    // we pocketed this ball — don't test other pockets for it
+                // we pocketed this ball — don't test other pockets for it
                     break;
                 } // end pocket loop
             }
@@ -3672,13 +3672,13 @@ void GameUpdate() {
                             }, TEXT("cue.wav")).detach();
                     }
 
-                        ApplyShot(
-                            aiPlannedShotDetails.power,
-                            aiPlannedShotDetails.angle,
-                            aiPlannedShotDetails.spinX,
-                            aiPlannedShotDetails.spinY
-                        );
-                        aiPlannedShotDetails.isValid = false;
+                    ApplyShot(
+                        aiPlannedShotDetails.power,
+                        aiPlannedShotDetails.angle,
+                        aiPlannedShotDetails.spinX,
+                        aiPlannedShotDetails.spinY
+                    );
+                    aiPlannedShotDetails.isValid = false;
                 }
                 currentGameState = SHOT_IN_PROGRESS;
                 foulCommitted = false;
@@ -7031,9 +7031,9 @@ void PlayMidiInBackground(HWND hwnd, std::wstring midiPath) {
             midiDeviceID = 0;
         }
     }*/
-//}
+    //}
 
-// StartMidi (std::wstring) - primary start function
+    // StartMidi (std::wstring) - primary start function
 void StartMidi(HWND hwnd, const std::wstring& midiPath) {
     // If already playing, do nothing
     if (isMusicPlaying.load()) return;
@@ -7065,31 +7065,31 @@ void StartMidi(HWND hwnd, const TCHAR* midiPath) {
     // Detach the thread, allowing it to run independently and exit when done.
     musicThread.detach();
 }*/
-    /*if (musicThread.joinable()) {
-        musicThread.join();
-    }
-    isMusicPlaying = true;
-    // pass midiPath by value into the thread (std::thread will copy the std::wstring)
-    musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);*/
-    /*if (musicThread.joinable()) {
-        musicThread.join();
-    }
-    isMusicPlaying = true;
-    // pass midiPath by value into the thread (std::thread will copy the std::wstring)
-    musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);*/
-    /*// Before starting a new thread, ensure the old one (if any) is finished.
-    if (musicThread.joinable()) {
-        musicThread.join();
-    }
-    // Set the flag to true so the new thread's loop will execute.
-    isMusicPlaying = true;
-    // Create and launch the new background thread.
-    musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);*/
-    /*if (isMusicPlaying) {
-        StopMidi();
-    }
-    isMusicPlaying = true;
-    musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);*/
+/*if (musicThread.joinable()) {
+    musicThread.join();
+}
+isMusicPlaying = true;
+// pass midiPath by value into the thread (std::thread will copy the std::wstring)
+musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);*/
+/*if (musicThread.joinable()) {
+    musicThread.join();
+}
+isMusicPlaying = true;
+// pass midiPath by value into the thread (std::thread will copy the std::wstring)
+musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);*/
+/*// Before starting a new thread, ensure the old one (if any) is finished.
+if (musicThread.joinable()) {
+    musicThread.join();
+}
+// Set the flag to true so the new thread's loop will execute.
+isMusicPlaying = true;
+// Create and launch the new background thread.
+musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);*/
+/*if (isMusicPlaying) {
+    StopMidi();
+}
+isMusicPlaying = true;
+musicThread = std::thread(PlayMidiInBackground, hwnd, midiPath);*/
 //}
 
 void StopMidi() {
@@ -7126,20 +7126,20 @@ void StopMidi() {
         }
     }
 }*/
-    /*if (isMusicPlaying) {
-        isMusicPlaying = false; // Signal the background thread to terminate its loop.
-        if (musicThread.joinable()) {
-            musicThread.join(); // Wait for the thread to finish completely and clean up MCI.
-        }
-    }*/
-    /*if (isMusicPlaying) {
-        isMusicPlaying = false;
-        if (musicThread.joinable()) musicThread.join();
-        if (midiDeviceID != 0) {
-            mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
-            midiDeviceID = 0;
-        }
-    }*/
+/*if (isMusicPlaying) {
+    isMusicPlaying = false; // Signal the background thread to terminate its loop.
+    if (musicThread.joinable()) {
+        musicThread.join(); // Wait for the thread to finish completely and clean up MCI.
+    }
+}*/
+/*if (isMusicPlaying) {
+    isMusicPlaying = false;
+    if (musicThread.joinable()) musicThread.join();
+    if (midiDeviceID != 0) {
+        mciSendCommand(midiDeviceID, MCI_CLOSE, 0, NULL);
+        midiDeviceID = 0;
+    }
+}*/
 //}
 
 /*void PlayGameMusic(HWND hwnd) {
@@ -7330,7 +7330,7 @@ void DrawTable(ID2D1RenderTarget* pRT, ID2D1Factory* pFactory) {
     // --- Layer 4: Black Pocket Holes ---
     // These are drawn on top of the felt but will be underneath the cushions.
     ID2D1SolidColorBrush* pPocketBrush = nullptr;
-    ID2D1SolidColorBrush * pRimBorderBrush = nullptr; // <<< ADD: Brush for the inner gray border
+    ID2D1SolidColorBrush* pRimBorderBrush = nullptr; // <<< ADD: Brush for the inner gray border
     const float rimBorderAlpha = 0.5f; // <<< DEFINE: Alpha constant here (0.0 to 1.0)
     pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pPocketBrush);
     pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::LightGray, rimBorderAlpha), &pRimBorderBrush); // <<< ADD: Light gray, semi-transparent
@@ -7592,12 +7592,12 @@ void DrawTable(ID2D1RenderTarget* pRT, ID2D1Factory* pFactory) {
                     pRT->FillEllipse(&h, pRivetHighlight);
                 }
             }
-        //}
+            //}
 
-        SafeRelease(&pRivetBrush);
-        SafeRelease(&pRivetHighlight);
-    }
+            SafeRelease(&pRivetBrush);
+            SafeRelease(&pRivetHighlight);
         }
+    }
     //}
 
     // Part 2: Draw the Inner Gradient Rim as 6 Polygons with Correct V-Cuts
@@ -8570,204 +8570,204 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
         };
         pRT->DrawLine(finalLineEnd, reflectionEnd, pReflectBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
     }
-        // If the shot is impossible (aiming too far to the side), no lines are drawn.  
-        /*// 1. Draw the ghost ball at the point of contact
-        D2D1_ELLIPSE ghostCue = D2D1::Ellipse(ballCollisionPoint, BALL_RADIUS, BALL_RADIUS);
-        pRT->DrawEllipse(ghostCue, pGhostBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
+    // If the shot is impossible (aiming too far to the side), no lines are drawn.  
+    /*// 1. Draw the ghost ball at the point of contact
+    D2D1_ELLIPSE ghostCue = D2D1::Ellipse(ballCollisionPoint, BALL_RADIUS, BALL_RADIUS);
+    pRT->DrawEllipse(ghostCue, pGhostBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
 
-        // --- ACCURATE FORWARD-FACING DUAL TRAJECTORY CALCULATION ---
+    // --- ACCURATE FORWARD-FACING DUAL TRAJECTORY CALCULATION ---
 
-        // Define key points for clarity
-        D2D1_POINT_2F targetCenter = { hitBall->x, hitBall->y };
-        D2D1_POINT_2F ghostCenter = ballCollisionPoint; // This is the impact point
+    // Define key points for clarity
+    D2D1_POINT_2F targetCenter = { hitBall->x, hitBall->y };
+    D2D1_POINT_2F ghostCenter = ballCollisionPoint; // This is the impact point
 
-        // --- PATH 1: Object Ball Trajectory (Purple Line) ---
-        // Physics: The object ball travels along the line from the ghost ball's center through its own center.
-        float purpleAngle = atan2f(targetCenter.y - ghostCenter.y, targetCenter.x - ghostCenter.x);
-        D2D1_POINT_2F purpleStart = targetCenter;
-        D2D1_POINT_2F purpleEnd = {
-            purpleStart.x + cosf(purpleAngle) * rayLength,
-            purpleStart.y + sinf(purpleAngle) * rayLength
-        };
+    // --- PATH 1: Object Ball Trajectory (Purple Line) ---
+    // Physics: The object ball travels along the line from the ghost ball's center through its own center.
+    float purpleAngle = atan2f(targetCenter.y - ghostCenter.y, targetCenter.x - ghostCenter.x);
+    D2D1_POINT_2F purpleStart = targetCenter;
+    D2D1_POINT_2F purpleEnd = {
+        purpleStart.x + cosf(purpleAngle) * rayLength,
+        purpleStart.y + sinf(purpleAngle) * rayLength
+    };
 
-        // --- PATH 2: Cue Ball Trajectory After Impact (Cyan Line) - Stun Shot Approximation ---
-                // --- PATH 2: Cue Ball Trajectory After Impact (Cyan Line) - Follow Shot Approximation ---
-        // This model shows the cue ball deflecting but also moving forward, which is intuitive for a default shot.
+    // --- PATH 2: Cue Ball Trajectory After Impact (Cyan Line) - Stun Shot Approximation ---
+            // --- PATH 2: Cue Ball Trajectory After Impact (Cyan Line) - Follow Shot Approximation ---
+    // This model shows the cue ball deflecting but also moving forward, which is intuitive for a default shot.
 
-        // First, get the direction for a pure "stun" shot (perpendicular to the object ball's path).
-        D2D1_POINT_2F cueInitialDir = { cosA, sinA }; // The direction the cue ball was initially traveling.
-        D2D1_POINT_2F impactLineDir = { cosf(purpleAngle), sinf(purpleAngle) }; // The direction of force transfer.
-        float projection = cueInitialDir.x * impactLineDir.x + cueInitialDir.y * impactLineDir.y;
-        D2D1_POINT_2F cueStunDir = { // This is the perpendicular component of the initial velocity.
-            cueInitialDir.x - projection * impactLineDir.x,
-            cueInitialDir.y - projection * impactLineDir.y
-        };
+    // First, get the direction for a pure "stun" shot (perpendicular to the object ball's path).
+    D2D1_POINT_2F cueInitialDir = { cosA, sinA }; // The direction the cue ball was initially traveling.
+    D2D1_POINT_2F impactLineDir = { cosf(purpleAngle), sinf(purpleAngle) }; // The direction of force transfer.
+    float projection = cueInitialDir.x * impactLineDir.x + cueInitialDir.y * impactLineDir.y;
+    D2D1_POINT_2F cueStunDir = { // This is the perpendicular component of the initial velocity.
+        cueInitialDir.x - projection * impactLineDir.x,
+        cueInitialDir.y - projection * impactLineDir.y
+    };
 
-        // The "follow" direction is a blend of the initial forward motion and the stun deflection.
-        // For a straight shot, stun_dir is (0,0), so the cue follows forward.
-        // For a cut shot, it's a mix, showing both deflection and forward roll.
-        D2D1_POINT_2F cueFollowDir = {
-            (cueInitialDir.x * 0.5f) + (cueStunDir.x * 0.5f), // Blend the two directions
-            (cueInitialDir.y * 0.5f) + (cueStunDir.y * 0.5f)
-        };
+    // The "follow" direction is a blend of the initial forward motion and the stun deflection.
+    // For a straight shot, stun_dir is (0,0), so the cue follows forward.
+    // For a cut shot, it's a mix, showing both deflection and forward roll.
+    D2D1_POINT_2F cueFollowDir = {
+        (cueInitialDir.x * 0.5f) + (cueStunDir.x * 0.5f), // Blend the two directions
+        (cueInitialDir.y * 0.5f) + (cueStunDir.y * 0.5f)
+    };
 
-        // Normalize the final blended direction vector
-        float cueFollowDirLen = sqrtf(cueFollowDir.x * cueFollowDir.x + cueFollowDir.y * cueFollowDir.y);
-        if (cueFollowDirLen > 1e-6f) {
-            cueFollowDir.x /= cueFollowDirLen;
-            cueFollowDir.y /= cueFollowDirLen;
-        }
+    // Normalize the final blended direction vector
+    float cueFollowDirLen = sqrtf(cueFollowDir.x * cueFollowDir.x + cueFollowDir.y * cueFollowDir.y);
+    if (cueFollowDirLen > 1e-6f) {
+        cueFollowDir.x /= cueFollowDirLen;
+        cueFollowDir.y /= cueFollowDirLen;
+    }
 
-        float cyanAngle = atan2f(cueFollowDir.y, cueFollowDir.x);
-        D2D1_POINT_2F cyanStart = ghostCenter;
-        D2D1_POINT_2F cyanEnd = {
-            cyanStart.x + cosf(cyanAngle) * rayLength,
-            cyanStart.y + sinf(cyanAngle) * rayLength
-        };*/
+    float cyanAngle = atan2f(cueFollowDir.y, cueFollowDir.x);
+    D2D1_POINT_2F cyanStart = ghostCenter;
+    D2D1_POINT_2F cyanEnd = {
+        cyanStart.x + cosf(cyanAngle) * rayLength,
+        cyanStart.y + sinf(cyanAngle) * rayLength
+    };*/
 
-        /*// Physics: For a stun shot, the cue ball's path is perpendicular to the object ball's path.
-        // We determine the direction of deflection ("left" or "right") using a cross product.
-        D2D1_POINT_2F vInitial = { ghostCenter.x - rayStart.x, ghostCenter.y - rayStart.y };
-        D2D1_POINT_2F vToTarget = { targetCenter.x - rayStart.x, targetCenter.y - rayStart.y };
-        float cross_product_z = vInitial.x * vToTarget.y - vInitial.y * vToTarget.x;
+    /*// Physics: For a stun shot, the cue ball's path is perpendicular to the object ball's path.
+    // We determine the direction of deflection ("left" or "right") using a cross product.
+    D2D1_POINT_2F vInitial = { ghostCenter.x - rayStart.x, ghostCenter.y - rayStart.y };
+    D2D1_POINT_2F vToTarget = { targetCenter.x - rayStart.x, targetCenter.y - rayStart.y };
+    float cross_product_z = vInitial.x * vToTarget.y - vInitial.y * vToTarget.x;
 
-        // If target is to the "left" of the cue's path (cross > 0), cue deflects "right" (-90 deg).
-        // If target is to the "right" (cross < 0), cue deflects "left" (+90 deg).
-        float cyanAngle = (cross_product_z > 0) ? (purpleAngle - PI / 2.0f) : (purpleAngle + PI / 2.0f);
+    // If target is to the "left" of the cue's path (cross > 0), cue deflects "right" (-90 deg).
+    // If target is to the "right" (cross < 0), cue deflects "left" (+90 deg).
+    float cyanAngle = (cross_product_z > 0) ? (purpleAngle - PI / 2.0f) : (purpleAngle + PI / 2.0f);
 
-        D2D1_POINT_2F cyanStart = ghostCenter;
-        D2D1_POINT_2F cyanEnd = {
-            cyanStart.x + cosf(cyanAngle) * rayLength,
-            cyanStart.y + sinf(cyanAngle) * rayLength
-        };*/
+    D2D1_POINT_2F cyanStart = ghostCenter;
+    D2D1_POINT_2F cyanEnd = {
+        cyanStart.x + cosf(cyanAngle) * rayLength,
+        cyanStart.y + sinf(cyanAngle) * rayLength
+    };*/
 
-        // --- Shorten lines to the first rail they hit for a clean look ---
-        /*D2D1_POINT_2F intersection;
-        if (FindFirstRailIntersection(purpleStart, purpleEnd, intersection)) {
-            purpleEnd = intersection;
-        }
-        if (FindFirstRailIntersection(cyanStart, cyanEnd, intersection)) {
-            cyanEnd = intersection;
-        }
+    // --- Shorten lines to the first rail they hit for a clean look ---
+    /*D2D1_POINT_2F intersection;
+    if (FindFirstRailIntersection(purpleStart, purpleEnd, intersection)) {
+        purpleEnd = intersection;
+    }
+    if (FindFirstRailIntersection(cyanStart, cyanEnd, intersection)) {
+        cyanEnd = intersection;
+    }
 
-        // --- Draw the accurate, forward-facing lines ---
-        pRT->DrawLine(purpleStart, purpleEnd, pPurpleBrush, 2.0f);
-        pRT->DrawLine(cyanStart, cyanEnd, pCyanBrush, 2.0f);
-    }*/
+    // --- Draw the accurate, forward-facing lines ---
+    pRT->DrawLine(purpleStart, purpleEnd, pPurpleBrush, 2.0f);
+    pRT->DrawLine(cyanStart, cyanEnd, pCyanBrush, 2.0f);
+}*/
 
-     /*// Draw primary cue ball path (white dashed line)
-    pRT->DrawLine(rayStart, finalLineEnd, pBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
+/*// Draw primary cue ball path (white dashed line)
+pRT->DrawLine(rayStart, finalLineEnd, pBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
 
-    // If the line hits a ball, draw the ghost ball and trajectory lines
-    if (!aimingAtRail && hitBall) {
-        // 1. Draw the ghost ball at the point of contact
-        D2D1_ELLIPSE ghostCue = D2D1::Ellipse(ballCollisionPoint, BALL_RADIUS, BALL_RADIUS);
-        pRT->DrawEllipse(ghostCue, pGhostBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
+// If the line hits a ball, draw the ghost ball and trajectory lines
+if (!aimingAtRail && hitBall) {
+    // 1. Draw the ghost ball at the point of contact
+    D2D1_ELLIPSE ghostCue = D2D1::Ellipse(ballCollisionPoint, BALL_RADIUS, BALL_RADIUS);
+    pRT->DrawEllipse(ghostCue, pGhostBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
 
-        // --- ACCURATE DUAL TRAJECTORY CALCULATION (PURPLE & CYAN LINES) ---
+    // --- ACCURATE DUAL TRAJECTORY CALCULATION (PURPLE & CYAN LINES) ---
 
-        // Define key points for clarity
-        D2D1_POINT_2F targetCenter = { hitBall->x, hitBall->y };
-        D2D1_POINT_2F ghostCenter = ballCollisionPoint; // This is the impact point
+    // Define key points for clarity
+    D2D1_POINT_2F targetCenter = { hitBall->x, hitBall->y };
+    D2D1_POINT_2F ghostCenter = ballCollisionPoint; // This is the impact point
 
-        // 2. OBJECT BALL TRAJECTORY (PURPLE LINE)
-        // Physics: The object ball ALWAYS travels along the line connecting its center to the impact point.
-        float objectBallDx = ghostCenter.x - targetCenter.x;
-        float objectBallDy = ghostCenter.y - targetCenter.y;
-        float objectBallAngle = atan2f(objectBallDy, objectBallDx);
+    // 2. OBJECT BALL TRAJECTORY (PURPLE LINE)
+    // Physics: The object ball ALWAYS travels along the line connecting its center to the impact point.
+    float objectBallDx = ghostCenter.x - targetCenter.x;
+    float objectBallDy = ghostCenter.y - targetCenter.y;
+    float objectBallAngle = atan2f(objectBallDy, objectBallDx);
 
-        D2D1_POINT_2F purpleStart = targetCenter;
-        D2D1_POINT_2F purpleEnd = {
-            purpleStart.x + cosf(objectBallAngle) * rayLength,
-            purpleStart.y + sinf(objectBallAngle) * rayLength
-        };
+    D2D1_POINT_2F purpleStart = targetCenter;
+    D2D1_POINT_2F purpleEnd = {
+        purpleStart.x + cosf(objectBallAngle) * rayLength,
+        purpleStart.y + sinf(objectBallAngle) * rayLength
+    };
 
-        // 3. CUE BALL TRAJECTORY AFTER IMPACT (CYAN LINE) - Stun Shot Approximation
-        // Physics: For a stun shot, the cue ball's final velocity is perpendicular to the object ball's path.
-        // The cue ball's new direction is its initial direction minus the component parallel to the impact line.
-        D2D1_POINT_2F cueInitialDir = { cosA, sinA };
-        D2D1_POINT_2F impactLineDir = { cosf(objectBallAngle), sinf(objectBallAngle) };
+    // 3. CUE BALL TRAJECTORY AFTER IMPACT (CYAN LINE) - Stun Shot Approximation
+    // Physics: For a stun shot, the cue ball's final velocity is perpendicular to the object ball's path.
+    // The cue ball's new direction is its initial direction minus the component parallel to the impact line.
+    D2D1_POINT_2F cueInitialDir = { cosA, sinA };
+    D2D1_POINT_2F impactLineDir = { cosf(objectBallAngle), sinf(objectBallAngle) };
 
-        // Find how much of the cue's initial direction is along the impact line using the dot product.
-        float projection = cueInitialDir.x * impactLineDir.x + cueInitialDir.y * impactLineDir.y;
+    // Find how much of the cue's initial direction is along the impact line using the dot product.
+    float projection = cueInitialDir.x * impactLineDir.x + cueInitialDir.y * impactLineDir.y;
 
-        // Subtract this component to get the perpendicular (tangent) direction.
-        D2D1_POINT_2F cueFinalDir = {
-            cueInitialDir.x - projection * impactLineDir.x,
-            cueInitialDir.y - projection * impactLineDir.y
-        };
+    // Subtract this component to get the perpendicular (tangent) direction.
+    D2D1_POINT_2F cueFinalDir = {
+        cueInitialDir.x - projection * impactLineDir.x,
+        cueInitialDir.y - projection * impactLineDir.y
+    };
 
-        // Normalize the final direction vector
-        float cueFinalDirLen = sqrtf(cueFinalDir.x * cueFinalDir.x + cueFinalDir.y * cueFinalDir.y);
-        if (cueFinalDirLen > 1e-6f) {
-            cueFinalDir.x /= cueFinalDirLen;
-            cueFinalDir.y /= cueFinalDirLen;
-        }
+    // Normalize the final direction vector
+    float cueFinalDirLen = sqrtf(cueFinalDir.x * cueFinalDir.x + cueFinalDir.y * cueFinalDir.y);
+    if (cueFinalDirLen > 1e-6f) {
+        cueFinalDir.x /= cueFinalDirLen;
+        cueFinalDir.y /= cueFinalDirLen;
+    }
 
-        D2D1_POINT_2F cyanStart = ghostCenter;
-        D2D1_POINT_2F cyanEnd = {
-            cyanStart.x + cueFinalDir.x * rayLength,
-            cyanStart.y + cueFinalDir.y * rayLength
-        };
+    D2D1_POINT_2F cyanStart = ghostCenter;
+    D2D1_POINT_2F cyanEnd = {
+        cyanStart.x + cueFinalDir.x * rayLength,
+        cyanStart.y + cueFinalDir.y * rayLength
+    };
 
-        // --- Shorten lines to the first rail they hit for a clean look ---
-        D2D1_POINT_2F intersection;
-        if (FindFirstRailIntersection(purpleStart, purpleEnd, intersection)) {
-            purpleEnd = intersection;
-        }
-        if (FindFirstRailIntersection(cyanStart, cyanEnd, intersection)) {
-            cyanEnd = intersection;
-        }
+    // --- Shorten lines to the first rail they hit for a clean look ---
+    D2D1_POINT_2F intersection;
+    if (FindFirstRailIntersection(purpleStart, purpleEnd, intersection)) {
+        purpleEnd = intersection;
+    }
+    if (FindFirstRailIntersection(cyanStart, cyanEnd, intersection)) {
+        cyanEnd = intersection;
+    }
 
-        // 4. Draw the accurate trajectory lines
-        pRT->DrawLine(purpleStart, purpleEnd, pPurpleBrush, 2.0f, pDashedStyle ? pDashedStyle : NULL);
-        pRT->DrawLine(cyanStart, cyanEnd, pCyanBrush, 2.0f, pDashedStyle ? pDashedStyle : NULL);
-    }*/
-    // --- CONTEXT: This is the end of the NEW, ACCURATE code block ---
-        // End improved trajectory logic
+    // 4. Draw the accurate trajectory lines
+    pRT->DrawLine(purpleStart, purpleEnd, pPurpleBrush, 2.0f, pDashedStyle ? pDashedStyle : NULL);
+    pRT->DrawLine(cyanStart, cyanEnd, pCyanBrush, 2.0f, pDashedStyle ? pDashedStyle : NULL);
+}*/
+// --- CONTEXT: This is the end of the NEW, ACCURATE code block ---
+    // End improved trajectory logic
 
-    //new code end
+//new code end
 
-        // -- Cue Ball Path after collision (Optional, requires physics) --
-        // Very simplified: Assume cue deflects, angle depends on cut angle.
-        // float cutAngle = acosf(cosf(cueAngle - targetProjectionAngle)); // Angle between paths
-        // float cueDeflectionAngle = ? // Depends on cutAngle, spin, etc. Hard to predict accurately.
-        // D2D1_POINT_2F cueProjectionEnd = ...
-        // pRT->DrawLine(ballCollisionPoint, cueProjectionEnd, pGhostBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
+    // -- Cue Ball Path after collision (Optional, requires physics) --
+    // Very simplified: Assume cue deflects, angle depends on cut angle.
+    // float cutAngle = acosf(cosf(cueAngle - targetProjectionAngle)); // Angle between paths
+    // float cueDeflectionAngle = ? // Depends on cutAngle, spin, etc. Hard to predict accurately.
+    // D2D1_POINT_2F cueProjectionEnd = ...
+    // pRT->DrawLine(ballCollisionPoint, cueProjectionEnd, pGhostBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
 
-        // --- Accuracy Comment ---
-        // Note: The visual accuracy of this projection, especially for cut shots (hitting the ball off-center)
-        // or shots with spin, is limited by the simplified physics model. Real pool physics involves
-        // collision-induced throw, spin transfer, and cue ball deflection not fully simulated here.
-        // The ghost ball method shows the *ideal* line for a center-cue hit without spin.
+    // --- Accuracy Comment ---
+    // Note: The visual accuracy of this projection, especially for cut shots (hitting the ball off-center)
+    // or shots with spin, is limited by the simplified physics model. Real pool physics involves
+    // collision-induced throw, spin transfer, and cue ball deflection not fully simulated here.
+    // The ghost ball method shows the *ideal* line for a center-cue hit without spin.
 
-    //}
-    /*else if (aimingAtRail && hitRailIndex != -1) {
-        // Aiming at a rail: Draw reflection line
-        float reflectAngle = cueAngle;
-        // Reflect angle based on which rail was hit
-        if (hitRailIndex == 0 || hitRailIndex == 1) { // Left or Right rail
-            reflectAngle = PI - cueAngle; // Reflect horizontal component
-        }
-        else { // Top or Bottom rail
-            reflectAngle = -cueAngle; // Reflect vertical component
-        }
-        // Normalize angle if needed (atan2 usually handles this)
-        while (reflectAngle > PI) reflectAngle -= 2 * PI;
-        while (reflectAngle <= -PI) reflectAngle += 2 * PI;
+//}
+/*else if (aimingAtRail && hitRailIndex != -1) {
+    // Aiming at a rail: Draw reflection line
+    float reflectAngle = cueAngle;
+    // Reflect angle based on which rail was hit
+    if (hitRailIndex == 0 || hitRailIndex == 1) { // Left or Right rail
+        reflectAngle = PI - cueAngle; // Reflect horizontal component
+    }
+    else { // Top or Bottom rail
+        reflectAngle = -cueAngle; // Reflect vertical component
+    }
+    // Normalize angle if needed (atan2 usually handles this)
+    while (reflectAngle > PI) reflectAngle -= 2 * PI;
+    while (reflectAngle <= -PI) reflectAngle += 2 * PI;
 
 
-        float reflectionLength = 60.0f; // Length of the reflection line
-        D2D1_POINT_2F reflectionEnd = D2D1::Point2F(
-            finalLineEnd.x + cosf(reflectAngle) * reflectionLength,
-            finalLineEnd.y + sinf(reflectAngle) * reflectionLength
-        );
+    float reflectionLength = 60.0f; // Length of the reflection line
+    D2D1_POINT_2F reflectionEnd = D2D1::Point2F(
+        finalLineEnd.x + cosf(reflectAngle) * reflectionLength,
+        finalLineEnd.y + sinf(reflectAngle) * reflectionLength
+    );
 
-        // Draw the reflection line (e.g., using a different color/style)
-        pRT->DrawLine(finalLineEnd, reflectionEnd, pReflectBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
-    }*/
+    // Draw the reflection line (e.g., using a different color/style)
+    pRT->DrawLine(finalLineEnd, reflectionEnd, pReflectBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
+}*/
 
-    // Release resources
+// Release resources
     SafeRelease(&pBrush);
     SafeRelease(&pGhostBrush);
     SafeRelease(&pCueBrush);
@@ -9246,7 +9246,7 @@ if (SUCCEEDED(pFactory->CreatePathGeometry(&pPath))) {
 
         // --- MODIFIED: Foul Text (Large Red, Bottom Center) ---
     // Draw if the logical foul flag is set OR if the display counter is active.
-if ((foulCommitted || foulDisplayCounter > 0) && currentGameState != SHOT_IN_PROGRESS) {
+    if ((foulCommitted || foulDisplayCounter > 0) && currentGameState != SHOT_IN_PROGRESS) {
         ID2D1SolidColorBrush* pFoulBrush = nullptr;
         pRT->CreateSolidColorBrush(FOUL_TEXT_COLOR, &pFoulBrush);
         if (pFoulBrush && pLargeTextFormat) {
