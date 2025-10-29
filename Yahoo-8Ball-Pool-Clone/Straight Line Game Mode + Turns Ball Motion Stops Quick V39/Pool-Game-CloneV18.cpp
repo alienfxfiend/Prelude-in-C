@@ -1374,23 +1374,12 @@ bool IsBallInPocket(const Ball* ball, int p)
     return IsBallInPocketPolygon(*ball, p);
 } //end
 
-// --- NEW HELPER FOR STRAIGHT POOL RE-RACK ---
+// --- MODIFIED HELPER FOR STRAIGHT POOL RE-RACK ---
 void ReRackStraightPool() {
-    // Find the one ball left on the table
-    Ball* lastBall = nullptr;
-    for (Ball& b : balls) {
-        if (b.id != 0 && !b.isPocketed) {
-            lastBall = &b;
-            break;
-        }
-    }
-    // TODO: Handle edge case where lastBall interferes with rack spot (move to head spot)
-    // TODO: Handle edge case where cueBall interferes with rack spot (move to kitchen)
-
-    // Define rack positions (same as InitGame)
+    // --- Define Rack and Spot Positions ---
     float spacingX = BALL_RADIUS * 2.0f * 0.866f;
     float spacingY = BALL_RADIUS * 2.0f * 1.0f;
-    D2D1_POINT_2F rackPositions[15];
+    D2D1_POINT_2F rackPositions[15]; // Positions 0 to 14
     int rackIndex = 0;
     for (int row = 0; row < 5; ++row) {
         for (int col = 0; col <= row; ++col) {
@@ -1400,12 +1389,113 @@ void ReRackStraightPool() {
             rackPositions[rackIndex++] = D2D1::Point2F(x, y);
         }
     }
+    const D2D1_POINT_2F headSpot = rackPositions[0]; // Apex position
+    const float collisionThresholdSq = (BALL_RADIUS * 2.0f) * (BALL_RADIUS * 2.0f); // Squared distance for overlap check
 
-    // Place the 14 pocketed balls back in the rack, leaving apex empty (index 0)
+    // --- Find the last object ball and the cue ball ---
+    Ball* lastBall = nullptr;
+    Ball* cueBall = GetCueBall(); // Get cue ball pointer
+
+    for (Ball& b : balls) {
+        if (b.id != 0 && !b.isPocketed) {
+            lastBall = &b;
+            break; // Found the single remaining object ball
+        }
+    }
+
+    // Safety checks - should not happen if called correctly when 1 ball is left
+    if (!lastBall || !cueBall) {
+        // Error condition or unexpected state, maybe just reset game?
+        // For now, just return to avoid crashing.
+        currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
+        if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
+        return;
+    }
+
+    bool lastBallMoved = false;
+    bool cueBallMoved = false;
+
+    // --- Edge Case 1: Check if lastBall interferes with the rack area (spots 1-14) ---
+    for (int i = 1; i <= 14; ++i) { // Check spots where balls will be placed
+        if (GetDistanceSq(lastBall->x, lastBall->y, rackPositions[i].x, rackPositions[i].y) < collisionThresholdSq) {
+            // Obstruction found! Move lastBall to the headSpot.
+            lastBall->x = headSpot.x;
+            lastBall->y = headSpot.y;
+            lastBall->vx = 0;
+            lastBall->vy = 0;
+            lastBallMoved = true;
+            break; // No need to check further spots for lastBall
+        }
+    }
+
+    // --- Edge Case 2: Check if cueBall interferes with ANY rack spot (0-14) ---
+    // This check includes the headSpot where lastBall might have just been moved.
+    bool cueObstructs = false;
+    for (int i = 0; i <= 14; ++i) { // Check ALL spots including the head spot
+        if (GetDistanceSq(cueBall->x, cueBall->y, rackPositions[i].x, rackPositions[i].y) < collisionThresholdSq) {
+            cueObstructs = true;
+            break;
+        }
+    }
+
+    if (cueObstructs) {
+        // Cue ball obstructs. Move it behind the headstring (kitchen) and give ball-in-hand.
+
+        // Find a valid spot in the kitchen (reuse Respawn logic concept but simpler)
+        float targetX = TABLE_LEFT + (HEADSTRING_X - TABLE_LEFT) * 0.5f;
+        float targetY = TABLE_TOP + TABLE_HEIGHT / 2.0f;
+        int attempts = 0;
+        bool positionFound = false;
+
+        // Check against lastBall's potential new position as well
+        while (attempts < 50) {
+            // Check overlap with lastBall only
+            if (GetDistanceSq(targetX, targetY, lastBall->x, lastBall->y) >= collisionThresholdSq &&
+                targetX < HEADSTRING_X - BALL_RADIUS) // Ensure it's behind headstring
+            {
+                positionFound = true;
+                break;
+            }
+            // Try nudging
+            targetX += (static_cast<float>(rand() % 100 - 50) / 100.0f) * BALL_RADIUS * 1.5f;
+            targetY += (static_cast<float>(rand() % 100 - 50) / 100.0f) * BALL_RADIUS * 1.5f;
+            // Clamp within kitchen bounds
+            targetX = std::max(TABLE_LEFT + BALL_RADIUS, std::min(targetX, HEADSTRING_X - BALL_RADIUS));
+            targetY = std::max(TABLE_TOP + BALL_RADIUS, std::min(targetY, TABLE_BOTTOM - BALL_RADIUS));
+            attempts++;
+        }
+        // Fallback if nudging fails
+        if (!positionFound) {
+            targetX = TABLE_LEFT + BALL_RADIUS * 2.0f;
+            targetY = RACK_POS_Y;
+        }
+
+
+        cueBall->x = targetX;
+        cueBall->y = targetY;
+        cueBall->vx = 0;
+        cueBall->vy = 0;
+        cueBallMoved = true;
+
+        // Set state to Ball-in-Hand for the current player
+        if (currentPlayer == 1) {
+            currentGameState = BALL_IN_HAND_P1;
+            aiTurnPending = false;
+        }
+        else { // Player 2
+            currentGameState = BALL_IN_HAND_P2;
+            aiTurnPending = isPlayer2AI; // Trigger AI placement if needed
+        }
+    }
+
+    // --- Place the 14 pocketed balls back in the rack ---
+    // Place them in spots 1 to 14, leaving the headSpot (index 0) open,
+    // unless lastBall was moved there.
     int placedCount = 0;
     for (Ball& b : balls) {
-        if (b.id != 0 && b.isPocketed && placedCount < 14) {
-            // Find next available rack spot (skip apex index 0)
+        // Place if pocketed AND it's not the lastBall (even if lastBall was moved)
+        if (b.id != 0 && b.isPocketed && (&b != lastBall) && placedCount < 14) {
+            // Find next available rack spot (skip index 0 - the head spot)
             int targetRackIndex = placedCount + 1; // Start placing from index 1
 
             b.x = rackPositions[targetRackIndex].x;
@@ -1416,12 +1506,17 @@ void ReRackStraightPool() {
             placedCount++;
         }
     }
-    ballsOnTableCount = 15; // Reset count
-    // Play continues from current player
-    currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
-    if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
+    ballsOnTableCount = 15; // Reset count to 15 (14 placed + lastBall)
 
-    // Play a sound?
+    // --- Set Game State for Continued Play (unless cue was moved) ---
+    if (!cueBallMoved) {
+        // If cue ball wasn't moved, the current player continues their turn normally.
+        currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
+        if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
+    }
+    // Else: State was already set to BALL_IN_HAND above.
+
+    // --- Play Re-Rack Sound ---
     if (!g_soundEffectsMuted) {
         PlaySound(TEXT("rack.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
     }
