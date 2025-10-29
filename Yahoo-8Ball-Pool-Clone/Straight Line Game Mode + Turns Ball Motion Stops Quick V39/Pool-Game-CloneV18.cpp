@@ -3158,22 +3158,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                            return 0;
                        }*/
     case WM_LBUTTONUP: {
-        // --- Cheat-mode pocket processing: uses the exact same IsBallInPocketBlackArea() test
+        // --- Cheat-mode pocket processing ---
         if (cheatModeEnabled && draggingBallId != -1) {
             Ball* b = GetBallById(draggingBallId);
             if (b) {
                 bool playedPocketSound = false;
+                bool ballPocketedInCheat = false; // Flag to track if pocketing occurred
+
                 for (int p = 0; p < 6; ++p) {
-                    // Use the same precise black-area test used by physics.
+                    // Use the precise mask test
                     if (!IsBallTouchingPocketMask_D2D(*b, p)) continue;
 
-                    // Mark pocketed and record which pocket (especially important for the 8-ball)
-                    if (b->id == 8) {
-                        lastEightBallPocketIndex = p;
-                    }
+                    // --- Common Pocketing Actions (Do these first) ---
+                    ballPocketedInCheat = true; // Mark that pocketing happened
                     b->isPocketed = true;
                     b->vx = b->vy = 0.0f;
-                    pocketedThisTurn.push_back(b->id);
+                    // pocketedThisTurn.push_back(b->id); // Not strictly needed for cheat scoring logic
+
                     if (!playedPocketSound) {
                         if (!g_soundEffectsMuted) {
                             std::thread([](const TCHAR* soundName) { PlaySound(soundName, NULL, SND_FILENAME | SND_NODEFAULT); }, TEXT("pocket.wav")).detach();
@@ -3181,118 +3182,142 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         playedPocketSound = true;
                     }
 
-                    // If table is still "open" ... assign types to the shooter immediately.
-                    if (player1Info.assignedType == BallType::NONE
-                        && player2Info.assignedType == BallType::NONE
-                        && (b->type == BallType::SOLID || b->type == BallType::STRIPE))
-                    {
-                        // This function now correctly handles the FIRST ball count.
-                        AssignPlayerBallTypes(b->type);
-                    }
-                    // FIX: This 'else' prevents double-counting the first ball.
-                    else {
-                        // Update pocket counts for all subsequent balls.
-                        if (b->id != 0 && b->id != 8) {
-                            if (b->type == player1Info.assignedType) player1Info.ballsPocketedCount++;
-                            else if (b->type == player2Info.assignedType) player2Info.ballsPocketedCount++;
+                    // --- Game Mode Specific Logic ---
+                    if (currentGameType == GameType::STRAIGHT_POOL) {
+                        // Straight Pool Scoring & Ball Count
+                        if (b->id > 0 && b->id <= 15) { // Any numbered ball counts
+                            if (currentPlayer == 1) {
+                                player1StraightPoolScore++;
+                            }
+                            else {
+                                player2StraightPoolScore++;
+                            }
+                            ballsOnTableCount--; // Decrement count for re-rack check
                         }
                     }
-                    /*// If table is still "open" (no assignments yet) and the pocketed ball is an object ball,
-                    // assign types to the shooter immediately.
-                    if (player1Info.assignedType == BallType::NONE
-                        && player2Info.assignedType == BallType::NONE
-                        && (b->type == BallType::SOLID || b->type == BallType::STRIPE))
-                    {
-                        AssignPlayerBallTypes(b->type);
-                        // Give the shooter one ball counted immediately (they just pocketed it)
-                        if (currentPlayer == 1) player1Info.ballsPocketedCount = 1;
-                        else                    player2Info.ballsPocketedCount = 1;
+                    else if (currentGameType == GameType::EIGHT_BALL_MODE) {
+                        // Original 8-Ball Logic
+                        if (b->id == 8) {
+                            lastEightBallPocketIndex = p; // Record 8-ball pocket
+                        }
+
+                        // Assign types if table is open
+                        if (player1Info.assignedType == BallType::NONE &&
+                            player2Info.assignedType == BallType::NONE &&
+                            (b->type == BallType::SOLID || b->type == BallType::STRIPE))
+                        {
+                            AssignPlayerBallTypes(b->type, true); // Pass true to credit
+                        }
+                        // Update pocket counts only AFTER types are assigned
+                        else if (player1Info.assignedType != BallType::NONE) {
+                            if (b->id != 0 && b->id != 8) {
+                                if (b->type == player1Info.assignedType) player1Info.ballsPocketedCount++;
+                                else if (b->type == player2Info.assignedType) player2Info.ballsPocketedCount++;
+                            }
+                        }
                     }
+                    // --- End Game Mode Specific Logic ---
 
-                    // Update pocket counts (don't count cue or 8-ball here)
-                    if (b->id != 0 && b->id != 8) {
-                        if (b->type == player1Info.assignedType) player1Info.ballsPocketedCount++;
-                        else if (b->type == player2Info.assignedType) player2Info.ballsPocketedCount++;
-                    }*/
+                    break; // Ball pocketed, stop checking other pockets for this ball
+                } // End pocket loop
 
-                    // If this was an object ball (not the 8-ball), check if shooter now has 7 balls.
-                    if (b->id != 8) {
-                        PlayerInfo& shooter = (currentPlayer == 1 ? player1Info : player2Info);
-                        if (shooter.ballsPocketedCount >= 7) {
-                            // Prepare for called-pocket selection for the 8-ball
-                            if (currentPlayer == 1) calledPocketP1 = -1;
-                            else                  calledPocketP2 = -1;
-                            currentGameState = (currentPlayer == 1) ? CHOOSING_POCKET_P1 : CHOOSING_POCKET_P2;
-                            // finalize this cheat pocket step and return from WM_LBUTTONUP
+                // --- Post-Pocketing Checks (After the pocket loop) ---
+                if (ballPocketedInCheat) {
+                    if (currentGameType == GameType::STRAIGHT_POOL) {
+                        // Check for Game Over FIRST
+                        CheckGameOverConditions(false, false); // Check Straight Pool win condition
+
+                        // Check for Re-Rack AFTER decrementing count, ONLY if game isn't over
+                        if (currentGameState != GAME_OVER && ballsOnTableCount == 1) {
+                            ReRackStraightPool();
+                            // ReRack function sets the next state (often Ball-in-Hand or Player Turn)
+                        }
+                        else if (currentGameState != GAME_OVER) {
+                            // Player continues turn after successful cheat pocket
+                            currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
+                            if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
+                        }
+
+                    }
+                    else if (currentGameType == GameType::EIGHT_BALL_MODE) {
+                        // Check if player is now on the 8-ball (if a numbered ball was pocketed)
+                        if (b->id != 8) {
+                            PlayerInfo& shooter = (currentPlayer == 1 ? player1Info : player2Info);
+                            if (shooter.assignedType != BallType::NONE && shooter.ballsPocketedCount >= 7) {
+                                CheckAndTransitionToPocketChoice(currentPlayer);
+                                // State transition handled within CheckAndTransition
+                            }
+                            else if (currentGameState != GAME_OVER) {
+                                // Player continues turn if not on 8-ball yet and game isn't over
+                                currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
+                                if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
+                            }
+                        }
+                        // Check for Game Over if 8-ball was the one pocketed
+                        else if (b->id == 8) {
+                            int shooterId = currentPlayer;
+                            int opponentId = (currentPlayer == 1) ? 2 : 1;
+                            int called = (shooterId == 1) ? calledPocketP1 : calledPocketP2;
+                            int actual = lastEightBallPocketIndex;
+                            bool clearedGroupBeforeShot = false;
+                            PlayerInfo& shooterInfo = (shooterId == 1) ? player1Info : player2Info;
+                            // Assume group *was* cleared if pocketing 8-ball in cheat mode now
+                            if (shooterInfo.assignedType != BallType::NONE) {
+                                clearedGroupBeforeShot = (shooterInfo.ballsPocketedCount >= 7);
+                            }
+
+                            std::wstring reason = L"(Cheat Mode)";
+                            bool isLegalWinCheat = clearedGroupBeforeShot && (called != -1) && (called == actual);
+
+                            if (isLegalWinCheat) {
+                                FinalizeGame(shooterId, opponentId, reason);
+                            }
+                            else {
+                                reason += L" - Illegal 8-Ball";
+                                if (!clearedGroupBeforeShot) reason += L" (Early)";
+                                else if (called == -1) reason += L" (Not Called)";
+                                else if (called != actual) reason += L" (Wrong Pocket)";
+                                FinalizeGame(opponentId, shooterId, reason);
+                            }
+                            // If FinalizeGame was called, reset dragging state and exit handler early
                             draggingBallId = -1;
                             isDraggingCueBall = false;
-                            return 0;
+                            return 0; // Exit WM_LBUTTONUP processing
                         }
-                        else {
-                            // Keep the shooter's turn (cheat pocket gives them another opportunity)
+                        // If game didn't end and player isn't on 8-ball, continue turn
+                        else if (currentGameState != GAME_OVER) {
                             currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
                             if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
                         }
                     }
-                    else {
-                        // 8-ball pocketed during cheat: use the centralized FinalizeGame function.
-                        int shooterId = currentPlayer;
-                        int opponentId = (currentPlayer == 1) ? 2 : 1;
-                        int called = (shooterId == 1) ? calledPocketP1 : calledPocketP2;
-                        int actual = lastEightBallPocketIndex;
+                } // End if (ballPocketedInCheat)
 
-                        std::wstring reason = L"(Cheat Mode)";
+            } // End if (b)
 
-                        // Determine the winner and call the finalization function.
-                        if (actual == called) {
-                            FinalizeGame(shooterId, opponentId, reason);
-                        }
-                        else {
-                            FinalizeGame(opponentId, shooterId, reason + L" - Wrong Pocket");
-                        }
+            // Reset dragging state after cheat mode processing is complete
+            draggingBallId = -1;
+            isDraggingCueBall = false; // Reset the general dragging flag
+            // Don't return here yet, allow standard mouse up logic to run if needed
+        } // End if (cheatModeEnabled && draggingBallId != -1)
 
-                        // End message processing immediately.
-                        draggingBallId = -1;
-                        isDraggingCueBall = false;
-                        return 0;
-                    }
-                    /*// 8-ball pocketed during cheat: enforce the "called pocket" rule.
-                    int called = (currentPlayer == 1 ? calledPocketP1 : calledPocketP2);
-                    int actual = lastEightBallPocketIndex;
-                    currentGameState = GAME_OVER;
-                    if (actual == called) {
-                        gameOverMessage = (currentPlayer == 1 ? player1Info.name : player2Info.name)
-                            + L" Wins! (Called pocket: " + std::to_wstring(called)
-                            + L", Actual pocket: " + std::to_wstring(actual) + L")";
-                    }
-                    else {
-                        gameOverMessage = (currentPlayer == 1 ? player2Info.name : player1Info.name)
-                            + L" Wins! (Called: " + std::to_wstring(called)
-                            + L", Actual: " + std::to_wstring(actual) + L")";
-                    }
-                    // end the message processing immediately
-                    draggingBallId = -1;
-                    isDraggingCueBall = false;
-                    return 0;
-                }*/
+        // --- Standard Mouse Release Logic (Aiming, Placement, English) ---
+        // (This is the code you provided, placed *after* the cheat mode block)
 
-                // we pocketed this ball — don't test other pockets for it
-                    break;
-                } // end pocket loop
-            }
-        }
         ptMouse.x = LOWORD(lParam);
         ptMouse.y = HIWORD(lParam);
-        Ball* cueBall = GetCueBall();
+        Ball* cueBall = GetCueBall(); // Re-get cueBall pointer just in case
+
+        // Handle release after aiming/dragging stick
         if ((isAiming || isDraggingStick) &&
             ((currentPlayer == 1 && (currentGameState == AIMING || currentGameState == BREAKING)) ||
                 (!isPlayer2AI && currentPlayer == 2 && (currentGameState == AIMING || currentGameState == BREAKING))))
         {
-            bool wasAiming = isAiming;
+            bool wasAiming = isAiming; // Store state before resetting
             bool wasDraggingStick = isDraggingStick;
-            isAiming = false; isDraggingStick = false;
-            if (shotPower > 0.15f) {
-                if (currentGameState != AI_THINKING) {
+            isAiming = false; isDraggingStick = false; // Reset flags
+
+            if (shotPower > 0.15f) { // Only shoot if there's power
+                if (currentGameState != AI_THINKING) { // Don't allow human shot during AI thinking
                     firstHitBallIdThisShot = -1; cueHitObjectBallThisShot = false; railHitAfterContact = false;
                     if (!g_soundEffectsMuted) {
                         std::thread([](const TCHAR* soundName) { PlaySound(soundName, NULL, SND_FILENAME | SND_NODEFAULT); }, TEXT("cue.wav")).detach();
@@ -3302,55 +3327,70 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     foulCommitted = false; pocketedThisTurn.clear();
                 }
             }
-            else if (currentGameState != AI_THINKING) {
-                if (currentGameState == BREAKING) {}
-                else {
+            else if (currentGameState != AI_THINKING) { // If no power, revert state (unless AI thinking)
+                if (currentGameState != BREAKING) { // Don't revert BREAKING state just by clicking
                     // FIX: Check if we need to return to pocket selection state
-                    if (IsPlayerOnEightBall(currentPlayer)) {
+                    if (currentGameType == GameType::EIGHT_BALL_MODE && IsPlayerOnEightBall(currentPlayer)) {
                         currentGameState = (currentPlayer == 1) ? CHOOSING_POCKET_P1 : CHOOSING_POCKET_P2;
                     }
-                    else {
+                    else { // Otherwise, go back to standard turn state
                         currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
                     }
-                    if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = false;
+                    if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = false; // Cancel pending AI turn if human reverted
                 }
             }
-            /*else if (currentGameState != AI_THINKING) {
-                if (currentGameState == BREAKING) {}
-                else {
-                    currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
-                    if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = false;
-                }
-            }*/
-            shotPower = 0;
+            shotPower = 0; // Reset shot power after release
         }
-        if (isDraggingCueBall) {
+
+        // Handle release after dragging cue ball for placement
+        if (isDraggingCueBall) { // Note: This flag is now ONLY used for cue ball placement, not cheat dragging
             isDraggingCueBall = false;
             bool isPlacingState = (currentGameState == BALL_IN_HAND_P1 || currentGameState == BALL_IN_HAND_P2 || currentGameState == PRE_BREAK_PLACEMENT);
             bool isPlayerAllowed = (isPlacingState &&
                 ((currentPlayer == 1 && currentGameState == BALL_IN_HAND_P1) ||
                     (currentPlayer == 2 && !isPlayer2AI && currentGameState == BALL_IN_HAND_P2) ||
-                    (currentGameState == PRE_BREAK_PLACEMENT)));
+                    (currentGameState == PRE_BREAK_PLACEMENT && (currentPlayer == 1 || !isPlayer2AI)) // Allow human P1/P2 in PRE_BREAK
+                    ));
+
             if (isPlayerAllowed && cueBall) {
                 bool behindHeadstring = (currentGameState == PRE_BREAK_PLACEMENT);
                 if (IsValidCueBallPosition(cueBall->x, cueBall->y, behindHeadstring)) {
-                    if (currentGameState == PRE_BREAK_PLACEMENT) currentGameState = BREAKING;
-                    else if (currentGameState == BALL_IN_HAND_P1) currentGameState = PLAYER1_TURN;
-                    else if (currentGameState == BALL_IN_HAND_P2) currentGameState = PLAYER2_TURN;
-                    cueAngle = 0.0f;
+                    // Valid placement, finalize state
+                    if (currentGameState == PRE_BREAK_PLACEMENT) {
+                        currentGameState = BREAKING; // Ready to aim the break
+                    }
+                    else if (currentGameState == BALL_IN_HAND_P1) {
+                        currentGameState = PLAYER1_TURN;
+                    }
+                    else if (currentGameState == BALL_IN_HAND_P2) {
+                        currentGameState = PLAYER2_TURN;
+                    }
+                    cueAngle = 0.0f; // Reset aim angle after placement
+
+                    // After placing ball-in-hand, check if player is now on the 8-ball
                     if (currentGameState == PLAYER1_TURN || currentGameState == PLAYER2_TURN)
                     {
-                        CheckAndTransitionToPocketChoice(currentPlayer);
+                        if (currentGameType == GameType::EIGHT_BALL_MODE) {
+                            CheckAndTransitionToPocketChoice(currentPlayer);
+                        }
                     }
                 }
-                else {}
+                else {
+                    // Invalid placement - ideally, the visual indicator already showed this.
+                    // You might want to force the ball back to a default valid spot here,
+                    // or just leave it where it is and rely on the visual cue.
+                    // For simplicity, we leave it, assuming the player saw the red indicator.
+                }
             }
         }
+
+        // Handle release after setting english
         if (isSettingEnglish) {
             isSettingEnglish = false;
         }
-        return 0;
-    }
+
+        return 0; // Standard return for message handled
+    } // End WM_LBUTTONUP case
     case WM_DESTROY:
         // Correctly stops the music and cleans up resources on exit.
         StopMidi();
