@@ -7,7 +7,7 @@
 * ~~default Table dither effect. & add Grainy Felt Texture For Table.~~
 * ~~Balls In Motion Effect When Struck & Rolling.~~
 * Kibitzer (Cheat) Mode: Shows/ Traces All Predicted Trajectory Paths Taken When Hit By Current Shot Strength & Aim.
-* Better DrawAimingAids() To Dynamically Better Reflect Contact-Ball <!-- Target Ball ? --> Tip/ Edge Angled Shots.
+* Better DrawAimingAids() To Dynamically Better Reflect Contact-Ball <!-- Target Ball ? --> Tip/ Edge sharp-Angled cut-Shots.
 * ~~Some Visual Feedback When Targetting Wrong Player's Balls.~~
 * ~~AI Should Handle Bank Shots And English Spin Better /w Better Shot Handling Logic/ Planning/ Decision Making. Enhance AI Shot-Strength for more intense heavy-impact shots!~~
 * ~~In Enabling Fouls To Work In Tandem /w 'Pocket Indicator Arrow', The Foul Text Was Overriden (It Currently Does Not Display) —Needs Revamped code Fix.~~
