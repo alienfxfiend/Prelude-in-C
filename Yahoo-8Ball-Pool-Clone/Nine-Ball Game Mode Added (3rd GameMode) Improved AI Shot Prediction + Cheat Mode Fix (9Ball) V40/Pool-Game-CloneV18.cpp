@@ -3263,6 +3263,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         if (cheatModeEnabled && draggingBallId != -1) {
             Ball* b = GetBallById(draggingBallId);
             if (b) {
+                bool nineBallPocketedCheat = false; // NEW: 9-Ball cheat flag
                 bool playedPocketSound = false;
                 bool ballPocketedInCheat = false; // Flag to track if pocketing occurred
 
@@ -3294,6 +3295,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                                 player2StraightPoolScore++;
                             }
                             ballsOnTableCount--; // Decrement count for re-rack check
+                        }
+                    }
+                    else if (currentGameType == GameType::NINE_BALL) {
+                        // 9-Ball: We just need to know if the 9-ball was pocketed.
+                        if (b->id == 9) {
+                            nineBallPocketedCheat = true;
                         }
                     }
                     else if (currentGameType == GameType::EIGHT_BALL_MODE) {
@@ -3387,6 +3394,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         }
                         // If game didn't end and player isn't on 8-ball, continue turn
                         else if (currentGameState != GAME_OVER) {
+                            currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
+                            if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
+                        }
+                    }
+                    else if (currentGameType == GameType::NINE_BALL) {
+                        if (nineBallPocketedCheat) {
+                            // 9-Ball was pocketed, this is a win
+                            FinalizeGame(currentPlayer, (currentPlayer == 1) ? 2 : 1, L"(Cheat Mode 9-Ball)");
+                            draggingBallId = -1;
+                            isDraggingCueBall = false;
+                            return 0; // Exit handler
+                        }
+                        else {
+                            // Any other ball was pocketed, update lowest and continue turn
+                            UpdateLowestBall();
                             currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
                             if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
                         }
