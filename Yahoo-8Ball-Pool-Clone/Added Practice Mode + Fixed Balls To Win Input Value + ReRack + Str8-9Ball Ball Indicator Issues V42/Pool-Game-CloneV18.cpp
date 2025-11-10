@@ -10008,6 +10008,9 @@ void DrawUI(ID2D1RenderTarget* pRT) {
         // Draw simplified UI for Practice Mode
         std::wostringstream oss;
         oss << L"Practice Mode (Free Play)";
+        if (currentGameType == GameType::STRAIGHT_POOL) {
+            oss << L"\nScore: " << player1StraightPoolScore; // Still show score for Straight Pool
+        }
         /*if (currentGameType == GameType::STRAIGHT_POOL) {
             oss << L"\nScore: " << player1StraightPoolScore << L" / " << targetScoreStraightPool; // Still show score for Straight Pool
         }*/
