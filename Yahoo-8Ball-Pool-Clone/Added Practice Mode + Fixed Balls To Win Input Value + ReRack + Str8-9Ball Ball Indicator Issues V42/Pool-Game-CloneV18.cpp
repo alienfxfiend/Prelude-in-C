@@ -383,6 +383,8 @@ bool AssignPlayerBallTypes(BallType firstPocketedType,
 void CheckGameOverConditions(bool eightBallPocketed, bool cueBallPocketed);
 void FinalizeGame(int winner, int loser, const std::wstring& reason); // <<< ADD THIS NEW LINE
 void ReRackPracticeMode(); // NEW: For re-racking in practice mode
+void ReRackStraightPool(); // Forward declaration for your existing function
+void HandleCheatDropPocket(Ball* b, int p); // Atomic cheat drop handler
 Ball* GetBallById(int id);
 Ball* GetCueBall();
 //void PlayGameMusic(HWND hwnd); //midi func
@@ -1434,6 +1436,94 @@ void RespawnBall(int ballId) {
     ballToRespawn->vx = 0;
     ballToRespawn->vy = 0;
     ballToRespawn->isPocketed = false;
+}
+
+void HandleCheatDropPocket(Ball* b, int p) {
+    // Glitch #3 Fix: Atomic check. Only process if not already pocketed.
+    if (!b || b->isPocketed) return;
+
+    // 1. Mark as pocketed to prevent re-entry from this or other functions
+    b->isPocketed = true;
+    b->vx = b->vy = 0.0f;
+
+    // 2. Play sound
+    if (!g_soundEffectsMuted) {
+        std::thread([](const TCHAR* soundName) { PlaySound(soundName, NULL, SND_FILENAME | SND_NODEFAULT); }, TEXT("pocket.wav")).detach();
+    }
+
+    // 3. Update game logic (scores, counts) - *ONCE*
+    if (currentGameType == GameType::STRAIGHT_POOL) {
+        if (b->id > 0 && b->id <= 15) {
+            if (currentPlayer == 1) player1StraightPoolScore++;
+            else if (!g_isPracticeMode) player2StraightPoolScore++;
+
+            ballsOnTableCount--; // Decrement count *ONCE*
+        }
+    }
+    else if (currentGameType == GameType::EIGHT_BALL_MODE) {
+        if (b->id == 8) lastEightBallPocketIndex = p;
+
+        if (player1Info.assignedType == BallType::NONE && (b->type == BallType::SOLID || b->type == BallType::STRIPE)) {
+            AssignPlayerBallTypes(b->type, true);
+        }
+        else if (b->id != 0 && b->id != 8) {
+            if (b->type == player1Info.assignedType) player1Info.ballsPocketedCount++;
+            else if (b->type == player2Info.assignedType) player2Info.ballsPocketedCount++;
+        }
+
+        if (b->id != 0) ballsOnTableCount--; // Decrement count *ONCE*
+    }
+    else if (currentGameType == GameType::NINE_BALL) {
+        if (b->id != 0) ballsOnTableCount--; // Decrement count *ONCE*
+    }
+
+    // 4. Check Post-Pocketing Game State (Win/Re-rack)
+    if (g_isPracticeMode) {
+        if (ballsOnTableCount == 0) ReRackPracticeMode();
+        else currentGameState = PLAYER1_TURN; // Always P1 turn in practice
+    }
+    else if (currentGameType == GameType::STRAIGHT_POOL) {
+        CheckGameOverConditions(false, false); // Check for win
+        // Glitch #2 Fix: Call user's re-rack function if 1 ball left
+        if (currentGameState != GAME_OVER && ballsOnTableCount == 1) {
+            ReRackStraightPool(); // Calls your existing function
+        }
+        else if (currentGameState != GAME_OVER) {
+            currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
+            if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
+        }
+    }
+    else if (currentGameType == GameType::EIGHT_BALL_MODE) {
+        if (b->id == 8) {
+            // Dropped the 8-ball, check win/loss
+            int shooterId = currentPlayer;
+            int opponentId = (currentPlayer == 1) ? 2 : 1;
+            int called = (shooterId == 1) ? calledPocketP1 : calledPocketP2;
+            PlayerInfo& shooterInfo = (shooterId == 1) ? player1Info : player2Info;
+            bool clearedGroup = (shooterInfo.assignedType != BallType::NONE && shooterInfo.ballsPocketedCount >= 7);
+            bool isLegalWinCheat = clearedGroup && (called != -1) && (called == p);
+
+            if (isLegalWinCheat) FinalizeGame(shooterId, opponentId, L"(Cheat Mode)");
+            else FinalizeGame(opponentId, shooterId, L"(Cheat Mode - Illegal 8-Ball)");
+        }
+        else if (IsPlayerOnEightBall(currentPlayer)) {
+            CheckAndTransitionToPocketChoice(currentPlayer);
+        }
+        else {
+            currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
+            if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
+        }
+    }
+    else if (currentGameType == GameType::NINE_BALL) {
+        UpdateLowestBall();
+        if (b->id == 9) {
+            FinalizeGame(currentPlayer, (currentPlayer == 1) ? 2 : 1, L"(Cheat Mode 9-Ball)");
+        }
+        else {
+            currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
+            if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
+        }
+    }
 }
 
 // --- MODIFIED HELPER FOR STRAIGHT POOL RE-RACK ---
@@ -3296,211 +3386,32 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                        }*/
     case WM_LBUTTONUP: {
         // --- Cheat-mode pocket processing ---
+               // --- Glitch #3 Fix: Atomic Cheat-Mode Pocket Processing ---
         if (cheatModeEnabled && draggingBallId != -1) {
             Ball* b = GetBallById(draggingBallId);
             if (b) {
-                bool nineBallPocketedCheat = false; // NEW: 9-Ball cheat flag
-                bool playedPocketSound = false;
-                bool ballPocketedInCheat = false; // Flag to track if pocketing occurred
-
+                // Check all 6 pockets
                 for (int p = 0; p < 6; ++p) {
                     // Use the precise mask test
-                    if (!IsBallTouchingPocketMask_D2D(*b, p)) continue;
+                    if (IsBallTouchingPocketMask_D2D(*b, p)) {
+                        // Call the atomic handler function.
+                        // This function handles the sound, score, ball count,
+                        // and re-rack logic all in one safe, atomic call.
+                        HandleCheatDropPocket(b, p);
 
-                    // --- Common Pocketing Actions (Do these first) ---
-                    ballPocketedInCheat = true; // Mark that pocketing happened
-                    b->isPocketed = true;
-                    b->vx = b->vy = 0.0f;
-                    // pocketedThisTurn.push_back(b->id); // Not strictly needed for cheat scoring logic
-
-                    if (!playedPocketSound) {
-                        if (!g_soundEffectsMuted) {
-                            std::thread([](const TCHAR* soundName) { PlaySound(soundName, NULL, SND_FILENAME | SND_NODEFAULT); }, TEXT("pocket.wav")).detach();
-                        }
-                        playedPocketSound = true;
+                        // Break the pocket loop *immediately* to prevent
+                        // the ball from being pocketed in two places at once.
+                        break;
                     }
-
-                    // --- Game Mode Specific Logic ---
-                    if (currentGameType == GameType::STRAIGHT_POOL) {
-                        // Straight Pool Scoring & Ball Count
-                        if (b->id > 0 && b->id <= 15) { // Any numbered ball counts
-                            if (currentPlayer == 1) {
-                                player1StraightPoolScore++;
-                            }
-                            else {
-                                player2StraightPoolScore++;
-                            }
-                            ballsOnTableCount--; // Decrement count for re-rack check
-                        }
-                    }
-                    else if (currentGameType == GameType::NINE_BALL) {
-                        // 9-Ball: We just need to know if the 9-ball was pocketed.
-                        if (b->id == 9) {
-                            nineBallPocketedCheat = true;
-                        }
-                    }
-                    else if (currentGameType == GameType::EIGHT_BALL_MODE) {
-                        // Original 8-Ball Logic
-                        if (b->id == 8) {
-                            lastEightBallPocketIndex = p; // Record 8-ball pocket
-                        }
-
-                        // Assign types if table is open
-                        if (player1Info.assignedType == BallType::NONE &&
-                            player2Info.assignedType == BallType::NONE &&
-                            (b->type == BallType::SOLID || b->type == BallType::STRIPE))
-                        {
-                            AssignPlayerBallTypes(b->type, true); // Pass true to credit
-                        }
-                        // Update pocket counts only AFTER types are assigned
-                        else if (player1Info.assignedType != BallType::NONE) {
-                            if (b->id != 0 && b->id != 8) {
-                                if (b->type == player1Info.assignedType) player1Info.ballsPocketedCount++;
-                                else if (b->type == player2Info.assignedType) player2Info.ballsPocketedCount++;
-                            }
-                        }
-                    }
-                    // --- End Game Mode Specific Logic ---
-
-                    break; // Ball pocketed, stop checking other pockets for this ball
-                } // End pocket loop
-
-                // --- Post-Pocketing Checks (After the pocket loop) ---
-                if (ballPocketedInCheat) {
-                    if (currentGameType == GameType::STRAIGHT_POOL) {
-                        // Check for Game Over FIRST
-                        if (!g_isPracticeMode) CheckGameOverConditions(false, false); // Check Straight Pool win condition (skip in practice)
-
-                        // Check for Re-Rack AFTER decrementing count, ONLY if game isn't over
-                        if (g_isPracticeMode && ballsOnTableCount == 0) {
-                            ReRackPracticeMode(); // Practice mode re-racks at 0 balls
-                        }
-                        else if (!g_isPracticeMode && currentGameState != GAME_OVER && ballsOnTableCount == 1) {
-                            ReRackStraightPool();
-                            // ReRack function sets the next state (often Ball-in-Hand or Player Turn)
-                        }
-                        else if (currentGameState != GAME_OVER) {
-                            // Player continues turn after successful cheat pocket
-                            currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
-                            if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
-                        }
-
-                    }
-                    else if (currentGameType == GameType::EIGHT_BALL_MODE) {
-                        // Check if player is now on the 8-ball (if a numbered ball was pocketed)
-                        ballsOnTableCount--; // <-- ADD THIS LINE!
-                        if (b->id != 8) {
-                            PlayerInfo& shooter = (currentPlayer == 1 ? player1Info : player2Info);
-                            if (shooter.assignedType != BallType::NONE && shooter.ballsPocketedCount >= 7) {
-                                CheckAndTransitionToPocketChoice(currentPlayer);
-                                // State transition handled within CheckAndTransition
-                            }
-                            else if (currentGameState != GAME_OVER) {
-                                // Player continues turn if not on 8-ball yet and game isn't over
-                                currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
-                                if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
-                            }
-                        }
-                        // --- THIS IS THE MISSING FIX FOR 8-BALL ---
-                        if (g_isPracticeMode && ballsOnTableCount == 0) {
-                            ReRackPracticeMode();
-                        }
-                        // --- END FIX ---
-                        // Check for Game Over if 8-ball was the one pocketed
-                        else if (b->id == 8) {
-                            if (g_isPracticeMode) {
-                                // In practice mode, just check for re-rack if all balls are gone
-                                ballsOnTableCount--; // <-- Add this line!
-                                if (ballsOnTableCount == 0) {
-                                    ReRackPracticeMode();
-                                }
-                                else {
-                                    // Continue turn
-                                    currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
-                                    if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
-                                }
-                            }
-                            else {
-                                // Original game-over logic
-                                int shooterId = currentPlayer;
-                                int opponentId = (currentPlayer == 1) ? 2 : 1;
-                                int called = (shooterId == 1) ? calledPocketP1 : calledPocketP2;
-                                int actual = lastEightBallPocketIndex;
-                                bool clearedGroupBeforeShot = false;
-                                PlayerInfo& shooterInfo = (shooterId == 1) ? player1Info : player2Info;
-                                // Assume group *was* cleared if pocketing 8-ball in cheat mode now
-                                if (shooterInfo.assignedType != BallType::NONE) {
-                                    clearedGroupBeforeShot = (shooterInfo.ballsPocketedCount >= 7);
-                                }
-
-                                std::wstring reason = L"(Cheat Mode)";
-                                bool isLegalWinCheat = clearedGroupBeforeShot && (called != -1) && (called == actual);
-
-                                if (isLegalWinCheat) {
-                                    FinalizeGame(shooterId, opponentId, reason);
-                                }
-                                else {
-                                    reason += L" - Illegal 8-Ball";
-                                    if (!clearedGroupBeforeShot) reason += L" (Early)";
-                                    else if (called == -1) reason += L" (Not Called)";
-                                    else if (called != actual) reason += L" (Wrong Pocket)";
-                                    FinalizeGame(opponentId, shooterId, reason);
-                                }
-                            }
-                            // If FinalizeGame was called, reset dragging state and exit handler early
-                            draggingBallId = -1;
-                            isDraggingCueBall = false;
-                            return 0; // Exit WM_LBUTTONUP processing
-                        }
-                        // If game didn't end and player isn't on 8-ball, continue turn
-                        else if (currentGameState != GAME_OVER) {
-                            currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
-                            if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
-                        }
-                    }
-                    else if (currentGameType == GameType::NINE_BALL) {
-                        if (nineBallPocketedCheat && g_isPracticeMode) {
-                            // 9-Ball pocketed in practice mode, just check for re-rack
-                            UpdateLowestBall(); // Update lowest ball (might be 9)
-                            ballsOnTableCount--; // <-- THIS IS THE MISSING FIX FOR 9-BALL
-                            if (ballsOnTableCount == 0) {
-                                ReRackPracticeMode();
-                            }
-                            else {
-                                // Continue turn
-                                currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
-                                if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
-                            }
-                        }
-                        else if (nineBallPocketedCheat && !g_isPracticeMode) {
-                            // 9-Ball was pocketed, this is a win
-                            FinalizeGame(currentPlayer, (currentPlayer == 1) ? 2 : 1, L"(Cheat Mode 9-Ball)");
-                            draggingBallId = -1;
-                            isDraggingCueBall = false;
-                            return 0; // Exit handler
-                        }
-                        else {
-                            // Any other ball was pocketed, update lowest and continue turn
-                            UpdateLowestBall();
-                            ballsOnTableCount--; // <-- ADD THIS LINE!
-                            if (g_isPracticeMode && ballsOnTableCount == 0) {
-                                ReRackPracticeMode();
-                            }
-                            else {
-                            currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
-                            if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
-                            }
-                        }
-                    }
-                } // End if (ballPocketedInCheat)
-
+                }
             } // End if (b)
 
-            // Reset dragging state after cheat mode processing is complete
+            // Reset dragging state regardless of pocketing
             draggingBallId = -1;
-            isDraggingCueBall = false; // Reset the general dragging flag
-            // Don't return here yet, allow standard mouse up logic to run if needed
-        } // End if (cheatModeEnabled && draggingBallId != -1)
+            isDraggingCueBall = false;
+            // We DO NOT return. Allow standard LBUTTONUP logic to run
+            // (which will reset isAiming, isDraggingStick, etc.)
+        } // --- End Glitch #3 Fix ---
 
         // --- Standard Mouse Release Logic (Aiming, Placement, English) ---
         // (This is the code you provided, placed *after* the cheat mode block)
@@ -3966,13 +3877,12 @@ void InitGame() {
     else {
         // --- 8-Ball and Straight Pool Racking (Triangle) ---
         // --- FIX: Check for custom ball count in Straight Pool Practice Mode ---
+               // --- FIX: 8-Ball and Straight Pool always rack 15 balls ---
         int numBallsToCreate = 15;
-        if (currentGameType == GameType::STRAIGHT_POOL && g_isPracticeMode) {
-            numBallsToCreate = targetScoreStraightPool;
-            ballsOnTableCount = numBallsToCreate; // Update global count!
+        if (currentGameType == GameType::STRAIGHT_POOL) {
+            ballsOnTableCount = 15; // Explicitly set 15 for 14.1 Continuous
         }
         // --- END FIX ---
-        // --- MODIFIED LOOP ---
         for (int i = 1; i <= numBallsToCreate; ++i) {
             BallType type = (i == 8) ? BallType::EIGHT_BALL : ((i < 8) ? BallType::SOLID : BallType::STRIPE);
             objectBalls.push_back({ i, type, 0, 0, 0, 0, GetBallColor(i), false, 0.0f, 0.0f });
@@ -4017,7 +3927,7 @@ void InitGame() {
     } */
         }
 
-        for (int i = 0; i < numBallsToCreate; ++i) {
+        for (int i = 0; i < (int)objectBalls.size() && i < 15; ++i) {
             Ball& ballToPlace = objectBalls[i];
             ballToPlace.x = rackPositions[i].x;
             ballToPlace.y = rackPositions[i].y;
@@ -9900,7 +9810,15 @@ void ReRackPracticeMode() {
         ballsToRackCount = 15;
     }
     else if (currentGameType == GameType::STRAIGHT_POOL) {
-        ballsToRackCount = targetScoreStraightPool; // Use the custom value
+        // Follow official 14.1 rules:
+        // - When only 1 ball remains, re-rack exactly 14 balls
+        // - Leave the penultimate ball on the table
+        if (ballsOnTableCount == 1) {
+            ballsToRackCount = 14; // Always 14 per 14.1 rules
+        }
+        else {
+            ballsToRackCount = 15; // Full rack for initial break
+        }
     }
     else {
         ballsToRackCount = 15; // Fallback
@@ -10090,9 +10008,9 @@ void DrawUI(ID2D1RenderTarget* pRT) {
         // Draw simplified UI for Practice Mode
         std::wostringstream oss;
         oss << L"Practice Mode (Free Play)";
-        if (currentGameType == GameType::STRAIGHT_POOL) {
+        /*if (currentGameType == GameType::STRAIGHT_POOL) {
             oss << L"\nScore: " << player1StraightPoolScore << L" / " << targetScoreStraightPool; // Still show score for Straight Pool
-        }
+        }*/
         D2D1_RECT_F practiceRect = D2D1::RectF(TABLE_LEFT, uiTop, TABLE_RIGHT, uiTop + uiHeight);
 
         // --- FOOLPROOF: Use pTextFormatBold and ensure centering ---
