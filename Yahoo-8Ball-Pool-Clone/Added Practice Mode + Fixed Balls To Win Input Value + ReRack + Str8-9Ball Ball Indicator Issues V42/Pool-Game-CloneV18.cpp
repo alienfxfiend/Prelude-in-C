@@ -1451,6 +1451,15 @@ void HandleCheatDropPocket(Ball* b, int p) {
         std::thread([](const TCHAR* soundName) { PlaySound(soundName, NULL, SND_FILENAME | SND_NODEFAULT); }, TEXT("pocket.wav")).detach();
     }
 
+    // *** NEW FIX: Handle Cue Ball Respawn Logic ***
+    if (b->id == 0) { // Cue ball pocketed
+        RespawnCueBall(false); // Respawn anywhere on table (not restricted to headstring)
+        // Optional: Uncomment to enforce foul in Versus modes
+        // if (!g_isPracticeMode) { foulCommitted = true; }
+        return; // Prevent further processing for cue ball
+    }
+    // *** END NEW FIX ***
+
     // 3. Update game logic (scores, counts) - *ONCE*
     if (currentGameType == GameType::STRAIGHT_POOL) {
         if (b->id > 0 && b->id <= 15) {
