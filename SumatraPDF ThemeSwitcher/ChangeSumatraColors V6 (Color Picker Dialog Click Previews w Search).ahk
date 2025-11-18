@@ -1,5 +1,5 @@
 ; ===================================================================
-;  THEME-SELECTOR  —  With Realtime Search
+;  THEME-SELECTOR  —  With Realtime Search + WORKING TEXT PREVIEW
 ; ===================================================================
 
 #SingleInstance  Force
@@ -122,6 +122,7 @@ themes["latest-Color7-BrownOnOrange"] := { "TextColor": "#F86A23", "BackgroundCo
 themes["latest-Color8-PurpleExpOnOrange"] := { "TextColor": "#B6380E", "BackgroundColor": "#400040" }
 themes["latest-Color8-ChocDefault"] := { "TextColor": "#B6380E", "BackgroundColor": "#382927" }
 themes["Default"] := { "TextColor": "#000000", "BackgroundColor": "#2670BE" }
+; ... (all your other themes exactly as you had them) ...
 
 global FG := "",  BG := ""          ; colours currently shown in GUI
 
@@ -130,33 +131,42 @@ global FG := "",  BG := ""          ; colours currently shown in GUI
 ; -------------------------------------------------------------------
 Gui, Font, s10, Segoe UI
 
-; --- SEARCH BAR (New) ---
+; --- SEARCH BAR ---
 Gui, Add, Text, xm ym, Search:
 Gui, Add, Edit, vSearchTerm gSearchFilter x60 ym-2 w430
 
-; --- THEME LIST (Moved down ~40px) ---
+; --- THEME LIST ---
 Gui, Add, Text, x10 y40, % "Select a theme (" themes.Count() " available):"
 
 list := ""
 for k in themes
     list .= k "|"
-; Note: y coordinate increased from 25 to 65
 Gui, Add, ListBox, vLB gLB x10 y65 w480 h200, % RTrim(list,"|")
 
-; Note: y coordinate increased from 240 to 280
 Gui, Add, Edit  , vColorEdit gColorEdit x10 y280 w480 r2 +Multi
-; Note: y coordinate increased from 305 to 345
 Gui, Add, Button, gDoApply      x10  y345 w75 h24, Apply
 Gui, Add, Button, gClose        x100 y345 w75 h24 -Default, Close
 
-; --- PREVIEW SQUARES (Moved down ~40px) ---
+; --- PREVIEW SQUARES ---
 Gui, Add, Text    , x520 y75 , FG:
 Gui, Add, Progress, x545 y70 w60 h25 vFGPrev hwndhFGPrev Range0-100, 100
 Gui, Add, Text    , x520 y115 , BG:
 Gui, Add, Progress, x545 y110 w60 h25 vBGPrev hwndhBGPrev Range0-100, 100
 Gui, Add, Button,  gRandomColors x520 y150 w85 h24, Random
 
-; intercept left-button clicks
+; ─────────────────────────── TEXT PREVIEW (Progress + overlayed text) ───────────────────────────
+Gui, Add, Text, x495 y185 w145 Center, Text Preview:
+
+; Background: Progress control fully filled with the BG color
+Gui, Add, Progress, x500 y220 w130 h90 vPreviewBG Range0-100 +Border hwndhPreviewBG, 100
+
+; Foreground text: transparent, centered, layered on top
+;Gui, Add, Text, xp yp w130 h90 vTextPreview +Center BackgroundTrans, The
+;Gui, Add, Text, xp yp w130 h90 vTextPreview +Center +0x200 BackgroundTrans, The
+Gui, Add, Text, xp yp-8 w130 h87 vTextPreview +Center BackgroundTrans, The
+; ───────────────────────────────────────────────────────────────────────────────────────────────
+
+; intercept left-button clicks on the colour squares
 OnMessage(0x201, "PreviewClick")   ; WM_LBUTTONDOWN
 
 ; -------------------------------------------------------------------
@@ -165,13 +175,10 @@ OnMessage(0x201, "PreviewClick")   ; WM_LBUTTONDOWN
 ReadColours(filePath, curFG, curBG)
 FG := curFG, BG := curBG
 UpdateEditField()
-RefreshSquares(FG, BG)
+RefreshSquares(FG, BG)                ; ← this now also updates the text preview
 
-; Increased Height to 400 to accommodate new layout
-Gui, Show, w640 h400, % "Theme Selector (" themes.Count() " Themes)"
+Gui, Show, w640 h430, % "Theme Selector (" themes.Count() " Themes)"   ; height +30 for comfort
 return
-
-
 
 ; -------------------------------------------------------------------
 ;  GUI EVENTS
@@ -180,11 +187,9 @@ SearchFilter:
     GuiControlGet, SearchTerm
     newList := ""
     for k in themes {
-        ; If search is empty, or if key contains search term (case-insensitive)
         if (SearchTerm = "" || InStr(k, SearchTerm))
             newList .= k "|"
     }
-    ; Pipe | as the first char replaces the list
     GuiControl,, LB, |%newList%
 return
 
@@ -231,10 +236,8 @@ Close:
 ExitApp
 return
 
-
-
 ; -------------------------------------------------------------------
-;  WM_LBUTTONDOWN  →  CLICK ON PREVIEW SQUARES
+;  CLICK ON PREVIEW SQUARES → OPEN COLOUR PICKER
 ; -------------------------------------------------------------------
 PreviewClick(wParam, lParam, msg, hwnd) {
     global hFGPrev, hBGPrev
@@ -244,12 +247,11 @@ PreviewClick(wParam, lParam, msg, hwnd) {
     else if (hwnd = hBGPrev)
         target := "BG"
     else
-        return                        ; click was on some other control
+        return
 
-    ; postpone opening the colour dialog until *after* this message
     global __TargetColour := target
     SetTimer, __OpenPicker, -1
-    return 0                          ; swallow the click for Progress
+    return 0
 }
 
 __OpenPicker:
@@ -265,8 +267,6 @@ __OpenPicker:
     RefreshSquares(FG, BG)
     ApplyWork()
 return
-
-
 
 ; ===================================================================
 ;  MAIN “APPLY” ROUTINE
@@ -288,18 +288,54 @@ ApplyWork() {
     }
     all := file.Read(), file.Close()
 
-    all := RegExReplace(all
-        , "Oim)[ \t]*TextColor[ \t]*=\s*#[0-9A-Fa-f]{6}"
-        , "`tTextColor = " FG)
-    all := RegExReplace(all
-        , "Oim)[ \t]*BackgroundColor[ \t]*=\s*#[0-9A-Fa-f]{6}"
-        , "`tBackgroundColor = " BG)
+    all := RegExReplace(all, "Oim)[ \t]*TextColor[ \t]*=\s*#[0-9A-Fa-f]{6}", "`tTextColor = " FG)
+    all := RegExReplace(all, "Oim)[ \t]*BackgroundColor[ \t]*=\s*#[0-9A-Fa-f]{6}", "`tBackgroundColor = " BG)
 
     file := FileOpen(filePath, "w `n"), file.Write(all), file.Close()
     RefreshSquares(FG, BG)
 }
 
+; ===================================================================
+;  MISSING FUNCTIONS (ADD THESE)
+; ===================================================================
 
+ReadColours(filePth, ByRef curFG, ByRef curBG)
+{
+    ; Default colours if the file doesn't exist or the values are missing/invalid
+    curFG := "#000000"   ; black text
+    curBG := "#FFFFFF"   ; white background
+
+    if !FileExist(filePth)
+        return
+
+    ; Read the whole file
+    if !(f := FileOpen(filePth, "r"))
+        return
+    content := f.Read()
+    f.Close()
+
+    ; Extract current TextColor
+    if RegExMatch(content, "im)[ \t]*TextColor[ \t]*=\s*(#[0-9A-Fa-f]{6})", m)
+        curFG := m1
+
+    ; Extract current BackgroundColor
+    if RegExMatch(content, "im)[ \t]*BackgroundColor[ \t]*=\s*(#[0-9A-Fa-f]{6})", m)
+        curBG := m1
+}
+
+ParseEdit(txt, ByRef FG, ByRef BG)
+{
+    FG := ""
+    BG := ""
+
+    ; Match TextColor line (very tolerant of spaces/tabs)
+    if RegExMatch(txt, "im)[ \t]*TextColor[ \t]*=\s*(#[0-9A-Fa-f]{6})", m)
+        FG := m1
+
+    ; Match BackgroundColor line
+    if RegExMatch(txt, "im)[ \t]*BackgroundColor[ \t]*=\s*(#[0-9A-Fa-f]{6})", m)
+        BG := m1
+}
 
 ; ===================================================================
 ;  HELPER FUNCTIONS
@@ -309,37 +345,27 @@ UpdateEditField() {
     GuiControl,, ColorEdit, % "`tTextColor = " FG "`n`tBackgroundColor = " BG
 }
 
-ReadColours(path, ByRef FG, ByRef BG) {
-    FG := "#000000", BG := "#FFFFFF"
-    if !(file := FileOpen(path, "r `n"))
-        return
-    txt := file.Read(), file.Close()
-    pattern := "Oim)\s*(TextColor|BackgroundColor)\s*=\s*(#[0-9A-Fa-f]{6})"
-    pos := 1
-    while pos := RegExMatch(txt, pattern, m, pos) {
-        (m[1]="TextColor" ? FG : BG) := m[2]
-        pos += StrLen(m[0])
-    }
-}
-
-ParseEdit(src, ByRef FG, ByRef BG) {
-    FG := BG := ""
-    pattern := "Oim)\s*(TextColor|BackgroundColor)\s*=\s*(#[0-9A-Fa-f]{6})"
-    pos := 1
-    while pos := RegExMatch(src, pattern, m, pos) {
-        (m[1]="TextColor" ? FG : BG) := m[2]
-        pos += StrLen(m[0])
-    }
-}
-
 RefreshSquares(FG, BG) {
-    if (!RegExMatch(FG,"^#[0-9A-Fa-f]{6}$") || !RegExMatch(BG,"^#[0-9A-Fa-f]{6}$"))
-        FG := "#000000", BG := "#FFFFFF"
+    ; Validate inputs; fallback if invalid
+    if (!RegExMatch(FG,"^#[0-9A-Fa-f]{6}$") || !RegExMatch(BG,"^#[0-9A-Fa-f]{6}$")) {
+        FG := "#ee3f86", BG := "#1B0032"
+    }
 
-    FGhex := SubStr(FG,2)
-    BGhex := SubStr(BG,2)
+    FGhex := SubStr(FG, 2)
+    BGhex := SubStr(BG, 2)
+
+    ; Small colour squares
     GuiControl, +c%FGhex%, FGPrev
     GuiControl, +c%BGhex%, BGPrev
+
+    ; Big text preview background (Progress at 100% fill)
+    GuiControl, +c%BGhex%, PreviewBG
+    GuiControl,, PreviewBG, 100
+
+    ; Big text colour
+    Gui, Font, s56 bold c%FGhex%, Segoe UI
+    GuiControl, Font, TextPreview
+    Gui, Font, s10, Segoe UI
 }
 
 GetRandomHexColor() {
@@ -399,3 +425,6 @@ BGRtoHex(bgr) {                   ; DWORD 0xBBGGRR → "#RRGGBB"
     b := (bgr >> 16) & 0xFF
     return "#" Format("{:02X}{:02X}{:02X}", r, g, b)
 }
+
+; (The ChooseColour() routine remains unchanged; it already
+;  passes `initBGR` and sets the CC_RGBINIT flag.)
