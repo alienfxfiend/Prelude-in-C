@@ -435,8 +435,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             SetCursor(LoadCursor(NULL, IDC_SIZEALL));
             SetCapture(hwnd);
         }
-        else if (wParam == 0x50) { isPaintbrushSelected = true; isEraserMode = false; UpdateStatus(hwnd); }
-        else if (wParam == 0x45) { isPaintbrushSelected = false; isEraserMode = true; UpdateStatus(hwnd); }
+        else if (wParam == 0x50) { isPaintbrushSelected = true; isEraserMode = false; UpdateStatus(hwnd); InvalidateRect(hwnd, NULL, FALSE); }
+        else if (wParam == 0x45) { isPaintbrushSelected = false; isEraserMode = true; UpdateStatus(hwnd); InvalidateRect(hwnd, NULL, FALSE); }
         else if (wParam == 'Q') {
             CHOOSECOLOR cc = { sizeof(CHOOSECOLOR) };
             static COLORREF customColors[16] = { 0 };
@@ -447,8 +447,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             if (ChooseColor(&cc)) currentBrushColor = cc.rgbResult;
             UpdateStatus(hwnd);
         }
-        else if (wParam == VK_ADD || wParam == VK_OEM_PLUS) { brushSize = std::min(50, brushSize + 5); UpdateStatus(hwnd); }
-        else if (wParam == VK_SUBTRACT || wParam == VK_OEM_MINUS) { brushSize = std::max(5, brushSize - 5); UpdateStatus(hwnd); }
+        else if (wParam == VK_ADD || wParam == VK_OEM_PLUS) { brushSize = std::min(50, brushSize + 5); UpdateStatus(hwnd); InvalidateRect(hwnd, NULL, FALSE); }
+        else if (wParam == VK_SUBTRACT || wParam == VK_OEM_MINUS) { brushSize = std::max(5, brushSize - 5); UpdateStatus(hwnd); InvalidateRect(hwnd, NULL, FALSE); }
         else if (wParam == 0x43) {
             std::lock_guard<std::mutex> lock(strokeMutex);
             strokeHistory.clear();
