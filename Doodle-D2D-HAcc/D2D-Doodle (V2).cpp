@@ -461,6 +461,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         else if (wParam == VK_PRIOR) { gridZoomFactor *= 1.1f; offscreenDirty = true; UpdateStatus(hwnd); InvalidateRect(hwnd, NULL, FALSE); }
         else if (wParam == VK_NEXT) { gridZoomFactor = std::max(0.1f, gridZoomFactor * 0.9f); offscreenDirty = true; UpdateStatus(hwnd); InvalidateRect(hwnd, NULL, FALSE); }
         else if (wParam == VK_ESCAPE) { PostQuitMessage(0); return 0; }
+        else if (wParam == VK_F1) {
+            MessageBox(hwnd, TEXT("I made an Infinite Canvas app using Direct2D 64Bit and Hardware Acceleration, no need for bloated Godot Engine/ Frameworks or M$ Infinite Canvas Control! Eternity of effort paid off! (674 lines of code) by Entisoft Software (c) Evans Thorpemorton pen=24,123,205"), TEXT("Information"), MB_OK | MB_ICONINFORMATION);
+        }
 
         return 0;
     }
@@ -661,7 +664,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
     RegisterClass(&wc);
     hInst = hInstance;
-    hWnd = CreateWindowEx(0, CLASS_NAME, L"Infinite Canvas Doodle App", WS_OVERLAPPEDWINDOW | WS_MAXIMIZE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
+    hWnd = CreateWindowEx(0, CLASS_NAME, L"Infinite Canvas Doodle App (P=Brush E=Eraser C=Clear +-=BrushSize Space+Drag=Scroll Home=Center Q=Color G=Grid PgUp = ZoomIn PgDown = ZoomOut F1=About", WS_OVERLAPPEDWINDOW | WS_MAXIMIZE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
     if (!hWnd) return 0;
     SetWindowLongPtr(hWnd, GWL_EXSTYLE, GetWindowLongPtr(hWnd, GWL_EXSTYLE) | WS_EX_COMPOSITED);
     ShowWindow(hWnd, SW_SHOWMAXIMIZED);
