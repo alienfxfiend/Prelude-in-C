@@ -462,7 +462,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         else if (wParam == VK_NEXT) { gridZoomFactor = std::max(0.1f, gridZoomFactor * 0.9f); offscreenDirty = true; UpdateStatus(hwnd); InvalidateRect(hwnd, NULL, FALSE); }
         else if (wParam == VK_ESCAPE) { PostQuitMessage(0); return 0; }
         else if (wParam == VK_F1) {
-            MessageBox(hwnd, TEXT("I made an Infinite Canvas app using Direct2D 64Bit and Hardware Acceleration, no need for bloated Godot Engine/ Frameworks or M$ Infinite Canvas Control! Eternity of effort paid off! (674 lines of code) by Entisoft Software (c) Evans Thorpemorton pen=24,123,205"), TEXT("Information"), MB_OK | MB_ICONINFORMATION);
+            MessageBox(hwnd, TEXT("I made an Infinite Canvas app using Direct2D True 64Bit /w Hardware Acceleration, no need for bloated Godot Engine/ Frameworks or M$ Infinite Canvas Control! Eternity of effort paid off! (674 lines of code) by Entisoft Software (c) Evans Thorpemorton pen=24,123,205"), TEXT("Information"), MB_OK | MB_ICONINFORMATION);
         }
 
         return 0;
