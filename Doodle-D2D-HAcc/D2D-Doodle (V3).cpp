@@ -490,17 +490,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         else if (wParam == VK_NEXT) { gridZoomFactor = std::max(0.1f, gridZoomFactor * 0.9f); offscreenDirty = true; UpdateStatus(hwnd); InvalidateRect(hwnd, NULL, FALSE); }
         // Opacity Controls: [ (VK_OEM_4) decreases, ] (VK_OEM_6) increases
         else if (wParam == VK_OEM_4) { // '[' key
-            if (showGrid) { // Only allow change if Grid is On
+            if (showGrid && useAlphaGrid) { // Only allow if Grid AND Alpha are On
                 gridOpacity = std::max(0, gridOpacity - 15);
                 UpdateStatus(hwnd);
-                if (useAlphaGrid) InvalidateRect(hwnd, NULL, FALSE);
+                InvalidateRect(hwnd, NULL, FALSE); // Always repaint since we know it's visible
             }
         }
         else if (wParam == VK_OEM_6) { // ']' key
-            if (showGrid) { // Only allow change if Grid is On
+            if (showGrid && useAlphaGrid) { // Only allow if Grid AND Alpha are On
                 gridOpacity = std::min(255, gridOpacity + 15);
                 UpdateStatus(hwnd);
-                if (useAlphaGrid) InvalidateRect(hwnd, NULL, FALSE);
+                InvalidateRect(hwnd, NULL, FALSE); // Always repaint since we know it's visible
             }
         }
         else if (wParam == VK_ESCAPE) { PostQuitMessage(0); return 0; }
