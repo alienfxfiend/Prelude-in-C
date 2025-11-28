@@ -27,6 +27,7 @@
 #define IDM_TOOL_COLOR    2003
 #define IDM_SIZE_INC      2004
 #define IDM_SIZE_DEC      2005
+#define IDM_TOOL_CLEAR    2006
 #define IDM_GRID_TOGGLE   3001
 #define IDM_GRID_ALPHA    3002
 #define IDM_GRID_ZIN      3003

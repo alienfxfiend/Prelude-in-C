@@ -443,6 +443,8 @@ void CreateAppMenu(HWND hwnd) {
     AppendMenu(hTools, MF_SEPARATOR, 0, NULL);
     AppendMenu(hTools, MF_STRING, IDM_SIZE_INC, L"Increase Brush Size\t+");
     AppendMenu(hTools, MF_STRING, IDM_SIZE_DEC, L"Decrease Brush Size\t-");
+    AppendMenu(hTools, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hTools, MF_STRING, IDM_TOOL_CLEAR, L"C&lear Canvas\tC");
     AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hTools, L"&Tools");
 
     // 3. View Menu
@@ -523,6 +525,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             break;
         case IDM_SIZE_INC: SendMessage(hwnd, WM_KEYDOWN, VK_ADD, 0); break;
         case IDM_SIZE_DEC: SendMessage(hwnd, WM_KEYDOWN, VK_SUBTRACT, 0); break;
+        case IDM_TOOL_CLEAR: SendMessage(hwnd, WM_KEYDOWN, 0x43, 0); break; // Simulate 'C' key press
 
         case IDM_GRID_TOGGLE: SendMessage(hwnd, WM_KEYDOWN, 'G', 0); break;
         case IDM_GRID_ALPHA:  SendMessage(hwnd, WM_KEYDOWN, 'A', 0); break;
@@ -574,11 +577,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         else if (wParam == VK_ADD || wParam == VK_OEM_PLUS) { brushSize = std::min(50, brushSize + 5); UpdateStatus(hwnd); InvalidateRect(hwnd, NULL, FALSE); }
         else if (wParam == VK_SUBTRACT || wParam == VK_OEM_MINUS) { brushSize = std::max(5, brushSize - 5); UpdateStatus(hwnd); InvalidateRect(hwnd, NULL, FALSE); }
         else if (wParam == 0x43) {
-            std::lock_guard<std::mutex> lock(strokeMutex);
-            strokeHistory.clear();
-            sessionDirty = true;
-            offscreenDirty = true;
-            InvalidateRect(hwnd, NULL, TRUE);
+            // Confirmation Dialog
+            if (MessageBox(hwnd, L"Are you sure you want to clear the entire canvas?\nThis cannot be undone.", L"Clear Canvas", MB_YESNO | MB_ICONWARNING) == IDYES) {
+                std::lock_guard<std::mutex> lock(strokeMutex);
+                strokeHistory.clear();
+                sessionDirty = true;
+                offscreenDirty = true;
+                InvalidateRect(hwnd, NULL, TRUE);
+            }
         }
         else if (wParam == 'G') { showGrid = !showGrid; offscreenDirty = true; UpdateStatus(hwnd); InvalidateRect(hwnd, NULL, TRUE); UpdateMenuState(hwnd); }
         else if (wParam == 'A') {
