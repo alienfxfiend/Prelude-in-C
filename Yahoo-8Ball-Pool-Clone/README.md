@@ -2,7 +2,7 @@
 * ~~8-Ball Indicator Near PlayerInfo When 7 Balls OwnType Pocketed instead of showing Own-Ball-Owned Type (once chosen) for the entirety of the game —helps sets endgame transition phase.~~
 * ~~Realistic CueStick (Light Beige /w White Tip & Black Art On Rear.)~~
 * ~~Pockets Semicircle Base (Halfway) /w V-Cut Cavity (Possibly an Inner Rim Layer to Table (chamfered-shape.)) | (empty pockets holes /w Rim around Table perhaps ?) Pocket Rim Border Brush Inner Bevel 3D Look~~
-* Add a File Menu Perhaps ? <!-- Cheat Mode, Mute, New Game -->
+* ~~Add a File Menu Perhaps ?~~ <!-- Cheat Mode, Mute, New Game -->
 * ✅ ~~Hot Swappable Choice of Pool Table Colors in Startup Dialog Box (At Bottom (Red, Indigo, Tan, Green).) Green Teal Tan Red Purple (as Radio Buttons or Dropdown ListBox !)~~
 * ~~default Table dither effect. & add Grainy Felt Texture For Table.~~
 * ~~Balls In Motion Effect When Struck & Rolling.~~
