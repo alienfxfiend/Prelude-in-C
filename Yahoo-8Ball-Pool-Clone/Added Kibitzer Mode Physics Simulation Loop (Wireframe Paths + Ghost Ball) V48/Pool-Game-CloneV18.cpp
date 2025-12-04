@@ -2956,6 +2956,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 L"  M: Mute Audio\n"
                 L"  F2: New Game\n"
                 L"  G: Toggle Cheat Mode\n"
+                L"  K: Toggle Kibitzer Mode\n"
                 L"  T: Test Mode",
                 L"Keyboard Controls", MB_OK | MB_ICONINFORMATION);
             break;
@@ -3067,6 +3068,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             return 0; // Exit after toggling
         }
         // --- End of Fix ---
+        // --- NEW: Toggle Kibitzer/Debug Mode with 'K' ---
+        if (wParam == 'K' || wParam == 'k') {
+            g_debugMode = !g_debugMode;
+
+            // Sync the Menu Bar checkmark state
+            HMENU hMenu = GetMenu(hwnd);
+            if (hMenu) {
+                CheckMenuItem(hMenu, ID_GAME_DEBUGMODE, g_debugMode ? MF_CHECKED : MF_UNCHECKED);
+            }
+
+            // Force immediate redraw to show/hide trajectories
+            InvalidateRect(hwnd, NULL, FALSE);
+            return 0;
+        }
+        // ------------------------------------------------
         if (canPlayerControl) {
             bool shiftPressed = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
             float angleStep = shiftPressed ? 0.05f : 0.01f;
