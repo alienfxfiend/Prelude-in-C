@@ -11349,7 +11349,7 @@ if (SUCCEEDED(pFactory->CreatePathGeometry(&pPath))) {
                 TABLE_LEFT + 200.0f,
                 TABLE_TOP + 70.0f
             );
-            pRT->DrawText(L"DEBUG MODE", 10, pTextFormat, &debugTextRect, pDebugBrush);
+            pRT->DrawText(L"KIBITZER MODE", 13, pTextFormat, &debugTextRect, pDebugBrush);
         }
         SafeRelease(&pDebugBrush);
     }
