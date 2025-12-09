@@ -1,7 +1,7 @@
 
                                                         			++SIMS STRATEGY GUIDE GOLD++ v0.0039 GOD FAQ -BOOK OF SURVIVAL GUIDE|STRATEGM-++
 
--[ PhRoZeN KrEw ]- by alien_fx_fiend@mad.scientist.com "Master The Game Of Life, Learn The Rules, & Study It Like A Pro .. " "this is me, au` naturelle` :)) sims, gothiq, film noire, codin, greyhat~ stuff, .. " —BlackHat H4|<!NG. 	<EMBRACE THE INEVITABLE>    *INSERT DIABOLICAL LAUGHTER HERE*    29 May 2021, 8:38 PM	Emanicipate Yourself Be Ur Inner Child BreakAllRulez !
+-[ PhRoZeN KrEw ]- by alien_fx_fiend@mad.scientist.com "Master The Game Of Life, Learn The Rules, & Study It Like A Pro .. " "this is me, au` naturelle` :)) sims, gothiq, film noire, codin, greyhat~ stuff, .. " —BlackHat H4|<!NG. 	<EMBRACE THE INEVITABLE>    *INSERT DIABOLICAL LAUGHTER HERE*    29 May 2021, 8:38 PM	Emanicipate Yourself Be Ur Inner Child BreakAllRulez
 
 🔵	My first Sims were:: Betty (fitness buff tanktop) + Nick (swimming buff brown hair); PyroFalkon (rich green hair megalomaniac hellbent on world domination —married to Anita & Claire); Evans Thorpemorton (futuristic HALO suit with brown hair (Nick's) married to Bella Goth (cf. Befriending Mean Sims (keep an eye on your Sims Queue) orange female cat McFluffy); Diane Pleasant Family; Cassandra\ Mortimer Goth; Jeff in SimMars recliner spacing out in Brick patio; Back when I used to use Port-a-Potties ! P.S: Needs Pet Trainer
 
@@ -20854,6 +20854,6349 @@ cheese, all-in, 6-pool, 9-pool, 10-pool, proxy gate, cannon rush, proxy rax, bun
 These are literally thousands of terms that have been used seriously in high-level RTS play over the last 25+ years. You can copy-paste the whole thing. Enjoy your strategy dictionary.
 ===================================================================
 ===================================================================
+
+=================================================================== Start AOM Strat Guides
+=================================================================== Grok 4.1 Thinking or Claude 4.5 Opus
+#Write an advanced, extensive and comprehensive strategy guide for Age Of Mythology: Tale of the Dragon (PC RTS), include pointers with innovative, catchy titles and never-before-seen tactics! For instance (but not including), Chokepoints, Kill Zones, Echo Bases, Booming/ Turtling, Raiding, Containment Walls etc. You get the point...
+
+# Age of Mythology: Tale of the Dragon
+## The Ultimate Advanced Strategy Compendium
+### 300+ Tactics for Chinese Civilization Mastery
+
+---
+
+# PART I: THE PHILOSOPHY OF WAR
+## Understanding the Chinese Playstyle
+
+The Chinese civilization in Tale of the Dragon is fundamentally different from Greeks, Egyptians, Norse, and Atlanteans. Where other civilizations specialize, China **adapts**. Where others rush, China **scales**. Where others peak, China **transcends**.
+
+The core mechanic that defines Chinese gameplay is the **Garden**. This single building changes everything about how you approach economy, military timing, and late-game transitions.
+
+Before we dive into specific tactics, internalize this truth:
+
+> "The Chinese do not win by being stronger at minute 8. They win by being inevitable at minute 25."
+
+Now let's weaponize that inevitability.
+
+---
+
+# PART II: ECONOMIC DARK ARTS
+
+## Tactic #1: "The Breathing Garden"
+### Dynamic Resource Oscillation for Maximum Efficiency
+
+Most players set their Garden to one resource and forget it. This is a fundamental error that costs you 15-20% efficiency over a full game.
+
+**The technique:**
+
+Your Garden should "breathe" — constantly shifting based on your immediate needs and upcoming age transitions.
+
+**The rhythm:**
+
+```
+Archaic Age: Food (80%) → Wood (20% for buildings)
+Classical transition: Favor (100%) until you hit 25 favor
+Early Classical: Gold (60%) → Food (40%)
+Pre-Heroic: Wood (100%) for 45 seconds → Gold (100%)
+Heroic onwards: Gold (70%) → Favor (30%)
+```
+
+**Advanced oscillation pattern:**
+
+Every 90 seconds, check your resource bars. Whichever resource is lowest relative to your next planned action, switch to that for exactly 30 seconds, then return to your "base" resource for that age.
+
+**Why this works:**
+
+The Garden generates resources at a fixed rate regardless of villager count. By constantly micro-adjusting, you eliminate the "dead zones" where one resource overflows while another starves.
+
+**Pro tip:** Bind Garden selection to a hotkey. You should be checking it every 60-90 seconds unconsciously.
+
+---
+
+## Tactic #2: "The Phantom Economy"
+### Villager Illusion Through Garden Leverage
+
+Here's a secret most players don't realize:
+
+A fully upgraded Garden generates resources equivalent to approximately **4.5 villagers** working on a single resource.
+
+This means you can run a "phantom economy" — having fewer actual villagers than your opponent while matching or exceeding their resource income.
+
+**The execution:**
+
+1. Keep your villager count at 75-80% of the "standard" for your age
+2. Invest the saved food into military production earlier
+3. Use Garden to cover the gap
+4. Your opponent sees your small economy and pushes
+5. They discover your army is somehow equal to theirs
+6. Confusion. Panic. Defeat.
+
+**Villager targets by age (Phantom Economy build):**
+
+```
+End of Archaic: 14 villagers (normal: 18)
+End of Classical: 22 villagers (normal: 28)
+End of Heroic: 30 villagers (normal: 40)
+Mythic: 35-40 villagers (normal: 50+)
+```
+
+**When to use:** Against aggressive civilizations (Norse, Atlantean) who will scout your economy and calculate your military capacity based on villager count.
+
+---
+
+## Tactic #3: "The Silk Road Gambit"
+### Strategic Trade Route Domination
+
+Chinese trade is criminally underutilized. Here's how to weaponize it:
+
+**Setup:**
+
+1. Build your first Town Center at maximum distance from your starting TC
+2. Build Market at starting TC
+3. Build Caravans immediately
+
+**The math:**
+
+Trade income scales with distance. A maximum-distance trade route generates approximately 2.3x the gold of a short route.
+
+**The gambit:**
+
+At the 12-minute mark, you should have 8-10 Caravans running the long route. This generates enough gold to sustain continuous military production while your opponent is still mining.
+
+**Defense consideration:**
+
+Your trade route WILL be raided. Plan for it:
+- Station 4-5 Mounted Archers at the midpoint
+- Build a single Tower at the 1/3 and 2/3 distance markers
+- Consider the trade route as a "tripwire" — if caravans die, you know exactly where the enemy is
+
+**Counter-intuitive truth:** Losing 2-3 caravans to a raid is acceptable if the raid reveals your opponent's army position and composition.
+
+---
+
+## Tactic #4: "The Terracotta Treasury"
+### Converting Myth Units into Economic Advantage
+
+When your Terracotta Warriors (summoned via god power) inevitably die, they leave behind... nothing.
+
+But while they're alive, they're free military units that cost zero population.
+
+**The economic conversion:**
+
+1. Summon Terracotta Warriors
+2. Use them to defend your economy (miners, woodcutters)
+3. Reassign the human military units you would have used for defense to offense
+4. Those units raid enemy economy
+5. Net economic swing: massive
+
+**The math:**
+
+5 Terracotta Warriors defending = 5 Halberdiers freed for raiding
+5 Halberdiers kill 3 enemy villagers before dying
+3 enemy villagers = ~600 resources lost + replacement time
+Your Terracotta cost = 0 resources (god power)
+
+**Net advantage: 600+ resources from a "free" unit**
+
+---
+
+## Tactic #5: "The Reverse Boom"
+### Negative Villager Production as a Weapon
+
+This is extremely high-level and should only be attempted by confident players.
+
+**The concept:**
+
+In certain matchups (especially against Egyptian fast Heroic), you can win by deliberately **not** making villagers in Classical Age and spending that food on pure military aggression.
+
+**The execution:**
+
+1. Age up to Classical with 15-16 villagers
+2. Stop villager production entirely
+3. Spend all food on military (Chu Ko Nu + Cataphract)
+4. Attack at 6:30-7:00 with overwhelming force
+5. If you don't win, you lose. There is no recovery.
+
+**When to use:**
+
+- Against Isis (slow military production in Classical)
+- Against Gaia (vulnerable before Heroic)
+- Against Kronos (before they get Cheiroballista)
+
+**When to NEVER use:**
+
+- Against Norse (they're faster than you)
+- Against Zeus (Hoplites will crush you)
+- Against Poseidon (Cavalry will flank and destroy your economy)
+
+---
+
+# PART III: MILITARY DOCTRINE
+
+## Tactic #6: "The Bamboo Curtain"
+### Layered Defense-in-Depth with Chinese Architecture
+
+Chinese walls are cheap. Abuse this.
+
+**The structure:**
+
+```
+Layer 1 (Outermost): Single wall segments in a zigzag pattern
+   Purpose: Slow enemy advance, reveal approach direction
+
+Layer 2 (Middle): Double wall with gap
+   Purpose: Funnel enemies into kill zone
+
+Layer 3 (Inner): Actual defensive wall with towers
+   Purpose: Hold the line
+
+Layer 4 (Core): Buildings arranged as emergency wall
+   Purpose: Last stand
+```
+
+**The psychology:**
+
+When an enemy sees 4 layers of walls, they assume you're "turtling" and go defensive themselves or attempt an extremely slow siege.
+
+**The counter-psychology:**
+
+While they're preparing for a siege, you're actually massing a mobile army behind Layer 3 for a devastating counterattack.
+
+**Build order for Bamboo Curtain:**
+
+1. Layer 1: Build during early Classical with excess wood
+2. Layer 2: Build during mid-Classical when army is out raiding
+3. Layer 3: Build during Heroic transition
+4. Layer 4: Already exists (your production buildings)
+
+---
+
+## Tactic #7: "The Coiled Serpent"
+### Defensive Positioning with Instant Offensive Conversion
+
+This formation is for holding territory while maintaining strike capability.
+
+**Setup:**
+
+Position your army in a loose spiral around a central point (usually a strategic resource or forward tower).
+
+```
+        Ranged
+      /       \
+   Melee   [CORE]   Melee
+      \       /
+       Cavalry
+         |
+       (Escape route / Attack vector)
+```
+
+**How it works:**
+
+- If attacked, the spiral naturally contracts, concentrating force
+- If attacking, the cavalry "tail" uncoils and strikes
+- Ranged units always have clear sightlines due to spiral gap
+
+**Chinese-specific application:**
+
+Place War Chariot or Mounted Archers at the "tail." They can uncoil, raid, and return before enemy responds.
+
+---
+
+## Tactic #8: "The Paper Tiger Parade"
+### Using Weak Units to Mask Strong Ones
+
+**The principle:**
+
+In the fog of war, your opponent cannot see unit composition — only unit count and rough silhouettes.
+
+**The execution:**
+
+1. Build 15 Chu Ko Nu (cheap, fast, low pop)
+2. Build 5 Fire Lancers (expensive, devastating)
+3. Move them as a single group
+4. Enemy scouts see "20 units" and assumes all Chu Ko Nu
+5. Enemy builds counter (melee infantry)
+6. Your Fire Lancers shred infantry
+7. Victory
+
+**Advanced variation:**
+
+Include 2-3 Monks in the group. From a distance, Monks look like... nothing threatening. But when the fight starts, they're healing your Fire Lancers while enemy infantry melts.
+
+---
+
+## Tactic #9: "The Thunderclap Entry"
+### Siege Timing with God Power Synchronization
+
+This is the single most devastating timing attack available to Chinese players under Shennong.
+
+**Setup:**
+
+1. Advance to Mythic Age
+2. Build 6-8 Sitting Tigers (siege)
+3. Select Dabo Gong as Mythic minor god (for Uproot god power)
+4. Mass at least 25 military units
+
+**The Thunderclap:**
+
+1. Move entire army + siege to enemy wall
+2. Begin siege bombardment (draws all enemy units to wall)
+3. Cast Uproot in the enemy base
+4. Enemy army is now trapped BETWEEN their wall and your Uprooters
+5. Your main army breaks through wall
+6. Enemy is sandwiched
+7. Total annihilation
+
+**Timing window:** This must happen within 30 seconds or the Uprooters die to Town Center fire.
+
+---
+
+## Tactic #10: "The Jade Emperor's Gambit"
+### All-In Mythic Age Rush with Fu Xi
+
+Fu Xi's unique mechanic: Blessed Construction (buildings construct faster).
+
+**The gambit:**
+
+1. Age to Mythic as fast as possible (ignore some economy)
+2. Immediately build 2 Castles forward near enemy
+3. Due to Blessed Construction, castles complete before enemy can respond
+4. Spawn Myth Units from forward Castles
+5. Overwhelm with Azure Dragons, Pixiu, and Vermilion Birds
+
+**Critical timing:**
+
+Your Mythic transition should complete around 14:00-15:00.
+Your forward Castles should be up by 15:30.
+Your first myth unit wave hits at 16:00.
+
+**Risk:** If enemy scouts the forward Castles during construction, they can destroy them and you lose 800+ resources.
+
+**Mitigation:** Build Castles behind terrain features (forests, cliffs) where they won't be casually scouted.
+
+---
+
+## Tactic #11: "The Hundred Schools"
+### Unit Composition Philosophy for Every Matchup
+
+Chinese have access to every unit type. This is your advantage. Use it.
+
+**Against Greek:**
+
+```
+Core: Chu Ko Nu (counter Hoplites)
+Support: War Chariot (counter Toxotes)
+Finisher: Azure Dragon (counter everything)
+Avoid: Halberdiers (Hoplites destroy them)
+```
+
+**Against Egyptian:**
+
+```
+Core: Mounted Archers (kite Spearmen)
+Support: Fire Lancers (burst down Elephants)
+Finisher: Vermilion Bird (area damage on massed archers)
+Avoid: Cataphracts (Camelry hard-counter)
+```
+
+**Against Norse:**
+
+```
+Core: Cataphracts (trade efficiently vs Ulfsarks)
+Support: Monks (healing sustain in prolonged fights)
+Finisher: Pixiu (deny enemy gold income)
+Avoid: Chu Ko Nu (Throwing Axemen shred them)
+```
+
+**Against Atlantean:**
+
+```
+Core: Halberdiers (cheap, swarm Murmillo)
+Support: Mounted Archers (kill Turma from range)
+Finisher: White Tiger (fear effect breaks formations)
+Avoid: Fire Lancers (Katapeltes hard-counter)
+```
+
+**Against Chinese (mirror):**
+
+```
+Core: Whatever they're NOT building
+Support: Scouts to know what they're building
+Finisher: Superior god power timing
+The mirror is won by information, not composition.
+```
+
+---
+
+## Tactic #12: "The Dragon's Teeth"
+### Forward Military Building Placement for Zone Control
+
+**Concept:**
+
+Instead of building all production buildings at home, scatter military buildings across the map in strategic locations.
+
+**Placement priorities:**
+
+1. Near contested gold mines (control resource)
+2. At map chokepoints (force engagement on your terms)
+3. Behind enemy base (sandwich potential)
+4. Near relics (deny Atlantean relic control)
+
+**Chinese advantage:**
+
+War Academy + Castle + Stable can all build quickly due to Fu Xi bonus.
+
+**The pattern:**
+
+```
+YOUR BASE
+    |
+    | (clear route)
+    |
+[Forward Academy]----[Forward Stable]
+    |                      |
+    +---------+------------+
+              |
+         [ENEMY BASE]
+```
+
+Now you can produce fresh units from two angles. Enemy must defend everywhere.
+
+---
+
+## Tactic #13: "The Celestial Hammer"
+### Perfectly Timed Age-Up God Power Combinations
+
+Every age-up gives you a god power. Most players use them reactively. Champions use them **proactively in combination.**
+
+**The Shennong → Huang Di → He Bo → Dabo Gong Combo:**
+
+Age 2 (Huang Di): Recreation
+Age 3 (He Bo): Geyser
+Age 4 (Dabo Gong): Uproot
+
+**The combination attack:**
+
+1. Cast Geyser on enemy gold mine (denies gold, damages villagers)
+2. Attack immediately while enemy economy is disrupted
+3. When your army takes damage, cast Recreation (full heal)
+4. If enemy walls up, cast Uproot inside their base
+5. Push with fresh Sitting Tiger siege
+
+**Timing:**
+
+This entire sequence should execute within a 3-minute window in mid-Mythic Age.
+
+---
+
+## Tactic #14: "The Invisible Hand"
+### Monk Micro for Sustained Engagements
+
+Chinese Monks are overpowered if microed correctly.
+
+**The technique:**
+
+Never let Monks stand still. During any engagement:
+
+1. Move Monks to the back of your formation
+2. Select injured units and move them toward Monks
+3. Monks will auto-heal
+4. Healed units return to front line
+5. Repeat
+
+**The math:**
+
+A single Monk heals approximately 10 HP/second.
+A Cataphract has 270 HP.
+Full heal = 27 seconds.
+
+If an engagement lasts 60+ seconds (common in Chinese vs Chinese), 2 Monks can effectively "resurrect" 4 Cataphracts worth of HP.
+
+**Advanced Monk micro:**
+
+Assign each Monk to a control group (Ctrl+1, Ctrl+2, etc.)
+Assign wounded units to complementary groups
+Tab between groups to direct heals manually
+
+---
+
+## Tactic #15: "The Peasant Uprising"
+### Emergency Villager Conscription Protocol
+
+Villagers can fight. Most players forget this.
+
+**When to conscript:**
+
+- Early raid hits your economy
+- You're floating resources with no military production capacity
+- You need 2-3 extra bodies to finish off a wounded enemy force
+
+**Conscription doctrine:**
+
+1. Never send villagers alone (they die instantly)
+2. Mix 5-6 villagers with 5-6 military units
+3. Focus-fire the same target as your military
+4. Retreat villagers the moment enemy reinforcements appear
+
+**Chinese advantage:**
+
+Your villagers are slightly faster than other civilizations' villagers (base speed difference). Use this to kite.
+
+---
+
+# PART IV: MAP CONTROL MASTERY
+
+## Tactic #16: "The Compass Rose"
+### Four-Quadrant Map Control Methodology
+
+Divide the map mentally into four quadrants. Your goal is to control at least three at all times.
+
+**Quadrant designation:**
+
+```
+    N
+  ┌───┬───┐
+  │ 1 │ 2 │
+W ├───┼───┤ E
+  │ 3 │ 4 │
+  └───┴───┘
+    S
+```
+
+**Control indicators:**
+
+- You have vision (buildings, scouts, or relics)
+- You have military presence (even one unit)
+- You have economic activity (villagers gathering)
+
+**Escalation protocol:**
+
+```
+Control 1 quadrant: You're losing
+Control 2 quadrants: Even game
+Control 3 quadrants: Winning
+Control 4 quadrants: Victory is imminent
+```
+
+**Chinese-specific application:**
+
+Use Scouts (cheap, fast, great line of sight) to maintain vision.
+Build forward Town Centers in quadrants 2 and 3.
+Only fight for quadrant 4 (enemy home) when you control 1-3.
+
+---
+
+## Tactic #17: "The Ghost Protocol"
+### Information Warfare Through Scouting Denial
+
+Your opponent wants to scout you. Deny them.
+
+**Layer 1: Perimeter scouts**
+
+2-3 Scouts in a wide circle around your base. They see enemies before enemies see you.
+
+**Layer 2: Anti-scout patrols**
+
+4-5 Mounted Archers on patrol routes covering main approach lanes. They kill enemy scouts.
+
+**Layer 3: Building placement denial**
+
+Never build in a grid. Scatter buildings seemingly randomly. This makes it hard for enemies to "read" your base during brief scouting windows.
+
+**Layer 4: Decoy buildings**
+
+Build 1-2 military buildings that you don't actually use. Enemy assumes you're building composition X when you're actually building composition Y.
+
+---
+
+## Tactic #18: "The Watchtower Web"
+### Tower Network for Total Map Awareness
+
+Towers aren't just for defense. They're sensors.
+
+**Placement doctrine:**
+
+```
+Tower 1: At your base (obvious)
+Tower 2: At forward gold mine
+Tower 3: At map center
+Tower 4: Near enemy trade route
+Tower 5: Near relics
+```
+
+**Cost:** 5 towers × 150 wood = 750 wood
+**Value:** Complete map vision for the rest of the game
+
+**Upgrade priority:**
+
+Only upgrade the towers that matter (Towers 3, 4, 5).
+Home towers don't need upgrades — they're just vision.
+
+**Chinese synergy:**
+
+Shennong's technologies reduce building costs. Your tower network is cheaper than anyone else's.
+
+---
+
+## Tactic #19: "The Forbidden City"
+### Base Layout for Maximum Defensive Efficiency
+
+**Core principle:**
+
+Every building should either produce units, defend other buildings, or both.
+
+**Optimal layout:**
+
+```
+         [TOWER]        [TOWER]
+            |              |
+[WALL]--[ACADEMY]--[CASTLE]--[STABLE]--[WALL]
+            |              |
+         [MARKET]    [ARMORY]
+            |              |
+       [TOWN CENTER]   [TEMPLE]
+            |              |
+         [GARDEN]    [STOREHOUSE]
+            |              |
+         [WALL]--------[WALL]
+```
+
+**Why this works:**
+
+- Military buildings in front (take damage first)
+- Economic buildings in back (protected)
+- Towers covering military buildings
+- Single choke entrance
+
+---
+
+## Tactic #20: "The Silk Curtain"
+### Using Walls as Information Denial
+
+Walls block pathing but also block **vision**.
+
+**Application:**
+
+Build a wall segment specifically to block enemy sightline to your army staging area.
+
+**Setup:**
+
+```
+                     [ENEMY]
+                        |
+                        | (enemy vision cone)
+                        |
+        [YOUR HIDDEN ARMY]
+               |
+            [WALL] ←── blocks vision
+               |
+        [YOUR BASE]
+```
+
+**Result:**
+
+Enemy cannot see your army composition or numbers.
+When you attack, they're caught completely unprepared.
+
+---
+
+# PART V: TIMING ATTACKS AND POWER SPIKES
+
+## Tactic #21: "The Dragon Awakens"
+### The 7:30 Classical Age All-In
+
+This is the most reliable timing attack for Chinese players.
+
+**Build order (strict):**
+
+```
+0:00 - 5 villagers to food
+0:10 - Queue villager, scout starts exploring
+0:45 - 6th villager to wood
+1:00 - Build Garden, set to food
+1:30 - 7th villager to food
+2:00 - 8th villager to gold
+2:30 - 9th villager to wood
+3:00 - Begin Classical Age advance (400 food)
+3:00 - 10th villager to gold
+3:30 - Build Stable (during advance)
+4:30 - Classical Age hits
+4:30 - Build 2 War Chariots immediately
+5:00 - 11th-12th villagers to gold
+5:30 - Build Academy
+6:00 - Build 4 Chu Ko Nu
+6:30 - Build 2 more War Chariots
+7:00 - All military moves out
+7:30 - Attack hits enemy base
+```
+
+**Execution:**
+
+War Chariots tank arrows and kill villagers.
+Chu Ko Nu kill military and support buildings.
+Focus: enemy gold miners first, then production.
+
+---
+
+## Tactic #22: "The Qin Unification"
+### 15-Minute Mythic Power Spike
+
+This build sacrifices early pressure for an overwhelming Mythic Age timing.
+
+**Build order (economic focus):**
+
+```
+0:00-5:00: Standard opening, 18 villagers
+5:00-10:00: Minimal military, maximum economy
+10:00: 35+ villagers, advance to Heroic
+12:00: Heroic Age hits
+12:00-14:00: Build 2 Castles + siege workshop
+14:00: Advance to Mythic
+15:00: Mythic Age hits
+15:00-16:00: Spam Azure Dragons + Vermilion Birds
+16:00: Attack with overwhelming myth unit force
+```
+
+**Why this works:**
+
+Myth units are much stronger per population than human units.
+By Mythic, you have access to all god powers + technologies.
+Most opponents are still in Heroic when your attack hits.
+
+---
+
+## Tactic #23: "The Terracotta Legion"
+### God Power-Based Timing Attack
+
+If you choose Xi Wangmu as your Classical minor god, you get Terracotta Army god power.
+
+**The timing:**
+
+1. Advance to Classical with minimal military
+2. Build economy until 8:00
+3. At 8:00, build a modest force (10-15 units)
+4. Move to enemy base
+5. Cast Terracotta Army when engagement begins
+6. You now have 15 + 10 Terracotta = 25 units vs their 15
+7. Overwhelming numerical advantage wins
+
+**Critical note:**
+
+Terracotta Warriors are temporary. Do NOT let the fight drag out.
+You have approximately 90 seconds before they crumble.
+Focus enemy production buildings, not units.
+
+---
+
+## Tactic #24: "The Mandate of Heaven"
+### Winning the Game Before It Starts (God Selection)
+
+Your god choices should counter your opponent's civilization, not follow a "default" path.
+
+**Shennong (Recommended 70% of games)**
+
+Why: Best economy, most flexible, strongest late game
+Against: Greeks, Egyptians, other Chinese
+Avoid against: Aggressive Norse (too slow to stabilize)
+
+**Fu Xi (Recommended 20% of games)**
+
+Why: Faster buildings, earlier pressure, better castle rushes
+Against: Atlanteans, passive players
+Avoid against: Isis (too defensive for castle rush to work)
+
+**Nü Wa (Recommended 10% of games)**
+
+Why: Best myth units, recreation god power, surprise factor
+Against: Myth-unit heavy opponents
+Avoid against: Anyone who knows how to counter myth units
+
+---
+
+## Tactic #25: "The Five Phases"
+### Dynamic Strategy Shifting Based on Game Phase
+
+The game has five distinct phases. Your strategy should shift with each.
+
+**Phase 1: Archaic (0:00-4:00)**
+Focus: Pure economy
+Actions: Scout, gather, build Garden, advance
+Mistakes to avoid: Building military, fighting
+
+**Phase 2: Early Classical (4:00-8:00)**
+Focus: Establish map control
+Actions: Scout aggressively, build forward towers, light military
+Mistakes to avoid: Over-committing to fights, ignoring economy
+
+**Phase 3: Late Classical (8:00-12:00)**
+Focus: Prepare for Heroic power spike
+Actions: Expand, mass army, deny enemy expansion
+Mistakes to avoid: Aging up too slowly, aging up too quickly
+
+**Phase 4: Heroic (12:00-18:00)**
+Focus: Win the game
+Actions: Major military operations, siege if advantageous
+Mistakes to avoid: Passive play, letting enemy reach Mythic safely
+
+**Phase 5: Mythic (18:00+)**
+Focus: Overwhelming force
+Actions: Myth unit spam, god power combinations, final assault
+Mistakes to avoid: Still playing like it's Heroic
+
+---
+
+# PART VI: PSYCHOLOGICAL WARFARE
+
+## Tactic #26: "The Empty Fort Strategy"
+### Appearing Weak When You Are Strong
+
+Sun Tzu said it best. Here's how to apply it:
+
+**The setup:**
+
+1. Build your army in a hidden location (behind trees, cliffs)
+2. Leave your base looking "defenseless"
+3. Move villagers around visibly
+4. Remove military units from obvious sightlines
+
+**The bait:**
+
+Enemy scouts your base, sees no army, assumes you're booming.
+Enemy attacks with partial force.
+You surround their force with your hidden army.
+Enemy loses 60% of military for nothing.
+
+**When to use:**
+
+When you're ahead and enemy is desperate to attack.
+When you have superior map vision and can predict attack timing.
+
+---
+
+## Tactic #27: "The Feigned Retreat"
+### Baiting Enemy Into Overextension
+
+**The execution:**
+
+1. Send your army forward
+2. Engage briefly (2-3 seconds of combat)
+3. Pull back as if "losing"
+4. Enemy chases (they always chase)
+5. Lead them into your pre-positioned reinforcements
+6. Surround and annihilate
+
+**Setup requirements:**
+
+You need a second army positioned behind your "retreat" path.
+You need to pull back BEFORE you actually start losing.
+Timing is everything — too early and they don't chase, too late and you actually lose.
+
+---
+
+## Tactic #28: "The Loud Whisper"
+### Strategic Misdirection Through Visible Actions
+
+Make your opponent "see" what you want them to see.
+
+**Example 1: Fake Castle Rush**
+
+Build a Castle foundation in an aggressive position.
+Enemy panics, moves all military to defend against "Castle Rush."
+You cancel the Castle (lose 30% resources) and attack their now-undefended expansion.
+
+**Example 2: Fake Age-Up**
+
+Start researching Heroic Age.
+Cancel it immediately.
+Enemy sees the notification "Player is advancing to Heroic Age."
+Enemy stops military production, starts economic focus.
+You attack with superior Classical army.
+
+---
+
+## Tactic #29: "The Diplomatic Dagger"
+### Multiplayer Team Game Psychology
+
+In team games, you can use chat to manipulate.
+
+**Technique 1: The False Alarm**
+
+Type to your team: "I'm being rushed! Help!"
+Enemy team intercepts communication (if possible) or assumes you're under pressure.
+You're actually not under pressure and are building a massive hidden army.
+
+**Technique 2: The Blame Shift**
+
+When you lose an engagement, type: "Lag!"
+Enemy thinks you're not actually paying attention.
+They get overconfident.
+You punish overconfidence.
+
+**Technique 3: The Surrender Feint**
+
+Type: "gg"
+Enemy relaxes, stops making military.
+You don't actually resign.
+You attack 60 seconds later.
+
+*Note: This is considered BM (bad manners) in some communities. Use at your own social risk.*
+
+---
+
+## Tactic #30: "The Shadow Play"
+### Controlling Enemy Vision to Control Their Mind
+
+Everything your enemy does is based on what they see. Control their vision, control their actions.
+
+**Technique 1: Scout Hunting**
+
+Prioritize killing enemy scouts above almost everything else.
+A blind opponent makes poor decisions.
+
+**Technique 2: Fog of War Exploitation**
+
+Never leave units visible at the edge of fog of war.
+Always position armies slightly back from vision line.
+Enemy must commit scouts to find you.
+
+**Technique 3: Vision Anchoring**
+
+If enemy has a tower or unit giving them vision of an area, they'll assume that area is "safe."
+Attack that exact area after destroying the vision source.
+They won't react for 15-20 seconds because they "knew" it was safe.
+
+---
+
+# PART VII: ADVANCED MICRO TECHNIQUES
+
+## Tactic #31: "The Serpent Strike"
+### Mounted Archer Kiting Perfection
+
+Mounted Archers are one of the strongest Chinese units — if you micro them correctly.
+
+**The technique:**
+
+1. Attack-move toward enemy
+2. The moment your archers fire, issue move command away
+3. Your archers are now moving before the enemy melee can reach them
+4. Stop, attack once, move again
+5. Repeat until enemy is dead
+
+**Hotkey sequence:**
+
+```
+A + Left Click (attack move)
+Wait 0.3 seconds
+Right Click (move away)
+Wait 0.5 seconds
+A + Left Click (attack move)
+Repeat
+```
+
+**Practice method:**
+
+Create a custom scenario: 10 Mounted Archers vs 30 Hoplites.
+With perfect kiting, the archers should kill all 30 Hoplites without losing a single unit.
+When you can do this, you've mastered kiting.
+
+---
+
+## Tactic #32: "The Hammer and Anvil"
+### Perfect Cavalry Flanking
+
+**Setup:**
+
+You need two groups:
+- Group 1 (Anvil): Slow, tanky units (Cataphracts, Halberdiers)
+- Group 2 (Hammer): Fast units (War Chariots, Mounted Archers)
+
+**Execution:**
+
+1. Move Anvil directly at enemy
+2. Move Hammer in wide arc around enemy
+3. Anvil engages, enemy focuses on Anvil
+4. Hammer hits enemy from behind
+5. Enemy is sandwiched, cannot retreat
+
+**Formation diagram:**
+
+```
+Phase 1:
+      [ENEMY]
+         |
+      [ANVIL]    [HAMMER ──→ around]
+
+Phase 2:
+      [HAMMER] ↓
+         |
+      [ENEMY]  (surrounded)
+         |
+      [ANVIL]
+```
+
+---
+
+## Tactic #33: "The Orchid Mantis"
+### Ambush Setup and Execution
+
+**Requirements:**
+
+- Forest, cliff, or building to hide behind
+- Enemy must be approaching predictably
+- Your army must be faster than theirs (or at least the retreating portion)
+
+**Setup:**
+
+1. Hide main army behind vision blocker
+2. Position "bait" unit (single Scout or cheap unit) in visible location
+3. Enemy sees bait, sends force to kill it
+4. Bait retreats toward your hidden army
+5. Enemy follows
+6. Your army emerges and engages
+
+**The math:**
+
+If enemy commits 20 units to chase your 1 Scout, they're fighting 1v0.
+Then suddenly they're fighting 20v35 (your hidden army).
+Psychological shock + numerical advantage = total destruction.
+
+---
+
+## Tactic #34: "The Thousand Cuts"
+### Continuous Harassment Without Commitment
+
+**The concept:**
+
+Never commit your full army. Instead, constantly send small forces to harass.
+
+**The execution:**
+
+Split your army into 3 groups:
+- Group 1: 5 Mounted Archers (raid group)
+- Group 2: Main army (defense/push)
+- Group 3: 3-4 War Chariots (anti-raid / counter-harass)
+
+**The rhythm:**
+
+Every 45 seconds, Group 1 runs into enemy base, kills 1-2 villagers, runs away.
+You never lose Group 1 because you never commit.
+Over 10 raids, you've killed 15-20 villagers.
+Enemy economy is crippled.
+Your main army pushes for the kill.
+
+---
+
+## Tactic #35: "The Immortal Phoenix"
+### Hero Unit Preservation and Rotation
+
+Chinese Immortals are infinitely trainable hero units. Use this.
+
+**The technique:**
+
+1. Keep 2 Immortals in your army at all times
+2. When one drops below 30% HP, pull it back
+3. When you return home, heal the damaged Immortal
+4. Send a fresh Immortal to replace it
+5. Rotate continuously
+
+**Why this matters:**
+
+Immortals gain veterancy. A Veteran Immortal is massively stronger than a fresh one.
+By rotating and preserving them, you accumulate veterancy over time.
+By game end, you have multiple max-veterancy Immortals that fight like myth units.
+
+---
+
+# PART VIII: COUNTER-STRATEGY ENCYCLOPEDIA
+
+## Tactic #36: "The Chaos Cage"
+### Countering Norse Aggression
+
+Norse will rush you. Always. Here's how to survive.
+
+**Phase 1: Early game (0-6 minutes)**
+
+- Wall earlier than normal (start at 3:00)
+- Keep 6-8 villagers on wood for wall spam
+- Build Tower at most exposed point
+
+**Phase 2: First contact (6-8 minutes)**
+
+- Norse sends Ulfsarks + maybe Hersirs
+- DO NOT FIGHT IN THE OPEN
+- Pull villagers behind walls
+- Let tower damage the raiders
+- Counter with Chu Ko Nu from behind wall
+
+**Phase 3: Counter-attack (8+ minutes)**
+
+- Norse raiding force will eventually leave
+- Immediately attack their home with Cataphracts
+- Norse have no good counter to Cataphracts early
+- Force them to defend instead of attack
+
+---
+
+## Tactic #37: "The Mirror Breaker"
+### Winning the Chinese vs Chinese Matchup
+
+The mirror is entirely about three things:
+1. Garden management (whoever oscillates better wins economy)
+2. Information (whoever scouts better knows compositions)
+3. Mythic timing (whoever gets Azure Dragons first usually wins)
+
+**The edge:**
+
+Prioritize gold control. In mirrors, gold runs out faster because both players are efficient.
+The player who controls the 2nd and 3rd gold mines usually wins.
+
+---
+
+## Tactic #38: "The Phalanx Piercer"
+### Countering Greek Hoplite-Toxotes Death Ball
+
+Greeks love to mass Hoplites in front, Toxotes behind.
+
+**The counter:**
+
+Chu Ko Nu absolutely shred Hoplites. Build 20+ of them.
+But Toxotes kill Chu Ko Nu.
+Solution: Use Fire Lancers to dive past Hoplites and kill Toxotes.
+
+**Formation:**
+
+```
+[Your Chu Ko Nu] ←→ [Enemy Hoplites] ←→ [Enemy Toxotes]
+                          ↑
+               [Your Fire Lancers dive through]
+```
+
+**Result:**
+
+Fire Lancers die, but take all Toxotes with them.
+Chu Ko Nu clean up helpless Hoplites.
+
+---
+
+## Tactic #39: "The Sandstorm Shelter"
+### Countering Egyptian Siege
+
+Egyptians get very strong siege (Siege Towers, Catapults).
+
+**The counter:**
+
+Fire Lancers. Their bonus damage vs buildings also applies to siege.
+3-4 Fire Lancers can one-shot a Siege Tower.
+
+**Tactical approach:**
+
+1. Let Egyptians push toward your base
+2. Hide Fire Lancers to the side
+3. When siege units are separated from army, dive in
+4. Kill siege in 2-3 seconds
+5. Escape before army can react
+
+---
+
+## Tactic #40: "The Titan Slayer"
+### Defeating an Atlantean Titan
+
+If Atlantean player gets Titan Gate up, you're in trouble. But not dead.
+
+**Step 1: Don't let it happen**
+
+Scout aggressively in Mythic. If you see Titan Gate construction, drop everything and stop it.
+
+**Step 2: If it's already summoned...**
+
+- Azure Dragons do bonus damage to Titans
+- White Tiger fear can interrupt Titan attack animation
+- Vermilion Bird area damage hits Titan support army, not Titan (focus support)
+
+**Step 3: The base trade**
+
+If Titan is walking to your base, ignore it. Send EVERYTHING to their base.
+You can probably destroy their base before Titan destroys yours.
+With no production, their Titan is useless.
+
+---
+
+# PART IX: ADVANCED ECONOMY OPTIMIZATION
+
+## Tactic #41: "The Flowing River"
+### Optimal Villager Gathering Patterns
+
+Villagers have travel time. Minimize it.
+
+**For food (hunting):**
+
+Build a Storehouse directly next to the herd.
+When herd is exhausted, delete Storehouse and build new one next to next herd.
+Yes, you lose 50 wood. You gain 100+ food from reduced travel time.
+
+**For gold:**
+
+Gold mines don't move. Build Storehouse as close as possible.
+Assign exactly 8 villagers per gold mine. More = collision, less = inefficient.
+
+**For wood:**
+
+Tree lines are long. Build 2 Storehouses on opposite ends.
+Split villagers between them.
+They'll never walk far.
+
+---
+
+## Tactic #42: "The Surplus Protocol"
+### Resource Overflow Management
+
+Floating resources is bad. Here's how to prevent it.
+
+**The checks:**
+
+Every 60 seconds, glance at your resource bar.
+
+```
+If Food > 500 and not aging up: Build villagers or military
+If Wood > 800: Build buildings or expand
+If Gold > 600 and not researching: Build military or research
+If Favor > 50: Build myth units or research myth techs
+```
+
+**The Garden adjustment:**
+
+If you're floating a resource, NEVER set Garden to that resource.
+Garden should always produce your scarcest resource.
+
+---
+
+## Tactic #43: "The Expansionist Doctrine"
+### Optimal Expansion Timing and Placement
+
+**When to expand:**
+
+- When your starting gold mine is below 50%
+- When you have map control (no enemy can threaten expansion)
+- When you have idle villagers (no nearby resources)
+
+**Where to expand:**
+
+Priority 1: Nearest gold mine
+Priority 2: Position that creates mapcontrol (blocks enemy expansion)
+Priority 3: Defensive position (near cliffs/chokepoints)
+
+**The Chinese advantage:**
+
+Fu Xi's buildings build faster. Your expansion TC finishes before enemy can stop it.
+
+---
+
+## Tactic #44: "The Sustainable War Machine"
+### Military Production Without Economic Collapse
+
+Many players crash their economy when building an army.
+
+**The ratios:**
+
+For every 10 villagers, you can sustain:
+- 2 Barracks producing continuously, OR
+- 1 Stable producing continuously, OR
+- 1 Academy + 1 Stable at 50% production
+
+**The safe build:**
+
+Never exceed production capacity.
+If you have 30 villagers: 2 Academies + 1 Stable maximum.
+Additional buildings should be pre-built but NOT producing.
+
+---
+
+## Tactic #45: "The Golden Age"
+### Hitting Peak Economy at the Right Time
+
+Peak economy should align with your military timing.
+
+**If you're rushing (7:30 attack):**
+
+Economy peaks at 5:00 (15 villagers)
+Then you stop villager production
+All resources → military
+
+**If you're booming (15:00 Mythic):**
+
+Economy peaks at 13:00 (40+ villagers)
+Then you slow villager production
+Begin military mass
+
+**If you're turtling (late-game grind):**
+
+Economy never stops growing
+50, 60, 70+ villagers
+You will out-resource any opponent in the long game
+
+---
+
+# PART X: MAP-SPECIFIC STRATEGIES
+
+## Tactic #46: "The Mediterranean Doctrine"
+### Strategy for Mediterranean-Type Maps
+
+**Characteristics:**
+
+- Central sea
+- Land on edges
+- Water control = map control
+
+**Chinese adjustment:**
+
+Chinese navy is average. Don't fight for water superiority.
+Instead:
+- Build early Tower on your coastline
+- Focus on land dominance
+- Let opponent waste resources on ships
+- If they go full water, you've already won the land
+
+---
+
+## Tactic #47: "The Midgard Protocol"
+### Strategy for Open, Flat Maps
+
+**Characteristics:**
+
+- No chokepoints
+- Easy to raid
+- Hard to defend
+
+**Chinese adjustment:**
+
+More Mounted Archers. You need mobility.
+Wall aggressively to create artificial chokepoints.
+Build forward Towers to create "safe zones" for your villagers.
+
+---
+
+## Tactic #48: "The Oasis Doctrine"
+### Strategy for Resource-Dense Center Maps
+
+**Characteristics:**
+
+- Resources clustered in middle
+- Whoever controls center wins
+
+**Chinese adjustment:**
+
+Rush Classical Age.
+Immediately build Tower in center.
+Contest center aggressively.
+Use Garden to compensate for fewer villagers on edges.
+
+---
+
+## Tactic #49: "The Vinlandsaga"
+### Strategy for Water-Heavy Maps
+
+**Characteristics:**
+
+- More water than land
+- Navy required to function
+
+**Chinese adjustment:**
+
+This is NOT a good map for Chinese. Consider random god if map is water-heavy.
+If stuck on water map as Chinese:
+- Focus on economy, not water fights
+- Build exactly enough ships to not die
+- Aim for long game where Garden advantage matters
+
+---
+
+## Tactic #50: "The Frozen Throne"
+### Strategy for Snow/Cold Maps with Huntables
+
+**Characteristics:**
+
+- Lots of huntable animals
+- Less berries/farms needed
+- Hunt moves around
+
+**Chinese adjustment:**
+
+Assign Scout to always be near huntables.
+When hunt moves, move Storehouse.
+You want to exhaust ALL hunt before transitioning to farms.
+Garden can cover food while you're transitioning.
+
+---
+
+# PART XI: TEAM GAME SPECIALIZATIONS
+
+## Tactic #51: "The Silk Broker"
+### Economic Specialist Role
+
+In team games, one player can focus entirely on economy and support.
+
+**Your job:**
+
+- Boom harder than anyone else
+- Send resources to aggressive teammates
+- Build Trade Carts for allies
+- Hold defensive positions while teammates attack
+
+**Chinese advantage:**
+
+Garden lets you boom even harder.
+Your excess resources enable teammates to fight continuously.
+
+---
+
+## Tactic #52: "The Dragon's Guard"
+### Defensive Specialist Role
+
+If your team has an aggressive player, you play defense.
+
+**Your job:**
+
+- Wall all approaches to team bases
+- Build Tower networks along perimeter
+- Hold rear guard while team pushes
+- Counter enemy raids with mobile response force
+
+**Chinese advantage:**
+
+Shennong building discounts make defensive structures cheaper.
+You can wall the entire map for the price of one army.
+
+---
+
+## Tactic #53: "The Vanguard"
+### Aggressive Specialist Role
+
+Sometimes Chinese plays the aggressor. Here's how.
+
+**Your job:**
+
+- Fast Classical
+- Harass enemy's weakest player
+- Force enemies to commit resources to defense
+- Create space for teammates to boom
+
+**Chinese advantage:**
+
+Chu Ko Nu + War Chariot is a terrifying early army.
+If you damage one player enough, the game becomes 3v2.
+
+---
+
+## Tactic #54: "The Diplomat"
+### Target Calling and Coordination Role
+
+In team games, someone must coordinate attacks.
+
+**Your job:**
+
+- Scout all enemies continuously
+- Call targets ("focus red's gold miners")
+- Time god powers with teammates
+- Coordinate ages and timing attacks
+
+**Chinese advantage:**
+
+You can reach Mythic reliably and stack god powers with teammates.
+Example: Your Uproot + ally's Meteor = apocalypse.
+
+---
+
+## Tactic #55: "The Closer"
+### Late-Game Finisher Role
+
+Some games drag to Mythic. Chinese is best here.
+
+**Your job:**
+
+- Survive early game (take help from teammates if needed)
+- Reach Mythic with superior economy (Garden advantage)
+- Mass Azure Dragons + Vermilion Birds
+- End the game with overwhelming myth unit army
+
+**Chinese advantage:**
+
+Chinese late game is probably the strongest of any civilization.
+If you reach Mythic with healthy economy, you win.
+
+---
+
+# PART XII: THE PATH TO MASTERY
+
+## Tactic #56: "The Daily Practice Regimen"
+
+**15 minutes: Micro practice**
+
+Create custom scenario: 20 Chu Ko Nu vs 30 Hoplites.
+Goal: Win with fewer than 5 losses.
+
+**15 minutes: Build order practice**
+
+Start a single-player game.
+Execute your chosen timing attack build perfectly.
+Restart if you make any mistake.
+
+**30 minutes: Live game**
+
+Play one ranked or competitive game.
+Regardless of outcome, watch replay afterward and note 3 mistakes.
+
+**Total: 1 hour per day. 90 days. You will be unstoppable.**
+
+---
+
+## Tactic #57: "The Replay Analysis Protocol"
+
+Every game you play, watch the replay.
+
+**First pass:**
+
+Watch at 2x speed.
+Identify the moment you won or lost.
+
+**Second pass:**
+
+Watch at 1x speed.
+Focus on economy comparison (press F11 for graphs).
+
+**Third pass:**
+
+Watch from enemy perspective.
+What did they see? What did they not see?
+
+---
+
+## Tactic #58: "The Counter-Composition Flashcards"
+
+Memorize these until they're instant reflexes:
+
+```
+Enemy Hoplites → Your Chu Ko Nu
+Enemy Toxotes → Your War Chariots
+Enemy Cavalry → Your Halberdiers
+Enemy Siege → Your Fire Lancers
+Enemy Myth Units → Your Immortals + Monks
+Enemy Spearmen → Your Mounted Archers (kite)
+Enemy Archers → Your Cataphracts
+```
+
+---
+
+## Tactic #59: "The 10,000 Hour Path"
+
+There are no shortcuts. Mastery requires volume.
+
+**Milestone targets:**
+
+- 100 games: You understand the basics
+- 500 games: You have reliable builds
+- 1,000 games: You can adapt to any situation
+- 5,000 games: You are competitive with the best
+- 10,000 games: You are one of the best
+
+---
+
+## Tactic #60: "The Final Secret"
+
+Here it is. The actual secret.
+
+**Consistency beats brilliance.**
+
+The player who does the simple things right every game will beat the player who occasionally does brilliant things.
+
+Every game:
+- Scout at 0:10
+- Garden oscillating
+- Never floating resources
+- Never supply blocked
+- Army always moving
+
+Do those five things every single game. You will rise to the top 10% of players without any other tactics.
+
+Then, add the tactics from this guide.
+
+You will be unstoppable.
+
+---
+
+# APPENDIX A: BUILD ORDER CHEAT SHEETS
+
+## Build #1: "The Dragon Awakens" (7:30 Timing Attack)
+
+```
+0:00 - 5 vills to food (berries or hunt)
+0:10 - Scout circles base, then moves to enemy
+0:15 - Queue 1 villager (goes to food)
+0:40 - 6th vill builds Garden (set to Food)
+1:00 - 6th vill to wood after Garden
+1:15 - Queue 1 vill (goes to food)
+1:30 - 7th vill to food
+2:00 - Queue 1 vill (goes to gold)
+2:30 - 8th vill to gold
+3:00 - Queue 1 vill (goes to wood)
+3:00 - Switch Garden to Favor (get 25)
+3:30 - Advance to Classical (Xi Wangmu)
+3:30 - 9th vill to wood
+4:00 - Build Stable (with wood vills)
+4:30 - Classical Age
+4:30 - 2 War Chariots immediately
+4:30 - Switch Garden to Gold
+5:00 - Queue 2 vills (gold)
+5:30 - Build Academy
+6:00 - 4 Chu Ko Nu
+6:30 - 2 more War Chariots
+7:00 - Move out
+7:30 - Attack
+```
+
+---
+
+## Build #2: "The Qin Unification" (15:00 Mythic Timing)
+
+```
+0:00 - Standard opening (5 food, Garden on food)
+0:00-4:00 - Reach 16 vills, minimal military
+4:00 - Advance Classical (Huang Di)
+5:00 - Classical Age
+5:00-9:00 - Build to 30+ vills, minimal military (defense only)
+9:00 - Build 2 Academy, 1 Stable
+9:30 - Begin small army (10-15 units)
+10:00 - Advance Heroic (Dabo Gong)
+11:30 - Heroic Age
+11:30-14:00 - Build to 40+ vills, 2 Castles
+14:00 - Advance Mythic (He Bo)
+15:00 - Mythic Age
+15:00-16:00 - Mass Azure Dragons, Vermilion Birds
+16:00 - Attack with overwhelming force
+```
+
+---
+
+## Build #3: "The Phantom Economy" (All-Out Pressure)
+
+```
+0:00 - Standard opening (5 food)
+0:00-3:00 - Reach 15 vills only
+3:00 - Advance Classical (Xi Wangmu)
+3:30 - Build Stable during advance
+4:00 - Classical Age
+4:00 - STOP MAKING VILLAGERS
+4:00-7:00 - Pure military production
+7:00 - Attack with 25+ units vs their 10-12
+7:30 - If attack fails, you lose. No recovery.
+```
+
+---
+
+# APPENDIX B: HOTKEY CONFIGURATION
+
+**Essential hotkeys (set these before playing):**
+
+```
+Select all military: . (period)
+Select all idle villagers: , (comma)
+Go to Town Center: H
+Go to last notification: Space
+Build villager: Q
+Build house: Q (in build menu)
+Build wall: W (in build menu)
+Select Garden: Custom bind to G
+Control groups: 1-0 for armies, Ctrl+1-0 to set
+```
+
+**Pro-level binds:**
+
+```
+Attack move: A
+Stop: S
+Patrol: Z
+Formation toggle: F
+Select all military buildings: Shift+.
+```
+
+---
+
+# APPENDIX C: COUNTER MATCHUP TABLE
+
+| Enemy Civ | Their Strength | Your Counter | Your Win Condition |
+|-----------|---------------|--------------|---------------------|
+| Zeus | Hoplite spam | Chu Ko Nu mass | Survive to Heroic |
+| Poseidon | Cavalry raids | Halberdiers + walls | Deny raids, outscale |
+| Hades | Strong Heroic | Fast Mythic | Outscale in late game |
+| Isis | Defensive | Siege + Fire Lancers | Break walls, deny Heroic |
+| Ra | Empowered economy | Early pressure | Don't let them boom |
+| Set | Animals + harass | Towers + mobile army | Map control |
+| Odin | Hill Fort rush | Counter-castle | Defensive positioning |
+| Thor | Armory rush | Fast Classical | Punish eco investment |
+| Loki | Myth units | Immortals + Monks | Hero-heavy army |
+| Kronos | Time Shift TC | Tower ring | Deny forward TC |
+| Gaia | Passive boom | Early aggression | Punish greed |
+| Oranos | Sky Passages | Map vision | Hunt the Passages |
+| Fu Xi | Mirror | Information war | Scout better |
+| Nü Wa | Myth units | Immortal spam | Hero advantage |
+| Shennong | Late game | Prevent late game | Aggressive timing |
+
+---
+
+# APPENDIX D: TERMINOLOGY GLOSSARY
+
+**APM:** Actions Per Minute. Higher = faster player.
+
+**Boom:** Economic focus, low military, fast growth.
+
+**Cheese:** All-in strategy that fails if scouted.
+
+**ELO:** Ranking system. Higher = better player.
+
+**FE:** Fast Expand. Building 2nd TC early.
+
+**GG:** Good Game. Said when resigning or winning.
+
+**Macro:** Big picture decisions. Economy, production, upgrades.
+
+**Micro:** Small-scale unit control. Kiting, focus fire, formations.
+
+**Pop:** Population. How many units you have.
+
+**Rush:** Fast, aggressive early attack.
+
+**Timing Attack:** Attack designed to hit at a power spike.
+
+**Turtle:** Defensive playstyle with heavy walls/towers.
+
+---
+
+# FINAL WORDS
+
+This guide contains 60 major tactics, dozens of sub-tactics, complete build orders, counter-matchup tables, and everything you need to become a top-tier Chinese player in Age of Mythology: Tale of the Dragon.
+
+But knowledge means nothing without practice.
+
+Go. Play 100 games. Implement one tactic per session. Watch your replays. Refine your builds.
+
+In 90 days, you will be unstoppable.
+
+**The Dragon awaits.**
+
+---
+
+*Guide written for competitive play. All timings assume standard game speed. Adjust for game settings.*
+
+*Glory to the Jade Emperor.*
+===================================================================
+===================================================================
+
+===================================================================
+=================================================================== Claude Opus 4.5 (Definitive Edition not TotD mistake, rectified below)
+# Age of Mythology: Definitive Edition
+## The Ultimate Greek Strategy Compendium
+### 300+ Tactics for Hellenic Domination
+
+---
+
+# PART I: THE PHILOSOPHY OF OLYMPUS
+## Understanding the Greek Playstyle
+
+The Greeks are the **foundation** of Age of Mythology. While other civilizations have unique gimmicks—Egyptian monuments, Norse infantry builders, Atlantean citizen-soldiers, Chinese Gardens—Greeks win through **raw fundamentals**.
+
+Greek gameplay is built on three pillars:
+
+1. **The Phalanx Principle:** Your core army (Hoplite + Toxotes) is the most cost-efficient in the game when used correctly.
+
+2. **The Prayer Economy:** Favor generation requires villagers worshipping at Temples, creating unique economic tradeoffs.
+
+3. **The Hero Tradition:** Greeks train heroes from the Town Center, giving you flexible, powerful answers to myth units.
+
+Before any tactics, internalize this truth:
+
+> "Greeks don't need tricks. They need perfect execution of timeless fundamentals. Master the basics, and you master the game."
+
+The Greeks are like a chess player using only the classic openings—no gambits, no tricks. When executed perfectly, fundamentals beat gimmicks every time.
+
+Now let's perfect those fundamentals—and add some tricks anyway.
+
+---
+
+# PART II: THE PRAYER ECONOMY
+
+## Tactic #1: "The Divine Tithe"
+### Optimal Favor Generation Without Crippling Economy
+
+The core Greek dilemma: villagers worshipping at Temples produce favor but **no resources**. Every praying villager is one not gathering food, wood, or gold.
+
+**The formula:**
+
+For every Temple you own, assign **3-5 villagers** to worship.
+- Below 3: Favor generation too slow
+- Above 5: Diminishing returns per villager
+
+**The tithe schedule:**
+
+```
+Archaic Age: 0 villagers praying (no Temple yet)
+Early Classical: 3 villagers at first Temple
+Mid-Classical: 4-5 villagers (if planning myth units)
+Heroic Age: 5-6 villagers at first Temple
+              3-4 villagers at second Temple (if built)
+Mythic Age: 8-10 total villagers praying across 2 Temples
+```
+
+**The oscillation technique:**
+
+When you need a burst of favor (for a myth unit or technology), temporarily assign 8-10 villagers to pray.
+Once favor threshold is reached, send them back to economy.
+This is called "pulsing" your favor generation.
+
+**Pro tip:** Never queue myth units. They cost favor. Build them one at a time, pulsing villagers as needed.
+
+---
+
+## Tactic #2: "The Olympian Overdrive"
+### Zeus-Specific Favor Acceleration
+
+Zeus generates favor **30% faster** than Poseidon or Hades.
+
+**The exploitation:**
+
+With Zeus, you can run a leaner prayer economy:
+- Where Poseidon needs 5 villagers, Zeus needs only 4
+- This frees 1 villager per Temple for resource gathering
+- Over a 30-minute game, this equals hundreds of extra resources
+
+**The math:**
+
+1 villager gathering gold = ~30 gold/minute
+30 minutes × 30 gold = 900 gold
+1 extra myth unit or 3 additional military units
+
+**Zeus prayer targets:**
+
+```
+Early Classical: 2-3 villagers praying (not 4-5)
+Mid-Classical: 3-4 villagers
+Heroic: 4-5 villagers per Temple
+Mythic: 6-8 total (not 8-10)
+```
+
+---
+
+## Tactic #3: "The Silent Temple"
+### Delaying Favor for Economic Dominance
+
+Most players build a Temple immediately upon reaching Classical Age. This is not always optimal.
+
+**The heresy:**
+
+In certain matchups, skip the Temple entirely in early Classical.
+Use those resources (200 wood, 200 gold) and those villager-seconds for pure economy.
+
+**When to use:**
+
+- Against Norse (they rush; you need military, not myth units)
+- Against aggressive Atlantean (same logic)
+- When you're planning a fast Heroic Age (favor matters more later)
+
+**The catch-up mechanic:**
+
+Build your Temple at the 7:00-8:00 mark instead of 5:00.
+Assign 6 villagers to pray immediately.
+You'll catch up on favor by Heroic Age, but with a stronger economy.
+
+---
+
+## Tactic #4: "The Temple Fortress"
+### Defensive Temple Placement for Multi-Purpose Value
+
+Temples have high HP and provide population. Use them as defensive structures.
+
+**Placement doctrine:**
+
+```
+Temple 1: Near gold mine (protects miners, in range for defense)
+Temple 2: At chokepoint or expansion (creates "temple wall")
+Temple 3: Forward position (in aggressive games)
+```
+
+**The synergy:**
+
+Praying villagers are inside the Temple's "zone."
+If raiders come, villagers run inside Temple.
+Temple takes damage instead of villagers dying.
+You lose no economic units.
+
+**Advanced placement:**
+
+Build Temple so it blocks a gap between trees or cliffs.
+Now it's a wall + defensive structure + population + favor generator.
+Maximum value from a single building.
+
+---
+
+## Tactic #5: "The Altar of Ares"
+### Converting Favor into Military Momentum
+
+Favor is only valuable if spent. Hoarding favor is waste.
+
+**Spending priorities by age:**
+
+```
+Classical Age:
+1. Armory upgrades (Medium Infantry, Copper Weapons)
+2. Myth unit (1-2 Centaurs or Minotaurs)
+3. Economic techs (Husbandry, Hunting Dogs)
+
+Heroic Age:
+1. Armory upgrades (Heavy Infantry, Bronze Weapons)
+2. Myth units (Hydra, Manticore, or civ-specific)
+3. God-specific technologies
+
+Mythic Age:
+1. Champion upgrades
+2. Titan Gate (if going Titans)
+3. Myth unit spam
+```
+
+**The pulse-spend rhythm:**
+
+Every 2 minutes, check your favor.
+If above 50, spend it immediately.
+If below 25, pulse villagers to prayer.
+Never float favor. It's wasted potential.
+
+---
+
+# PART III: MILITARY DOCTRINE
+
+## Tactic #6: "The Marble Wall"
+### Hoplite Mastery and the Art of the Line
+
+Hoplites are the **backbone** of Greek armies. Learn them perfectly.
+
+**Stats that matter:**
+
+- High HP (115 base)
+- High pierce armor (30%)
+- Bonus vs cavalry
+- Slow movement speed
+
+**The formation:**
+
+Hoplites should ALWAYS be in front.
+They absorb damage while ranged units deal damage.
+Never let Hoplites chase. They're too slow.
+
+**The perfect Hoplite count:**
+
+```
+Classical Age: 8-12 Hoplites
+Heroic Age: 15-20 Hoplites
+Mythic Age: 20-25 Hoplites (with Champion upgrade)
+```
+
+**Beyond this count:** Switch to myth units or siege. Too many Hoplites becomes pop-inefficient.
+
+---
+
+## Tactic #7: "The Arrow Storm"
+### Toxotes Positioning and Focus Fire
+
+Toxotes are your damage dealers. Hoplites are your shields.
+
+**The fundamental truth:**
+
+Toxotes behind Hoplites = victory
+Toxotes in front of Hoplites = defeat
+
+**Positioning:**
+
+```
+[ENEMY]
+   |
+   ↓
+[HOPLITE LINE] ← absorbs damage
+   |
+[TOXOTES] ← deals damage from safety
+```
+
+**Focus fire doctrine:**
+
+Select all Toxotes.
+Right-click on a single enemy unit.
+All arrows hit that unit.
+It dies in 2 seconds.
+Repeat on next unit.
+
+**Never attack-move with Toxotes.** They'll spread damage across many targets, killing nothing. Manual focus fire always.
+
+---
+
+## Tactic #8: "The Hippikon Hammer"
+### Cavalry Flanking for Devastating Effect
+
+Greek cavalry (Hippikon, Prodromos) are not frontline units. They're assassins.
+
+**The role:**
+
+- Kill ranged units
+- Kill villagers
+- Kill siege
+- Kill fleeing enemies
+
+**The wrong way:**
+
+Send cavalry at Hoplites. Watch them die.
+
+**The right way:**
+
+1. Main army engages enemy frontline
+2. Cavalry circles around the flank
+3. Cavalry hits ranged units from behind
+4. Ranged units die
+5. Enemy army collapses
+
+**The timing:**
+
+Wait 5-8 seconds after engagement begins.
+Enemy is focused on the frontline fight.
+Cavalry strikes while attention is elsewhere.
+
+---
+
+## Tactic #9: "The Petrobolo Protocol"
+### Siege Timing and Composition
+
+Greek siege (Petrobolos) is powerful but vulnerable.
+
+**When to build siege:**
+
+- Never in Classical Age (too slow, too expensive)
+- Heroic Age: 2-3 Petroboloi for breaking walls
+- Mythic Age: 4-6 for major assaults
+
+**Protection doctrine:**
+
+Siege dies instantly to cavalry or myth units.
+NEVER move siege without protection.
+Minimum escort: 6 Hoplites + 4 Hippikons per 2 Petroboloi.
+
+**Targeting priority:**
+
+1. Enemy siege (counter-battery)
+2. Production buildings
+3. Town Centers
+4. Walls/Towers
+
+**Do NOT target units with siege.** Waste of damage.
+
+---
+
+## Tactic #10: "The Twelve Labors"
+### Greek Hero Utilization and Rotation
+
+Greeks have access to four trainable heroes:
+
+```
+Bellerophon: Flying. Good vs myth units.
+Heracles: High damage. Bonus vs myth units.
+Theseus: Bonus vs myth units.
+Jason: Bonus vs myth units.
+```
+
+**The rotation strategy:**
+
+Train 2 heroes at a time.
+When one dies, immediately train a replacement.
+Heroes should always be with your main army.
+
+**Hero micro:**
+
+Manually control heroes in battle.
+They should ONLY attack myth units.
+Pull them back when HP drops below 30%.
+
+**Veterancy farming:**
+
+Heroes gain veterancy from combat.
+A veteran hero is massively stronger than fresh one.
+Preserve heroes obsessively.
+
+---
+
+## Tactic #11: "The Bronze Legion"
+### Optimal Unit Composition by Major God
+
+Each Greek major god favors slightly different army compositions.
+
+**Zeus Army:**
+
+```
+Core: Hoplites (60%)
+Support: Toxotes (25%)
+Finisher: Myth units (15%) - stronger due to Zeus bonus
+Heroes: 2-3 at all times
+```
+
+Zeus's myth units have +10% HP. Lean into this.
+
+**Poseidon Army:**
+
+```
+Core: Hoplites (50%)
+Support: Cavalry - Hippikons, Prodromos (30%)
+Finisher: Toxotes (20%)
+Heroes: 2 (less important due to cavalry strength)
+```
+
+Poseidon cavalry has bonus HP. Use more cavalry than other Greeks.
+
+**Hades Army:**
+
+```
+Core: Hoplites (55%)
+Support: Toxotes (30%)
+Finisher: Gastraphetes (15%)
+Heroes: 2-3
+```
+
+Hades archers have better attack. Lean into ranged damage.
+
+---
+
+## Tactic #12: "The Peltast Paradox"
+### When to Use Light Infantry
+
+Peltasts (available in Heroic) are often ignored. This is a mistake.
+
+**Peltast strengths:**
+
+- Very fast
+- Good vs buildings
+- Cheap (no gold)
+
+**Use cases:**
+
+1. Raiding: Send 8-10 Peltasts to attack enemy economy while main army fights elsewhere
+2. Building sniping: Peltasts can burn down a forward Tower while Hoplites distract
+3. Chasing: After winning a fight, Peltasts catch fleeing enemies
+
+**Never use Peltasts for:**
+
+- Frontline combat (they melt)
+- Fighting Hoplites (hard counter)
+- Standing battles (too fragile)
+
+---
+
+## Tactic #13: "The Myrmidon Doctrine"
+### Zeus-Specific Myrmidon Strategies
+
+Myrmidons (Zeus unique unit) are Hoplite upgrades with bonus vs Egyptian units.
+
+**When to mass Myrmidons:**
+
+- Against Egypt (always)
+- Against Set (animals count as Egyptian)
+- When you need speed (Myrmidons are faster than Hoplites)
+
+**The substitution:**
+
+Replace 50% of your Hoplites with Myrmidons.
+Your army is now faster and just as tanky.
+You can chase down enemies or retreat more easily.
+
+---
+
+## Tactic #14: "The Hetairoi Charge"
+### Poseidon-Specific Cavalry Dominance
+
+Poseidon's Hetairoi (unique cavalry) have bonus HP and speed.
+
+**The strategy:**
+
+Build ONLY Hetairoi (no Hippikons) as Poseidon.
+They're better in every way.
+Mass 15-20 Hetairoi in Heroic Age.
+
+**The all-cavalry timing attack:**
+
+```
+10:00-11:00: 20 Hetairoi + 2 heroes
+Attack enemy base
+Ignore military, kill villagers
+If you kill 15+ villagers, you win the game
+```
+
+This works because Poseidon cavalry is faster than any other Greek god's options.
+
+---
+
+## Tactic #15: "The Shade Army"
+### Hades-Specific Death Recycling
+
+Hades' unique ability: dead units have a chance to return as Shades (ghost soldiers).
+
+**The exploitation:**
+
+Build large Hoplite armies.
+Engage in fights you expect to be close.
+Your dead Hoplites return as Shades.
+These Shades tip the fight in your favor.
+
+**The math:**
+
+25% of dead human soldiers become Shades.
+If you lose 20 Hoplites, 5 Shades appear.
+Those 5 Shades are free units that cost you nothing.
+
+**Strategic implication:**
+
+Hades can afford to take riskier fights.
+Even losses generate value.
+Play aggressively in Heroic Age.
+
+---
+
+# PART IV: TIMING ATTACKS AND POWER SPIKES
+
+## Tactic #16: "The Spartan Rush"
+### 6:30 Classical Age All-In
+
+This is the most famous Greek timing attack.
+
+**Build order (strict):**
+
+```
+0:00 - 4 villagers to food (berries or hunt)
+0:00 - Queue villagers continuously
+0:15 - Scout explores
+0:30 - 5th villager to food
+1:00 - 6th villager to food
+1:30 - 7th villager to wood
+2:00 - 8th villager to wood
+2:30 - Build house
+2:30 - 9th villager to food
+3:00 - Advance to Classical Age (Ares)
+3:00 - 10th villager to gold
+3:30 - Build Barracks (during advance)
+3:30 - 11th villager to gold
+4:15 - Classical Age hits
+4:15 - Immediately build 4 Hoplites
+4:45 - Build Academy
+5:00 - 12th-13th villagers to gold
+5:00 - Build 4 Toxotes
+5:30 - Build 4 more Hoplites
+6:00 - All military moves out
+6:00 - Build Temple (for favor, population)
+6:30 - Attack hits enemy base
+```
+
+**Execution:**
+
+Attack enemy gold miners first.
+Hoplites tank arrows.
+Toxotes focus-fire villagers.
+If you kill 8+ villagers, you've won.
+
+---
+
+## Tactic #17: "The Thermopylae Hold"
+### Defensive Classical into Dominant Heroic
+
+Not every game should be a rush. Here's the defensive timing.
+
+**Build order:**
+
+```
+0:00-5:00: Standard economy (15 villagers)
+5:00: Classical Age (Athena for Restoration god power)
+5:30: Build Temple + 3 villagers praying
+6:00: Wall key approaches
+6:30: Build Tower at most exposed point
+7:00-9:00: Build economy to 25 villagers
+9:00: Build military (10 Hoplites, 8 Toxotes)
+10:00: Advance to Heroic Age
+11:30: Heroic Age
+12:00: Push with Heroic-upgraded army
+```
+
+**Why this works:**
+
+Your Heroic army is dramatically stronger than their Classical army.
+Even if they attacked you in Classical, your walls + Tower held.
+Now you counter-attack with overwhelming force.
+
+---
+
+## Tactic #18: "The Colossus Walk"
+### Mythic Age Power Spike with Zeus
+
+The Colossus is one of the most powerful myth units in the game. With Zeus, it's even stronger.
+
+**The timing:**
+
+```
+0:00-11:00: Boom economy (40+ villagers)
+11:00: Advance to Mythic (Hephaestus for Colossus access)
+13:00: Mythic Age hits
+13:00: Build 3 Colossi immediately (900 favor, 900 gold)
+14:00: Push with Colossi + Champion army
+14:30: Destroy enemy base
+```
+
+**Why Colossus:**
+
+- Massive HP (1500+)
+- Huge damage
+- Self-heals by eating trees or gold mines
+- With Zeus +10% HP bonus = nearly unkillable
+
+**Counter-play:**
+
+Colossi are weak to hero units and focused myth unit attacks.
+Bring 3-4 heroes with your Colossi.
+Heroes protect Colossi from enemy myth units.
+
+---
+
+## Tactic #19: "The Medusa Gambit"
+### Athena-Specific Petrification Strategy
+
+Athena grants access to Medusa, who can petrify enemy units.
+
+**The setup:**
+
+1. Build 3 Medusas in Heroic Age
+2. Move them with your main army
+3. In battle, micro Medusas to use special attack
+
+**The special attack:**
+
+Medusa's petrification turns enemy units to stone.
+Stone units die in one hit.
+Prioritize petrifying expensive units (cavalry, myth units).
+
+**Target priority:**
+
+1. Enemy heroes (removes myth unit counter)
+2. Enemy myth units (high value)
+3. Enemy cavalry (high cost)
+4. Never waste petrification on infantry (too cheap)
+
+---
+
+## Tactic #20: "The Kraken Release"
+### Poseidon-Specific Naval Domination
+
+Poseidon is the god of the sea. On water maps, he's unstoppable.
+
+**The doctrine:**
+
+1. Build Dock immediately upon reaching Classical
+2. Prioritize Hippocampus (Poseidon unique ship)
+3. Control all fishing spots
+4. Deny enemy water access
+5. Once water is yours, boom in safety
+
+**The Hippocampus advantage:**
+
+- Free myth unit (created by Poseidon god power)
+- Creates map awareness
+- Can harass fishing boats
+- Forces enemy to invest in navy
+
+**Land-water coordination:**
+
+Once you control water, you can:
+- Attack coastal Town Centers with ships
+- Land troops behind enemy base
+- Force enemy to defend everywhere
+
+---
+
+## Tactic #21: "The Lightning Strike"
+### Zeus God Power Chain for Maximum Devastation
+
+Zeus's god powers are all offensive. Chain them.
+
+**The powers:**
+
+```
+Bolt (Archaic): Kills one unit instantly
+Restoration (Classical, via Athena): Heals army
+Bronze (Heroic, via Dionysus): Buffs all units
+Tartarian Gate (Mythic, via Hera): Summons endless monsters
+```
+
+**The chain:**
+
+1. Engage enemy army
+2. Cast Bronze (all your units gain armor)
+3. Fight for 30 seconds
+4. Cast Restoration (all your units heal)
+5. You now have a fresh army vs their damaged one
+6. Mop up survivors
+7. If enemy turtles, cast Tartarian Gate inside their base
+8. Monsters destroy everything
+
+**Timing:**
+
+This chain works best in mid-Mythic Age.
+Save god powers until you can execute the full sequence.
+
+---
+
+# PART V: MAP CONTROL MASTERY
+
+## Tactic #22: "The Aegean Web"
+### Greek Vision Control Through Strategic Building Placement
+
+Greeks have no special scouting mechanics. Use buildings instead.
+
+**Vision structure:**
+
+```
+Building 1: Tower at map center (permanent vision)
+Building 2: Temple at forward gold (vision + function)
+Building 3: House at enemy approach route (early warning)
+Building 4: Dock at water edge (naval vision)
+```
+
+**The house trick:**
+
+Houses are cheap (50 wood).
+Build them in sneaky locations just for vision.
+If enemy destroys them, you've learned their army position.
+
+**Scout preservation:**
+
+Your starting Kataskopos (scout) is valuable.
+Keep it alive for the entire game.
+Station it at critical approach routes.
+It gives permanent vision for zero ongoing cost.
+
+---
+
+## Tactic #23: "The Delian League"
+### Controlling Multiple Gold Mines
+
+Gold wins games. Greeks need gold for Hoplites, Toxotes, upgrades.
+
+**Expansion doctrine:**
+
+```
+Primary gold: Near starting TC (always controlled)
+Secondary gold: First expansion target (7:00-9:00)
+Tertiary gold: Contested center (if you're ahead)
+```
+
+**Claiming procedure:**
+
+1. Scout gold location in early game
+2. Clear any neutral animals
+3. Build Tower next to gold
+4. Build Storehouse
+5. Assign 8 villagers
+6. Station 4-6 military for defense
+
+**The "golden triangle":**
+
+Control 3 gold sources simultaneously.
+Enemy can only raid 1 at a time.
+You always have 2 producing.
+Sustained gold income = sustained military.
+
+---
+
+## Tactic #24: "The Pylae Protocol"
+### Chokepoint Identification and Exploitation
+
+Every map has chokepoints. Greeks are strongest when fighting in chokepoints.
+
+**Why chokepoints favor Greeks:**
+
+- Hoplites form unbreakable line
+- Toxotes fire from behind
+- Cavalry can't flank
+- Numerical advantage negated
+
+**Finding chokepoints:**
+
+Look for:
+- Gaps between forests
+- Narrow passages between cliffs
+- Bridge crossings
+- Relic locations (often at map centers)
+
+**Fortifying chokepoints:**
+
+```
+[CLIFF/FOREST]     [CLIFF/FOREST]
+       |                  |
+       |     [TOWER]      |
+       |    /      \      |
+[HOPLITES]   [TOXOTES]  [HOPLITES]
+       |                  |
+       |   [REINFORCEMENTS]  |
+```
+
+If you can force fights at chokepoints, you win even outnumbered.
+
+---
+
+## Tactic #25: "The Themistocles Gambit"
+### Walls as Offensive Weapons
+
+Walls aren't just for defense. Use them to control enemy movement.
+
+**Offensive wall applications:**
+
+**Application 1: The Cage**
+Build wall segments around enemy expansion.
+They can't easily move villagers in or out.
+Raid becomes trivially easy.
+
+**Application 2: The Funnel**
+Build walls that force enemy army through a specific path.
+Position your army at the exit.
+They arrive in a thin line; you have full formation.
+
+**Application 3: The Denial**
+Build wall segments at resource locations you can't take.
+If you can't mine that gold, neither can they.
+
+---
+
+## Tactic #26: "The Marathon Circuit"
+### Continuous Map Rotation for Dominance
+
+Static armies lose games. Keep moving.
+
+**The circuit:**
+
+Divide your army into two groups:
+- Main Army: 70% of forces
+- Raiding Party: 30% of forces (fast units only)
+
+**The pattern:**
+
+```
+Main Army sits at map center (threatening)
+Raiding Party moves in circle around enemy base
+Every 60 seconds, Raiding Party attacks different location
+Enemy must constantly react
+Eventually enemy makes mistake
+Main Army punishes mistake
+```
+
+**Greek advantage:**
+
+Hippikons/Prodromos are excellent raiders.
+They move fast, kill villagers, escape easily.
+Keep them circulating constantly.
+
+---
+
+# PART VI: PSYCHOLOGICAL WARFARE
+
+## Tactic #27: "The Oracle's Bluff"
+### Faking God Power Usage
+
+God powers create sound effects and visual cues visible to enemies.
+
+**The bluff:**
+
+1. Move your army forward aggressively
+2. Enemy assumes you'll use Bolt on their best unit
+3. They pull back their best unit
+4. You never cast Bolt
+5. Free retreat; you've gained ground without fighting
+
+**Advanced bluff:**
+
+Announce in chat: "Nice Colossus. Would be a shame if something happened to it."
+Enemy protects Colossus obsessively.
+You attack the other side of their base.
+
+---
+
+## Tactic #28: "The Wooden Horse"
+### Hidden Army Ambush Tactics
+
+Greek mythology includes the Trojan Horse. Channel that energy.
+
+**The setup:**
+
+1. Build your army in a hidden location (behind trees, in corner)
+2. Send a small "visible" force toward enemy
+3. Enemy moves to intercept
+4. Your visible force retreats
+5. Hidden army emerges behind enemy
+6. Enemy is sandwiched
+
+**Location selection:**
+
+Best hiding spots:
+- Behind thick forests (no vision through trees)
+- In map corners (rarely scouted late-game)
+- Behind cliffs (use patrol to stay hidden)
+
+---
+
+## Tactic #29: "The Cassandra Prophecy"
+### Predicting and Countering Enemy Strategy
+
+Watch for tells that reveal enemy strategy.
+
+**Tells and counters:**
+
+```
+Enemy building multiple Stables → They're going cavalry
+Counter: Build Hoplites (bonus vs cavalry)
+
+Enemy building multiple Archery Ranges → They're going archers
+Counter: Build Hippikons (crush archers)
+
+Enemy building siege early → They're preparing a push
+Counter: Train Hippikons to snipe siege
+
+Enemy praying with 6+ villagers → Myth unit incoming
+Counter: Train extra hero
+```
+
+**Scout timing:**
+
+Scout enemy base at:
+- 3:00 (see age-up timing)
+- 6:00 (see military buildings)
+- 10:00 (see Heroic preparation)
+
+---
+
+## Tactic #30: "The Pyrrhic Calculation"
+### When to Take Losing Trades
+
+Sometimes losing is winning.
+
+**The math:**
+
+If you trade 10 Hoplites for 8 enemy Toxotes:
+
+Your loss: 10 × (80 food, 40 gold) = 800 food, 400 gold
+Their loss: 8 × (60 wood, 40 gold) = 480 wood, 320 gold
+
+Raw resources: You lost more.
+But Toxotes require tech (Archery Range + upgrades).
+And you killed their ranged damage.
+Strategic value: You won.
+
+**Acceptable trades:**
+
+- Your infantry for their ranged
+- Your cheap units for their expensive units
+- Your units for their villagers
+- Any trade that kills siege
+
+**Unacceptable trades:**
+
+- Your heroes for anything (too valuable)
+- Your cavalry for their infantry (terrible exchange)
+- Your siege for their infantry (siege is expensive)
+
+---
+
+# PART VII: MYTH UNIT TACTICS
+
+## Tactic #31: "The Cyclops Catapult"
+### Using Cyclops as Living Siege
+
+Cyclops have a unique ability: grabbing and throwing units.
+
+**The exploitation:**
+
+Cyclops can throw enemy units.
+Thrown units take massive damage.
+Thrown units ragdoll into other units, damaging them too.
+
+**Target priority:**
+
+1. Enemy heroes (removes your counter)
+2. Enemy myth units (high value)
+3. Clustered infantry (chain damage)
+
+**Positioning:**
+
+Keep Cyclops slightly behind your frontline.
+When enemy engages, Cyclops grabs and throws.
+Enemy loses key units immediately.
+
+---
+
+## Tactic #32: "The Minotaur Maze"
+### Using Minotaurs for Area Denial
+
+Minotaurs have a gore attack that sends units flying.
+
+**The technique:**
+
+Position Minotaurs at chokepoints.
+When enemy tries to push through, Minotaurs gore them.
+Gored units are knocked back, breaking formation.
+Your ranged units shred disorganized enemies.
+
+**The math:**
+
+1 Minotaur can disrupt 10+ enemy units per charge.
+Disruption = lost DPS for enemy.
+Your formation stays intact.
+Massive advantage.
+
+---
+
+## Tactic #33: "The Hydra Farm"
+### Leveraging Hydra's Regeneration and Multi-Head Scaling
+
+Hydras grow additional heads as they gain veterancy. More heads = more damage.
+
+**The farming strategy:**
+
+1. Build 1-2 Hydras in Heroic Age
+2. Keep them alive obsessively
+3. Rotate them out of fights when HP is low
+4. Hydras regenerate HP over time
+5. By Mythic, your veteran Hydras have 5+ heads each
+6. They're now dealing massive area damage
+
+**Protection doctrine:**
+
+Hydras are slow.
+Protect them with Hoplites.
+Never let Hydras lead the charge.
+They arrive after battle is joined, then devastate.
+
+---
+
+## Tactic #34: "The Manticore Barrage"
+### Using Manticores for Ranged Myth Unit Pressure
+
+Manticores (via Artemis) shoot volleys of tail spikes.
+
+**Usage:**
+
+Mass 4-6 Manticores.
+Keep them behind your Hoplite line.
+They function as "super Toxotes."
+Their damage is massive and ranged.
+
+**Focus fire:**
+
+Like Toxotes, Manticores should focus-fire.
+Select all Manticores.
+Click on one enemy unit.
+Unit dies instantly.
+Repeat.
+
+**Counter:**
+
+Manticores are weak to enemy cavalry.
+If enemy dives your Manticores with cavalry, you lose them.
+Keep Hoplites positioned to intercept cavalry dives.
+
+---
+
+## Tactic #35: "The Centaur Harassment"
+### Using Centaurs for Endless Map Pressure
+
+Centaurs (via Hermes) are fast, ranged, and cheap.
+
+**The doctrine:**
+
+Build 4-6 Centaurs.
+Never group them with your main army.
+Instead, use them for constant harassment.
+
+**Harassment pattern:**
+
+1. Centaurs move to enemy woodcutters
+2. Fire 2-3 volleys, kill 1-2 villagers
+3. Retreat before response arrives
+4. Move to enemy gold miners
+5. Repeat
+
+**The accumulating damage:**
+
+Every 90 seconds, you kill 1-2 villagers.
+Over 10 minutes = 6-12 villagers dead.
+Enemy economy is crippled.
+Your main army eventually just walks in.
+
+---
+
+## Tactic #36: "The Nemean Lion Stand"
+### Using Nemean Lion for Hero Assassination
+
+Nemean Lion (via Aphrodite) is specifically strong vs heroes.
+
+**The setup:**
+
+Enemy has heroes protecting their army from your myth units.
+Your Nemean Lion targets enemy heroes.
+Once heroes are dead, your other myth units rampage freely.
+
+**Micro:**
+
+Manually control Nemean Lion.
+Right-click on enemy hero.
+Stay on that hero until dead.
+Then switch to next hero.
+Then let your myth units loose.
+
+---
+
+# PART VIII: GOD-SPECIFIC DEEP DIVES
+
+## Tactic #37: "The Thunderer's Path"
+### Complete Zeus Strategic Framework
+
+**Zeus identity:** Strongest myth units, fastest favor, aggressive playstyle.
+
+**Age-up path (standard):**
+
+```
+Classical: Athena (Restoration for sustain) OR Ares (for aggression)
+Heroic: Apollo (for Underworld Passage surprises) OR Dionysus (for Bronze)
+Mythic: Hephaestus (for Colossus) OR Hera (for Medusa, Tartarian Gate)
+```
+
+**Zeus power spikes:**
+
+- Classical: Strong Minotaurs/Centaurs (10% HP bonus)
+- Heroic: Apollo's Underworld Passage teleports army into enemy base
+- Mythic: Colossus is nearly unkillable, Tartarian Gate ends games
+
+**Zeus weaknesses:**
+
+- No economic bonuses
+- Infantry no better than other Greeks
+- If myth units die, advantage disappears
+
+---
+
+## Tactic #38: "The Earthshaker's Domain"
+### Complete Poseidon Strategic Framework
+
+**Poseidon identity:** Cavalry master, water control, economic bonuses.
+
+**Age-up path (standard):**
+
+```
+Classical: Hermes (for Centaurs, Ceasefire) OR Ares (for aggression)
+Heroic: Dionysus (for Bronze, Scylla on water) OR Aphrodite (land focus)
+Mythic: Hephaestus OR Artemis (for Chimera)
+```
+
+**Poseidon power spikes:**
+
+- Classical: Free Hippocampus, Militia from stables
+- Heroic: Hetairoi cavalry dominance, potential naval control
+- Mythic: Strong late-game from economic advantages
+
+**Poseidon special mechanics:**
+
+- Stables produce Militia when destroyed (free units on death)
+- Markets generate gold over time (free income)
+- Cavalry has bonus HP
+
+---
+
+## Tactic #39: "The Unseen Lord's Reign"
+### Complete Hades Strategic Framework
+
+**Hades identity:** Defensive powerhouse, attrition warfare, Shade generation.
+
+**Age-up path (standard):**
+
+```
+Classical: Athena (Restoration + Minotaurs) OR Ares (Cyclops)
+Heroic: Aphrodite (Nemean Lion, Curse) OR Apollo (Temple healing)
+Mythic: Hephaestus (Colossus) OR Artemis (for Earthquake)
+```
+
+**Hades power spikes:**
+
+- Passive: Shades from dead units (constant value)
+- Heroic: Stronger buildings make turtling viable
+- Mythic: Earthquake god power destroys enemy buildings
+
+**Hades special mechanics:**
+
+- 25% of dead human soldiers return as Shades
+- Buildings have +25% HP and attack
+- Archers have +10% attack
+
+**Hades playstyle:**
+
+More defensive than Zeus/Poseidon.
+Wall heavily, build Towers, accumulate army.
+Fight in your territory where Shades reinforce you.
+Push when you have overwhelming advantage.
+
+---
+
+## Tactic #40: "The Olympian Quartet"
+### Mixing Minor God Bonuses for Maximum Synergy
+
+Your minor god choices should complement each other.
+
+**Aggressive combo (Zeus):**
+
+```
+Classical: Ares → Cyclops + Pestilence
+Heroic: Dionysus → Bronze + Scylla
+Mythic: Hera → Medusa + Tartarian Gate
+```
+
+All three gods favor constant aggression.
+
+**Defensive combo (Hades):**
+
+```
+Classical: Athena → Minotaurs + Restoration
+Heroic: Apollo → Manticores + Temple of Healing
+Mythic: Hephaestus → Colossus + Plenty
+```
+
+All three gods favor sustain and late-game.
+
+**Cavalry combo (Poseidon):**
+
+```
+Classical: Hermes → Centaurs + Ceasefire
+Heroic: Dionysus → Bronze + Scylla
+Mythic: Artemis → Chimera + Earthquake
+```
+
+Hermes gives Centaurs (mobile). Bronze buffs cavalry. Chimera + Earthquake for finisher.
+
+---
+
+# PART IX: COUNTER-STRATEGY ENCYCLOPEDIA
+
+## Tactic #41: "The Persian Answer"
+### Countering Egyptian Civilization
+
+Egypt is slow but powerful. Counter with speed.
+
+**Phase 1: Early pressure**
+
+Egypt wants to boom to Heroic for powerful myth units.
+Don't let them.
+Attack at 6:30 with Spartan Rush.
+Force Pharaoh to fight (healing wastes time).
+
+**Phase 2: Deny Monuments**
+
+Egyptian monuments generate favor.
+If you kill villagers, they can't build monuments.
+No monuments = no favor = no myth units.
+
+**Phase 3: Hero focus**
+
+Egyptian myth units are powerful.
+Train 3-4 heroes specifically to counter them.
+War Elephants are dangerous but expensive.
+Focus fire elephants with heroes.
+
+---
+
+## Tactic #42: "The Olympian Bulwark"
+### Countering Norse Civilization
+
+Norse will rush you. Always. Prepare.
+
+**Phase 1: Wall immediately**
+
+At 3:00, start building walls.
+Norse Ulfsarks can build, so expect forward military buildings.
+Scout their base at 3:30 to see if they're rushing.
+
+**Phase 2: Tower placement**
+
+Build 1-2 Towers at key approaches.
+Norse have no early siege.
+Towers + walls hold indefinitely.
+
+**Phase 3: Counter-attack timing**
+
+After stopping the rush (around 8:00), immediately counter.
+Norse economy is weak if rush failed.
+Your Hoplites crush their infantry.
+
+**Unit counters:**
+
+```
+Ulfsarks → Hoplites (easily)
+Throwing Axemen → Hippikons (dive them)
+Huskarls → Toxotes (they're slow, kite)
+Jarls → Hoplites (they're just better infantry)
+```
+
+---
+
+## Tactic #43: "The Titanomachy"
+### Countering Atlantean Civilization
+
+Atlanteans are dangerous because of citizen-soldiers and time-shifting.
+
+**Phase 1: Deny Oracles**
+
+Atlantean Oracles give them free line of sight.
+If you find an Oracle near your base, kill it immediately.
+Their information advantage disappears.
+
+**Phase 2: Kronos counter**
+
+Kronos can Time Shift buildings.
+If you see a Tower suddenly appear near your base, don't panic.
+Shifted buildings have low HP initially.
+Kill it quickly with 10 infantry.
+
+**Phase 3: Titan prevention**
+
+Atlanteans get Titans from Titan Gate.
+Scout their base at 12:00, 14:00, 16:00.
+If you see Titan Gate construction, attack immediately.
+Titan Gate has low HP during construction.
+
+---
+
+## Tactic #44: "The Dragon Slayers"
+### Countering Chinese Civilization
+
+Chinese scale into late-game. Don't let them.
+
+**Phase 1: Early pressure**
+
+Chinese Gardens give free resources over time.
+The longer the game goes, the more value they get.
+Attack early and often.
+
+**Phase 2: Raid obsessively**
+
+Chinese villagers are vulnerable like any other.
+Hippikons kill villagers fast.
+Raid every 90 seconds.
+
+**Phase 3: Target Gardens**
+
+If you ever get into their base, destroy Gardens.
+Gardens are their economic engine.
+No Garden = dramatically slower economy.
+
+---
+
+## Tactic #45: "The Hellenic Mirror"
+### Winning Greek vs Greek Matchups
+
+The mirror matchup is about execution, not strategy.
+
+**Key differentiators:**
+
+1. **Favor efficiency:** Whoever manages prayer better has more myth units.
+2. **Hero preservation:** Whoever keeps heroes alive dominates.
+3. **Upgrade timing:** First player to Heavy Infantry wins engagements.
+4. **Colossus race:** First Colossus in Mythic often wins.
+
+**The edge:**
+
+- Scout more often (know their composition)
+- Focus-fire better (manual Toxotes control)
+- Flank execution (Hippikons decide games)
+
+---
+
+# PART X: BUILD ORDER COMPENDIUM
+
+## Build #1: "The Spartan Rush" (Zeus Aggression)
+
+```
+0:00 - 4 villagers to food
+0:00 - Queue villagers continuously
+0:15 - Scout moves toward enemy
+0:30 - 5th villager to food
+1:00 - 6th villager to food
+1:30 - 7th villager to wood
+2:00 - 8th villager to wood
+2:00 - Build house
+2:30 - 9th villager to food
+3:00 - 10th villager to gold
+3:00 - Advance Classical (Ares)
+3:30 - Build Barracks during advance
+3:30 - 11th villager to gold
+4:15 - Classical Age
+4:15 - 4 Hoplites immediately
+4:30 - 12th villager to gold
+4:45 - Build Academy
+5:00 - 4 Toxotes
+5:30 - 4 more Hoplites
+5:30 - Build Temple, 3 villagers pray
+6:00 - Move out
+6:30 - Attack
+```
+
+---
+
+## Build #2: "The Thermopylae" (Defensive Boom)
+
+```
+0:00-3:00 - Standard opening
+3:00 - 12 villagers
+3:00 - Advance Classical (Athena)
+4:00 - Classical Age
+4:00 - Build Temple, 3 praying
+4:00 - Wall key approaches
+5:00 - Build Tower at exposed gold
+5:00 - 15 villagers
+6:00-9:00 - Boom to 25 villagers
+6:00 - Minimal military (6 Hoplites)
+8:00 - Build Barracks + Academy
+9:00 - 10 Hoplites, 8 Toxotes
+10:00 - Advance Heroic (Dionysus for Bronze)
+11:30 - Heroic Age
+11:30 - Cast Bronze immediately
+11:30 - Push with superior army
+```
+
+---
+
+## Build #3: "The Poseidon Cavalry Blitz"
+
+```
+0:00-4:00 - Standard opening
+4:00 - Classical Age (Hermes)
+4:00 - Build Stable + Stable
+4:30 - 2 Hippikons
+5:00 - 2 more Hippikons
+5:30 - 2 more Hippikons
+6:00 - 6 Hippikons move out
+6:00 - Raid enemy woodcutters
+6:30 - Kill 3-4 villagers, retreat
+6:30 - Back home, rebuild to 10 cavalry
+7:30 - Raid again
+8:00 - Switch to Hetairoi production
+9:00 - 15 cavalry total
+9:30 - All-in cavalry attack
+```
+
+---
+
+## Build #4: "The Colossus Walk" (Zeus Late-Game)
+
+```
+0:00-5:00 - Standard opening (15 villagers)
+5:00 - Classical Age (Athena)
+6:00-10:00 - Boom to 35 villagers
+6:00 - Minimal military, maximum economy
+10:00 - Advance Heroic (Dionysus)
+11:30 - Heroic Age
+11:30-13:00 - Build to 45 villagers
+13:00 - Advance Mythic (Hephaestus)
+14:30 - Mythic Age
+14:30 - Build Fortress
+14:30 - 10+ villagers praying (favor burst)
+15:00 - Train Colossus immediately
+15:30 - Train second Colossus
+16:00 - Train third Colossus
+16:30 - Push with 3 Colossi + Champion army
+```
+
+---
+
+## Build #5: "The Shade Army" (Hades Attrition)
+
+```
+0:00-5:00 - Standard opening
+5:00 - Classical Age (Ares)
+5:00 - Build Barracks + Academy
+6:00-10:00 - Boom AND build army simultaneously
+8:00 - 25 villagers, 12 Hoplites, 8 Toxotes
+10:00 - Advance Heroic (Aphrodite)
+11:30 - Heroic Age
+12:00 - Attack with full army
+12:00 - Goal: Trade armies even
+12:00 - Your dead units become Shades
+13:00 - Shades + reinforcements push again
+14:00 - Enemy army depleted, yours reinforced by Shades
+15:00 - Victory
+```
+
+---
+
+# PART XI: MATCHUP REFERENCE TABLE
+
+| Enemy Civ | Their Strength | Your Counter | Your Win Condition |
+|-----------|---------------|--------------|---------------------|
+| Zeus | Strong myth units | More heroes, focus myth units | Kill myth units, win with infantry |
+| Poseidon | Cavalry raids | Hoplites everywhere | Deny mobility, force static fights |
+| Hades | Shades, defensive | Constant pressure | Don't let them turtle, attack early |
+| Isis | Defensive, monuments | Early rush, deny monuments | Kill villagers, prevent favor |
+| Ra | Economy, empowerment | Raid constantly | Never let Ra boom |
+| Set | Animals, harass | Towers, mobile response | Vision control, deny animals |
+| Odin | Hill Fort, Ravens | Fast Classical, push | Don't let them reach Heroic safely |
+| Thor | Armory rush | Counter with aggression | Punish their eco investment |
+| Loki | Myth spam | Mass heroes | Heroes counter all Loki myth units |
+| Kronos | Time Shift TC | Aggressive expansion | Kill shifted buildings quickly |
+| Gaia | Forests, boom | Burn forests, early pressure | Never let Gaia turtle |
+| Oranos | Sky Passages | Control map center | Destroy Sky Passages on sight |
+| Fu Xi | Building speed | Match aggression | Don't let them out-build you |
+| Nü Wa | Myth units | Heroes, anti-myth | Hero-heavy army |
+| Shennong | Late-game economy | Aggressive timing attacks | End game before minute 20 |
+
+---
+
+# PART XII: HOTKEY CONFIGURATION
+
+## Essential Hotkeys
+
+```
+Select all military: . (period)
+Select idle villagers: , (comma)
+Go to Town Center: H
+Go to last event: Space
+Cycle through Town Centers: Ctrl+H
+Select all buildings of type: Shift+click
+Control groups: 1-0
+Set control group: Ctrl+1-0
+Add to control group: Shift+1-0
+Attack move: A + Left Click
+Stop: S
+Patrol: Z
+```
+
+## Production Hotkeys
+
+```
+Train villager: Q
+Train Hoplite: Q (at Barracks)
+Train Toxotes: W (at Archery Range)
+Train Hippikon: Q (at Stable)
+Train hero: Q (at Town Center)
+Build house: Q (in build menu)
+Build Barracks: W (in military build menu)
+```
+
+## Pro-Level Binds
+
+```
+Select all Barracks: Ctrl+B
+Select all Stables: Ctrl+S
+Select all Archery Ranges: Ctrl+A
+Select all Temples: Ctrl+T
+Rally point: Right-click after selecting building
+Multi-building rally: Select multiple, set one rally
+```
+
+---
+
+# PART XIII: ADVANCED MICRO TECHNIQUES
+
+## Tactic #46: "The Phalanx Dance"
+### Hoplite Stutter-Step for Damage Optimization
+
+Hoplites attack slowly. Between attacks, they should move.
+
+**The technique:**
+
+1. Right-click enemy (Hoplite walks toward them)
+2. The moment Hoplite swings, issue move command
+3. Hoplite moves during recovery animation
+4. Right-click enemy again
+5. Repeat
+
+**Why this works:**
+
+Normal Hoplite: attacks, waits, attacks
+Dancing Hoplite: attacks, moves forward, attacks
+
+The dancing Hoplite closes distance on fleeing enemies.
+Also positions for better engagement angles.
+
+---
+
+## Tactic #47: "The Toxotes Volley"
+### Synchronized Ranged Fire for Burst Damage
+
+**The technique:**
+
+1. Select all Toxotes
+2. Press "S" (stop)
+3. All Toxotes stop moving, face same direction
+4. Right-click one enemy unit
+5. All Toxotes fire simultaneously
+6. Enemy unit takes all damage at once, dies instantly
+
+**Why this matters:**
+
+Unsynchronized Toxotes: some fire, some moving, damage spread out
+Synchronized Toxotes: all fire at once, instant kill
+
+Against myth units, this can mean killing before they attack.
+
+---
+
+## Tactic #48: "The Hippikon Carousel"
+### Cavalry Hit-and-Run Micro
+
+**The technique:**
+
+1. Move Hippikons toward enemy ranged units
+2. Right-click to attack
+3. After one attack, move away
+4. Circle around
+5. Attack again from different angle
+6. Repeat
+
+**The pattern:**
+
+```
+       [TOXOTES]
+          ↑
+    [HIPPIKON attacks]
+          ↓
+    [HIPPIKON retreats]
+          ↓
+    [HIPPIKON circles] ←------→
+          ↓
+    [HIPPIKON attacks again]
+```
+
+**Why this works:**
+
+Enemy ranged units must turn to face you.
+While turning, they're not shooting.
+You take less damage, deal full damage.
+
+---
+
+## Tactic #49: "The Hero Snipe"
+### Assassinating Enemy Heroes in Chaotic Battles
+
+**The technique:**
+
+1. Assign your heroes to a separate control group
+2. When battle starts, press that control group
+3. Right-click on enemy hero
+4. Your heroes chase and kill enemy hero
+5. Now enemy has no myth unit counter
+6. Your myth units rampage
+
+**Priority targets:**
+
+1. Enemy heroes (always first)
+2. Healers (Pharaohs, Priests)
+3. Enemy myth units with special abilities
+4. Everything else
+
+---
+
+## Tactic #50: "The Formation Lock"
+### Keeping Your Army in Perfect Position
+
+**The problem:**
+
+When you move an army, units bunch up.
+Bunched units die to area damage.
+Bunched units block each other's attacks.
+
+**The solution:**
+
+1. Arrange army in desired formation
+2. Press "F" to toggle formation mode
+3. Now when you move, formation is maintained
+4. Hoplites stay in front, Toxotes stay in back
+
+**Advanced formation:**
+
+```
+[CAVALRY]  [CAVALRY]
+      \      /
+[HOPLITE HOPLITE HOPLITE HOPLITE]
+[HOPLITE HOPLITE HOPLITE HOPLITE]
+      [TOXOTES TOXOTES]
+      [TOXOTES TOXOTES]
+        [HEROES]
+        [MYTH UNITS]
+```
+
+Lock this formation. Move as a unit. Never reform mid-battle.
+
+---
+
+# PART XIV: TEAM GAME SPECIALIZATIONS
+
+## Tactic #51: "The Spartiate"
+### Military Specialist Role
+
+**Your job:**
+
+You are the army. Your teammates boom.
+
+**Execution:**
+
+- Age up fast to Classical
+- Build continuous military
+- Attack enemy aggressively
+- Teammates send you resources
+- You translate resources into pressure
+
+**Greek advantage:**
+
+Hoplite + Toxotes is the most cost-efficient army.
+Resources from teammates become maximum military value.
+
+---
+
+## Tactic #52: "The Athenian"
+### Economic Specialist Role
+
+**Your job:**
+
+You boom. Teammates fight.
+
+**Execution:**
+
+- Minimal military, maximum villagers
+- Wall your base completely
+- Research all economic technologies
+- Send excess resources to aggressive teammate
+- Build Trade Carts for team income
+
+**Greek advantage:**
+
+Temple population helps support more villagers.
+Defensive buildings (Hades) protect boom.
+
+---
+
+## Tactic #53: "The Corinthian"
+### Naval Specialist Role
+
+**Your job:**
+
+You control the water. Teammates handle land.
+
+**Execution:**
+
+- Build Dock immediately
+- Prioritize fishing boats
+- Build navy before land military
+- Contest all water
+- Once water is yours, support land with coastal attacks
+
+**Greek advantage:**
+
+Poseidon is the strongest naval god.
+Hippocampus provides free naval unit.
+Scylla (Dionysus) is devastating in water fights.
+
+---
+
+## Tactic #54: "The Delphic Oracle"
+### Information and Coordination Role
+
+**Your job:**
+
+You scout everything. You call targets.
+
+**Execution:**
+
+- Keep scouts alive entire game
+- Scout all enemies repeatedly
+- Share information with team constantly
+- Call focus targets in team fights
+- Coordinate god power usage
+
+**Communication:**
+
+"Enemy Red going cavalry" → Teammate builds spears
+"Enemy Blue has Titan Gate" → Team attacks Blue immediately
+"Focus enemy gold miners" → Team raids same target
+
+---
+
+## Tactic #55: "The League Commander"
+### Late-Game Finisher Role
+
+**Your job:**
+
+Reach Mythic with overwhelming force. End the game.
+
+**Execution:**
+
+- Survive early game with teammate help
+- Boom while teammates defend
+- Reach Mythic first with strongest army
+- Colossus + Champion army = unstoppable
+- Walk through enemy bases one by one
+
+**Greek advantage:**
+
+Colossus is one of the best late-game units.
+Zeus myth units with +10% HP dominate.
+Tartarian Gate inside enemy base = instant loss for them.
+
+---
+
+# PART XV: THE PATH TO MASTERY
+
+## Tactic #56: "The Daily Training Regimen"
+
+**Micro training (15 minutes):**
+
+Create custom scenario:
+- 10 Toxotes vs 20 Ulfsarks
+- Goal: Win with perfect focus fire
+- If you lose, restart until you win
+
+**Build order training (15 minutes):**
+
+Start single-player game.
+Execute Spartan Rush build.
+If any villager is idle for more than 3 seconds, restart.
+Goal: Perfect execution 5 times in a row.
+
+**Live game (30+ minutes):**
+
+Play ranked or competitive match.
+Regardless of outcome, watch replay.
+Identify 3 mistakes. Write them down.
+
+**Total:** 1 hour per day. 90 days. Mastery.
+
+---
+
+## Tactic #57: "The Replay Analysis Protocol"
+
+Every game, watch the replay.
+
+**First pass (2x speed):**
+
+Identify the moment you won or lost.
+What single decision changed the game?
+
+**Second pass (1x speed, your perspective):**
+
+Watch your economy.
+Were villagers ever idle? Were resources ever floating?
+
+**Third pass (enemy perspective):**
+
+What did they see? What did they miss?
+How could you have exploited their blind spots?
+
+---
+
+## Tactic #58: "The Greek Flowchart"
+
+Memorize this decision tree:
+
+```
+Is enemy rushing? 
+├── YES → Wall + Tower + defensive army
+└── NO → 
+    Is enemy booming?
+    ├── YES → Punish with aggression
+    └── NO →
+        Is enemy turtling?
+        ├── YES → Boom harder, win late-game
+        └── NO → Mirror their approach, outplay mechanically
+```
+
+---
+
+## Tactic #59: "The Competitive Mindset"
+
+Every loss is a lesson.
+Every win is a habit reinforced.
+Focus on improvement, not rank.
+
+**The 100-game goal:**
+
+Play 100 games.
+After 100 games, you understand the basics.
+
+**The 1000-game goal:**
+
+Play 1000 games.
+After 1000 games, you have reliable builds.
+
+**The 10000-game goal:**
+
+You are now one of the best players in the world.
+
+---
+
+## Tactic #60: "The Final Truth"
+
+There is no secret.
+There is only practice.
+
+The player who executes fundamentals perfectly every game will beat the player who occasionally does brilliant things.
+
+Every game:
+- Scout at 0:15
+- Never idle villagers
+- Never floating resources
+- Never supply blocked
+- Army always moving
+- Focus fire always
+
+Do those six things every game.
+You will reach top 10% of players.
+
+Then add the tactics from this guide.
+You will be unstoppable.
+
+---
+
+# APPENDIX A: QUICK REFERENCE CARDS
+
+## Unit Counter Cheat Sheet
+
+```
+Enemy Hoplites → Your Toxotes (kite) or Peltasts (speed)
+Enemy Toxotes → Your Hippikons (dive and kill)
+Enemy Hippikons → Your Hoplites (bonus vs cavalry)
+Enemy Myth Units → Your Heroes (always)
+Enemy Siege → Your Hippikons (snipe and run)
+Enemy Villagers → Your Hippikons (raid)
+Enemy Heroes → Your Myth Units (they can't fight back)
+```
+
+## Economic Benchmarks
+
+```
+5:00 → 15 villagers
+8:00 → 25 villagers
+11:00 → 35 villagers
+14:00 → 45 villagers
+18:00 → 50+ villagers (if booming)
+```
+
+## Military Benchmarks
+
+```
+6:30 → 8 Hoplites + 4 Toxotes (if rushing)
+10:00 → 15 Hoplites + 10 Toxotes + 6 Cavalry
+14:00 → 25 Hoplites + 15 Toxotes + 10 Cavalry + 2-3 Myth Units
+18:00 → Champion army + Siege + Multiple Myth Units
+```
+
+---
+
+# APPENDIX B: GOD POWER TIMING GUIDE
+
+## Zeus God Powers
+
+```
+Bolt (Archaic): Save for enemy myth unit or hero
+               Never waste on infantry
+
+Restoration (Athena, Classical): Cast mid-battle for full heal
+                                 Turns losing fight into winning fight
+
+Underworld Passage (Apollo, Heroic): Teleport army behind enemy base
+                                     Use for surprise attacks only
+
+Bronze (Dionysus, Heroic): Cast at start of major engagement
+                           All units gain armor
+
+Curse (Aphrodite, Heroic): Turn enemy soldiers into pigs
+                            Use on expensive units (cavalry, siege)
+
+Tartarian Gate (Hera, Mythic): Cast inside enemy base
+                               Endless monsters destroy everything
+
+Plenty (Hephaestus, Mythic): Free resources near Plenty Vault
+                              Use in late-game stalemates
+```
+
+## Poseidon God Powers
+
+```
+Lure (Archaic): Draw animals to Town Center
+                Free food, saves walk time
+
+Ceasefire (Hermes, Classical): Stops all combat for 1 minute
+                               Use to save dying army or escape
+
+Pestilence (Ares, Classical): Prevents enemy buildings from working
+                              Use on enemy production buildings
+
+Carnivora (Dionysus, Heroic): Giant plant eats enemy units
+                              Use on clustered ranged units
+
+Ancestral Call (Aphrodite, Heroic): Summons ancestor warriors
+                                    Use as reinforcement mid-battle
+
+Earthquake (Artemis, Mythic): Massive building damage
+                              Use on enemy production cluster
+```
+
+## Hades God Powers
+
+```
+Sentinel (Archaic): Defensive statues at Town Center
+                   Helps against early raids
+
+Restoration (Athena, Classical): Same as Zeus
+                                 Mid-battle full heal
+
+Curse (Aphrodite, Heroic): Same as Zeus
+                           Turn expensive units to pigs
+
+Vaults of Erebus (Hephaestus, Mythic): Generates resources
+                                       Use in your base for late-game
+
+Earthquake (Artemis, Mythic): Massive building damage
+                              Destroy enemy base
+```
+
+---
+
+# APPENDIX C: CIVILIZATION MATCHUP SUMMARY
+
+## Greeks vs Greeks
+
+**Key:** Execution wins. No tricks.
+**Focus:** Better micro, better focus fire, better economy.
+
+## Greeks vs Egyptians
+
+**Key:** Pressure early, deny monuments.
+**Focus:** Spartan Rush, raid villagers, kill Pharaoh.
+
+## Greeks vs Norse
+
+**Key:** Wall and defend, counter-attack after rush fails.
+**Focus:** Towers, walls, Hoplite superiority.
+
+## Greeks vs Atlanteans
+
+**Key:** Aggressive early, deny Sky Passages and Titan.
+**Focus:** Constant pressure, scout for Titan Gate.
+
+## Greeks vs Chinese
+
+**Key:** Attack early and often, never let them scale.
+**Focus:** Raid Gardens, deny late-game.
+
+---
+
+# FINAL WORDS
+
+This guide contains 60 major tactics, complete build orders, god-specific strategies, and everything you need to dominate as Greeks in Age of Mythology.
+
+But knowledge without practice is worthless.
+
+Play 100 games. Apply one tactic per session. Watch your replays.
+
+In 90 days, you will be unstoppable.
+
+**Olympus awaits.**
+
+---
+
+*Guide written for competitive play on standard settings.*
+
+*For the glory of Hellas!*
+===================================================================
+=================================================================== Claude 4.1 Opus 4 TotD Greeks
+Is the above for Age of Mythology: Tale of the Dragon, or Definitive Edition (which is not what I want -- I want Greek strategies for Age of Mythology: Tale of the Dragon) -- if so, ignore this...
+
+===================================================================
+=================================================================== Claude 4.5 Opus Greek TotD Partial
+claude-opus-4-5-20251101-thinking-32k
+
+Thought for 9 seconds
+
+Age of Mythology: Tale of the Dragon
+The Ultimate Greek Strategy Compendium
+300+ Tactics for Hellenic Domination in Extended Edition
+PART I: THE PHILOSOPHY OF OLYMPUS
+Understanding the Greek Playstyle in Tale of the Dragon
+The Greeks are the original civilization of Age of Mythology. While the Chinese brought Gardens, the Norse brought infantry builders, the Egyptians brought monuments, and the Atlanteans brought citizen-soldiers—the Greeks brought fundamental perfection.
+
+In Tale of the Dragon (Extended Edition), Greeks remain the benchmark against which all other civilizations are measured. Understanding Greeks means understanding Age of Mythology itself.
+
+Greek gameplay in Tale of the Dragon rests on three pillars:
+
+The Phalanx Principle: Your core army (Hoplite + Toxotes) remains the most cost-efficient baseline in the game when positioned correctly.
+
+The Temple Economy: Favor generation requires villagers worshipping at Temples, creating the unique Greek economic tension that defines high-level play.
+
+The Hero Legacy: Greeks train multiple heroes from the Town Center, providing flexible, powerful answers to the myth unit threats that define late-game combat.
+
+Before diving into specific tactics, internalize this foundational truth:
+
+"Greeks don't win through gimmicks. Greeks win through perfect execution of timeless principles. When fundamentals are flawless, no trick can overcome them."
+
+The new Chinese civilization in Tale of the Dragon presents unique challenges—their Garden economy scales infinitely, their Immortals counter your myth units, and their late-game is devastating. This guide will teach you exactly how to dismantle them—and everyone else.
+
+Now let's forge your path to Olympus.
+
+PART II: THE TEMPLE ECONOMY
+Tactic #1: "The Divine Tithe"
+Optimal Favor Generation Without Crippling Economy
+The core Greek dilemma in Extended Edition: villagers worshipping at Temples produce favor but zero resources. Every praying villager represents food, wood, or gold you're NOT gathering.
+
+This is your fundamental constraint. Master it.
+
+The baseline formula:
+
+For each Temple you own, assign 3-5 villagers to worship.
+
+Below 3: Favor generation crawls
+Above 5: Diminishing returns per villager become severe
+The tithe schedule (Extended Edition timing):
+
+text
+
+Archaic Age: 0 villagers praying (no Temple exists yet)
+Early Classical (4:30-6:00): 3 villagers at first Temple
+Mid-Classical (6:00-9:00): 4-5 villagers (if myth units planned)
+Heroic Age (10:00+): 5-6 villagers at first Temple
+                     3-4 villagers at second Temple (if built)
+Mythic Age (15:00+): 8-10 total villagers praying across 2 Temples
+The oscillation technique:
+
+When you need a burst of favor (for a myth unit or expensive technology), temporarily assign 8-10 villagers to pray.
+
+Once the favor threshold is reached, immediately send them back to resource gathering.
+
+This is called "pulsing" your favor generation.
+
+Extended Edition specific note:
+
+In Tale of the Dragon, gather rates are slightly different from later versions. The economic impact of praying villagers is more severe early but less impactful late. Front-load your economy, pulse favor when needed.
+
+Pro tip: Bind Temple selection to a hotkey. You should check prayer count every 60 seconds without thinking.
+
+Tactic #2: "The Olympian Overdrive"
+Zeus-Specific Favor Acceleration
+Zeus generates favor faster than Poseidon or Hades at the Temple.
+
+The exploitation in Extended Edition:
+
+With Zeus, you can run a leaner prayer economy throughout the game:
+
+Where Poseidon needs 5 villagers praying, Zeus needs only 4 for equivalent output
+This frees 1 villager per Temple for resource gathering
+Over a 25-minute game, this equals hundreds of extra resources
+The compounding math:
+
+1 extra villager gathering gold = approximately 27 gold per minute (Extended Edition rates)
+25 minutes × 27 gold = 675 gold
+That's almost an extra Colossus worth of gold from thin air.
+
+Zeus prayer targets (Extended Edition):
+
+text
+
+Early Classical: 2-3 villagers praying (not 4-5)
+Mid-Classical: 3-4 villagers
+Heroic: 4-5 villagers per Temple
+Mythic: 6-8 total (not 8-10)
+Tactic #3: "The Silent Temple"
+Delaying Favor for Economic Dominance
+Most players build a Temple immediately upon reaching Classical Age. This is not always correct.
+
+The heretical strategy:
+
+In specific matchups, skip the Temple entirely in early Classical Age.
+
+Use those resources (200 wood, 200 gold in Extended Edition) and those villager-minutes for pure economic development or military production.
+
+When to delay Temple:
+
+Against Norse (they rush hard; you need military, not myth units)
+Against aggressive Atlantean Kronos (same reasoning)
+Against Chinese Fu Xi castle rush (you need immediate counter-military)
+When you're planning a fast Heroic Age (favor matters more later)
+The catch-up mechanic:
+
+Build your Temple at the 7:00-8:00 mark instead of 5:00.
+Assign 6-7 villagers to pray immediately upon completion.
+You'll catch up on favor by Heroic Age, but with a stronger underlying economy.
+
+Tactic #4: "The Temple Fortress"
+Defensive Temple Placement for Multi-Purpose Value
+Temples have significant HP and provide population space. In Extended Edition, they're surprisingly durable. Use them as defensive structures.
+
+Placement doctrine:
+
+text
+
+Temple 1: Near gold mine (protects miners, within villager run distance)
+Temple 2: At chokepoint or expansion (creates "temple wall" effect)
+Temple 3: Forward aggressive position (in dominant games)
+The synergy in action:
+
+Praying villagers are inside the Temple's protective radius.
+If raiders approach, villagers garrison or flee behind Temple.
+Temple absorbs damage instead of villagers dying.
+You lose zero economic units while Temple tanks hits.
+
+Advanced placement technique:
+
+Build Temple so it physically blocks a gap between trees or cliffs.
+Now it functions as wall + defensive structure + population + favor generator.
+Maximum value extraction from a single 400-resource building.
+
+Tactic #5: "The Altar of Ares"
+Converting Favor into Military Momentum
+Favor is only valuable when spent. Hoarding favor is pure waste—it sits there doing nothing while your opponent builds advantages.
+
+Spending priorities by age (Extended Edition values):
+
+text
+
+Classical Age:
+1. Armory upgrades (Medium Infantry, Copper Weapons/Shields)
+2. Myth unit (1-2 Centaurs, Minotaurs, or Cyclops depending on minor god)
+3. Economic technologies (Husbandry, Hunting Dogs if hunting)
+
+Heroic Age:
+1. Armory upgrades (Heavy Infantry, Bronze Weapons/Shields)
+2. Myth units (Hydra, Manticore, or civilization-specific choices)
+3. God-specific technologies (prioritize combat bonuses)
+
+Mythic Age:
+1. Champion unit upgrades
+2. Myth unit spam
+3. Titan Gate (if pursuing Titan strategy)
+The pulse-spend rhythm:
+
+Every 90-120 seconds, check your favor bar.
+If above 40 favor, spend it immediately on something useful.
+If below 20 favor and you need something, pulse villagers to prayer.
+Never float favor above 60. That's wasted production capacity.
+
+Tactic #6: "The Prayer Rotation"
+Advanced Villager Management for Favor Optimization
+The concept:
+
+Instead of assigning the same villagers to pray for the entire game, rotate them.
+
+Why this matters:
+
+Villagers assigned to resources gain no "experience" but establish walking patterns.
+Fresh villagers assigned to resources are slightly less efficient initially.
+But villagers who've been praying are "rested" and ready.
+
+The rotation schedule:
+
+text
+
+0:00-5:00: Villagers 1-15 on resources (no temple)
+5:00-7:00: Villagers 12-15 praying (first 4 pray)
+7:00-9:00: Villagers 8-11 praying (swap with previous)
+9:00-11:00: Villagers 12-15 back to praying (swap again)
+The psychological benefit:
+
+You stay engaged with your economy.
+You notice idle villagers faster.
+Your micro improves naturally.
+
+PART III: MILITARY DOCTRINE
+Tactic #7: "The Marble Wall"
+Hoplite Mastery and the Art of the Line
+Hoplites are the backbone of every Greek army in Tale of the Dragon. Learn them perfectly or lose every game.
+
+Extended Edition stats that matter:
+
+HP: 115 base (scales with upgrades)
+Hack armor: 35%
+Pierce armor: 25%
+Bonus vs cavalry: 1.25x multiplier
+Speed: Slow (4.0)
+The fundamental formation:
+
+Hoplites should ALWAYS be in front of your army.
+They absorb damage while ranged units deal damage from safety.
+Never let Hoplites chase fleeing enemies. They're too slow to catch anything.
+
+The optimal Hoplite count by age (Extended Edition):
+
+text
+
+Classical Age: 8-12 Hoplites (core of your army)
+Heroic Age: 15-20 Hoplites (with Heavy upgrade)
+Mythic Age: 20-25 Hoplites (with Champion upgrade)
+Beyond this count: Switch production to myth units or siege. Excessive Hoplites become population-inefficient in Mythic Age.
+
+Tactic #8: "The Arrow Storm"
+Toxotes Positioning and Focus Fire Fundamentals
+Toxotes are your primary damage dealers. Hoplites are your shields. This relationship is sacred.
+
+The fundamental truth of Greek warfare:
+
+Toxotes behind Hoplites = victory
+Toxotes in front of Hoplites = defeat
+Toxotes without Hoplites = massacre
+
+Positioning diagram:
+
+text
+
+            [ENEMY FORCES]
+                  |
+                  ↓
+[HOPLITE][HOPLITE][HOPLITE][HOPLITE] ← absorbs all damage
+                  |
+    [TOXOTES][TOXOTES][TOXOTES][TOXOTES] ← deals damage safely
+Focus fire doctrine (CRITICAL):
+
+Select all Toxotes (double-click or control group).
+Right-click on a single enemy unit.
+All arrows concentrate on that one target.
+Target dies in 2-3 seconds.
+Immediately right-click next target.
+Repeat until enemy army is destroyed.
+
+Never attack-move with Toxotes.
+
+Attack-move spreads damage across multiple targets, killing nothing. Manual focus fire kills units rapidly, creating snowballing numerical advantage.
+
+Tactic #9: "The Hippikon Hammer"
+Cavalry Flanking for Devastating Effect
+Greek cavalry (Hippikon, Prodromos) are not frontline units. They are assassins and opportunists.
+
+The role of Greek cavalry:
+
+Kill enemy ranged units
+Kill enemy villagers
+Kill enemy siege weapons
+Chase and kill fleeing enemies
+Never fight enemy infantry head-on
+The wrong approach:
+
+Send Hippikons directly at Hoplites or spearmen.
+Watch them die horribly.
+Lose the game.
+
+The correct approach:
+
+Your main army (Hoplites + Toxotes) engages enemy frontline
+Your Hippikons circle wide around the engagement
+Hippikons hit enemy ranged units from behind
+Enemy ranged units die instantly
+Enemy army collapses without damage support
+You win
+The timing discipline:
+
+Wait 5-8 seconds after main engagement begins.
+Enemy attention is focused on the frontline fight.
+Cavalry strikes while enemy is distracted.
+Perfect flanks win games.
+
+Tactic #10: "The Petrobolo Protocol"
+Siege Timing and Composition in Extended Edition
+Greek siege (Petrobolos) is powerful for breaking defenses but extremely vulnerable to attack.
+
+When to build siege (Extended Edition timing):
+
+Never in Classical Age (too slow, too expensive, too vulnerable)
+Heroic Age: 2-3 Petroboloi for breaking walls and towers
+Mythic Age: 4-6 Petroboloi for major base assaults
+Protection doctrine:
+
+Siege dies instantly to cavalry or myth units.
+NEVER move siege without substantial protection.
+
+Minimum escort per 2 Petroboloi:
+
+6 Hoplites (to block attackers)
+4 Hippikons (to intercept cavalry dives)
+Targeting priority for siege:
+
+Enemy siege (counter-battery fire)
+Enemy production buildings
+Enemy Town Centers
+Walls and Towers
+Never target enemy units with siege weapons. The accuracy is poor and damage is wasted. Use your human soldiers for killing enemy soldiers.
+
+Tactic #11: "The Twelve Labors"
+Greek Hero Utilization and Preservation
+Greeks have access to four trainable heroes in Extended Edition:
+
+text
+
+Bellerophon: Mounted, flying. Excellent mobility. Strong vs myth units.
+Heracles: Highest damage. Massive bonus vs myth units. Slow but devastating.
+Theseus: Balanced stats. Bonus vs myth units. Good all-rounder.
+Jason: Fast attacks. Bonus vs myth units. Excellent for dueling.
+The rotation strategy:
+
+Train 2 heroes at any given time.
+When one hero dies, immediately queue a replacement.
+Heroes should always accompany your main army—never leave them at home.
+
+Hero micro in battles:
+
+Manually control heroes during engagements.
+They should ONLY attack myth units.
+Pull heroes back when HP drops below 30%.
+Let them regenerate, then re-engage.
+
+Veterancy farming:
+
+Heroes gain veterancy (experience) from combat.
+A veteran hero is dramatically stronger than a fresh one.
+Preserving heroes across multiple battles creates snowballing advantage.
+Obsessively protect your heroes—they're irreplaceable power.
+
+Tactic #12: "The Bronze Legion"
+Optimal Unit Composition by Major God
+Each Greek major god favors slightly different army compositions in Extended Edition.
+
+Zeus Army Composition:
+
+text
+
+Core: Hoplites (55-60% of population)
+Ranged: Toxotes (20-25%)
+Myth Units: Emphasis on myth units (15-20%) — Zeus bonus makes them stronger
+Cavalry: Minimal — only for raiding
+Heroes: 2-3 at all times
+Zeus's myth units gain bonus HP. Lean into this strength by building more myth units than other Greek gods would.
+
+Poseidon Army Composition:
+
+text
+
+Core: Hoplites (45-50%)
+Cavalry: Hippikons and Hetairoi (30-35%) — Poseidon cavalry bonus is massive
+Ranged: Toxotes (15-20%)
+Heroes: 2 (less critical due to cavalry strength)
+Poseidon cavalry has bonus HP and creation speed. Use significantly more cavalry than other Greeks.
+
+Hades Army Composition:
+
+text
+
+Core: Hoplites (50-55%)
+Ranged: Toxotes + Gastraphetes (30-35%) — Hades archer bonus
+Myth Units: Moderate (10-15%)
+Heroes: 2-3
+Hades archers deal bonus damage. Lean into ranged-heavy compositions.
+
+Tactic #13: "The Peltast Paradox"
+When to Use Light Infantry
+Peltasts (available in Heroic Age) are often ignored by intermediate players. This is a mistake.
+
+Peltast strengths in Extended Edition:
+
+Very fast movement speed
+Bonus damage vs buildings
+Cheap cost (no gold requirement)
+Ranged attack with decent damage
+Optimal use cases:
+
+Raiding: Send 8-10 Peltasts to attack enemy woodcutters while your main army fights elsewhere
+Building sniping: Peltasts burn down forward Towers while Hoplites distract defenders
+Chasing: After winning an engagement, Peltasts catch and kill fleeing enemies
+Never use Peltasts for:
+
+Frontline combat (they disintegrate)
+Fighting Hoplites or heavy infantry (hard countered)
+Standing pitched battles (too fragile to survive)
+Tactic #14: "The Myrmidon Doctrine"
+Zeus-Specific Myrmidon Strategies
+Myrmidons (Zeus unique unit from Temple of Zeus upgrade) are enhanced Hoplites with bonus vs Egyptian and Norse units.
+
+When to mass Myrmidons:
+
+Against Egypt (always—the bonus is devastating)
+Against Norse (bonus applies to all Norse human units)
+When you need faster infantry (Myrmidons move faster than Hoplites)
+The substitution ratio:
+
+Replace 50-60% of your Hoplites with Myrmidons when upgraded.
+Your army becomes faster without sacrificing tanking ability.
+You can chase down enemies or retreat from bad fights more easily.
+
+Extended Edition note:
+
+Myrmidons are cost-effective against their bonus targets but expensive otherwise. Don't build them against Atlantean or Chinese where the bonus doesn't apply.
+
+Tactic #15: "The Hetairoi Charge"
+Poseidon-Specific Cavalry Dominance
+Poseidon's Hetairoi (unique cavalry unit) have bonus HP, speed, and are created faster from Stables.
+
+The core strategy:
+
+As Poseidon, build ONLY Hetairoi once available (no regular Hippikons).
+They're superior in every statistical category.
+Mass 15-25 Hetairoi in Heroic Age for devastating timing attacks.
+
+The all-cavalry timing attack (Extended Edition build):
+
+text
+
+9:30-10:30: Heroic Age hits
+10:30-11:30: Mass produce Hetairoi from 2-3 Stables
+12:00: 20+ Hetairoi + 2 heroes assembled
+12:00: Attack enemy base immediately
+12:00-13:00: Ignore enemy military, focus villagers
+Goal: Kill 15+ villagers before they can respond
+Result: Game is essentially over
+This works because Poseidon cavalry is faster and stronger than any defensive response the opponent can build in time.
+
+Tactic #16: "The Shade Army"
+Hades-Specific Death Recycling
+Hades' unique passive ability: dead human military units have a chance to return as Shades (ghost soldiers that fight for you).
+
+The exploitation:
+
+Build large Hoplite-heavy armies.
+Engage in fights you expect to be close or even slightly losing.
+Your dead Hoplites return as Shades during the battle.
+These Shades tip the engagement in your favor.
+
+The math in Extended Edition:
+
+Approximately 20-25% of dead human soldiers become Shades.
+If you lose 20 Hoplites in a fight, 4-5 Shades appear.
+Those 4-5 Shades are completely free units that cost you nothing.
+They continue fighting immediately upon spawning.
+
+Strategic implication:
+
+Hades can afford to take riskier fights than Zeus or Poseidon.
+Even "losing" trades generate value through Shade spawns.
+Play aggressively in Heroic Age when Shade generation matters most.
+
+Tactic #17: "The Gastraphetes Gambit"
+Hades-Specific Ranged Siege
+Gastraphetes (Hades unique ranged unit) are slow, expensive, but devastatingly powerful against buildings and massed units.
+
+When to build Gastraphetes:
+
+Heroic Age onwards
+When enemy is turtling behind walls
+When you need ranged siege without building Petroboloi
+Composition:
+
+text
+
+6-8 Gastraphetes behind 15 Hoplites
+Focus fire Gastraphetes on buildings
+Buildings melt faster than siege could destroy them
+The advantage over siege:
+
+Gastraphetes can defend themselves against cavalry dives.
+They don't require the same protection as Petroboloi.
+They're more flexible for hit-and-run attacks.
+
+PART IV: TIMING ATTACKS AND POWER SPIKES
+Tactic #18: "The Spartan Rush"
+6:30 Classical Age All-In (Extended Edition Timing)
+This is the most famous and reliable Greek timing attack in Tale of the Dragon.
+
+Build order (strict execution required):
+
+text
+
+0:00 - 4 villagers to closest food source (berries or hunt)
+0:00 - Queue villagers continuously from Town Center
+0:15 - Scout begins exploring (find enemy base location)
+0:30 - 5th villager to food
+1:00 - 6th villager to food
+1:30 - 7th villager to wood
+2:00 - 8th villager to wood
+2:00 - Build first house with a wood villager
+2:30 - 9th villager to food
+3:00 - 10th villager to gold
+3:15 - Begin advancing to Classical Age (choose Ares for aggression)
+3:15 - 11th villager to gold
+3:45 - Build Barracks with a wood villager (during age advance)
+4:15 - Classical Age complete
+4:15 - Immediately queue 4 Hoplites
+4:30 - 12th villager to gold
+4:45 - Build Academy
+5:00 - Queue 4 Toxotes
+5:15 - 13th villager to gold
+5:30 - Queue 4 more Hoplites
+5:45 - Build Temple, assign 3 villagers to pray
+6:00 - All military units move out toward enemy base
+6:30 - Attack hits enemy base
+Execution priorities:
+
+Target enemy gold miners first—gold is hardest to replace.
+Hoplites tank arrow fire from towers and Town Centers.
+Toxotes focus-fire villagers one at a time.
+If you kill 8+ villagers, you've likely won the game.
+If enemy fully walls before you arrive, pull back and transition to boom.
+
+Tactic #19: "The Thermopylae Hold"
+Defensive Classical into Dominant Heroic (Extended Edition)
+Not every game should be an early rush. Here's the defensive timing build.
+
+Build order:
+
+text
+
+0:00-4:00: Standard economic opening (14-15 villagers)
+4:00-4:30: Advance to Classical Age (choose Athena for Restoration god power)
+4:30-5:30: Classical Age complete
+5:00: Build Temple immediately, assign 3 villagers to pray
+5:30: Begin walling key approach routes
+6:00: Build Tower at most exposed resource location
+6:00-9:00: Focus on economy (reach 28-30 villagers)
+7:00: Build Barracks, but produce minimally (4-6 Hoplites for defense)
+9:00-10:00: Build military (12 Hoplites, 10 Toxotes)
+10:00: Begin advancing to Heroic Age
+11:30: Heroic Age complete
+11:30: Immediately upgrade to Heavy Infantry
+12:00: Push with Heroic-upgraded army
+Why this works:
+
+Your Heroic Age army is dramatically stronger than their Classical Age army.
+Even if they attacked during Classical, your walls + Tower held long enough.
+Now you counter-attack with overwhelming quality advantage.
+Their Classical units melt against your Heavy Hoplites.
+
+Tactic #20: "The Colossus Walk"
+Mythic Age Power Spike with Zeus (Extended Edition Timing)
+The Colossus is one of the most powerful myth units in Tale of the Dragon. With Zeus' myth unit HP bonus, it becomes nearly unstoppable.
+
+The timing build:
+
+text
+
+0:00-5:00: Standard opening (15 villagers)
+5:00: Advance to Classical Age (Athena)
+5:30-10:00: Heavy economic focus (reach 38-40 villagers)
+6:00: Minimal military—only enough to defend raids
+10:00: Begin advancing to Heroic Age (Dionysus for Bronze)
+11:30: Heroic Age complete
+11:30-14:00: Continue economy (reach 48-50 villagers)
+13:00: Build 2 Fortresses for myth unit production
+14:00: Begin advancing to Mythic Age (Hephaestus for Colossus)
+15:30: Mythic Age complete
+15:30: 8-10 villagers pulsed to praying (favor burst)
+16:00: Train first Colossus immediately
+16:30: Train second Colossus
+17:00: Train third Colossus
+17:30: Push with 3 Colossi + Champion-upgraded army
+Why Colossus dominates in Extended Edition:
+
+Massive HP pool (1400+ base, higher with Zeus bonus)
+Devastating damage output
+Self-healing by consuming trees and gold mines
+With Zeus +10% HP bonus = nearly impossible to kill
+Requires massed hero units to counter
+Supporting your Colossi:
+
+Colossi are vulnerable to focused hero attacks and massed myth units.
+Bring 3-4 of your own heroes to protect Colossi from enemy heroes.
+Your heroes screen for Colossi while Colossi destroy the enemy base.
+
+Tactic #21: "The Medusa Gambit"
+Athena-Specific Petrification Strategy
+Athena (Classical Age minor god) grants access to Medusa, who can permanently petrify enemy units.
+
+The setup:
+
+Build 2-3 Medusas in late Classical or early Heroic Age
+Include Medusas in your main army composition
+In battle, manually micro Medusas to use their special petrification attack
+The special attack mechanics:
+
+Medusa's petrification turns one enemy unit to stone permanently.
+Stone units die in one hit from any attack.
+Petrification has a cooldown, so use it strategically.
+
+Target priority for petrification:
+
+Enemy heroes (removes their myth unit counter completely)
+Enemy myth units (high resource value eliminated instantly)
+Enemy cavalry (expensive and dangerous)
+Never waste petrification on cheap infantry (Hoplites, Ulfsarks, etc.)
+Tactic #22: "The Underworld Express"
+Apollo-Specific Teleportation Assault
+Apollo (Heroic Age minor god) provides Underworld Passage god power—a one-way teleporter that moves your entire army instantly.
+
+The devastating setup:
+
+Build massive army at home
+Scout enemy base for weak point (usually the back)
+Cast Underworld Passage at the weakest spot
+Teleport entire army into enemy base
+Destroy production before they can respond
+Timing:
+
+Works best at 12:00-14:00 when you have Heroic Age army advantage.
+Enemy expects you to walk across the map.
+Instead, you appear inside their base.
+Psychological shock + positional advantage = victory.
+
+Critical notes:
+
+Underworld Passage is ONE-WAY. Your army cannot retreat through it.
+Commit fully or don't use it at all.
+If attack fails, your army is stranded in enemy territory.
+
+Tactic #23: "The Bronze Age"
+Dionysus-Specific Army Buff Timing
+Dionysus (Heroic Age minor god) provides Bronze god power—all your human soldiers gain bonus armor for a duration.
+
+The combo timing:
+
+Advance to Heroic Age with Dionysus
+Build massive army (25+ Hoplites, 15+ Toxotes)
+Engage enemy army
+Immediately cast Bronze when battle starts
+Your army takes dramatically less damage
+You win the engagement decisively
+If fight extends, cast Restoration (if Athena) for heal
+The math:
+
+Bronze adds significant armor to all human units.
+This effectively doubles their survivability.
+An even fight becomes a crushing victory.
+
+Tactic #24: "The Kraken Release"
+Poseidon-Specific Naval Dominance
+Poseidon is the god of the sea. On water maps in Tale of the Dragon, he's virtually unstoppable.
+
+The naval doctrine:
+
+Build Dock immediately upon reaching Classical Age
+Prioritize fishing boats for economy
+Build Hippocampus (free myth unit from god power)
+Contest all fishing spots aggressively
+Deny enemy water access entirely
+Once water is controlled, boom in safety
+The Hippocampus advantage:
+
+Created free by Poseidon god power
+Provides map vision
+Can harass fishing boats
+Forces enemy to invest in navy
+Zero resource cost for significant value
+Land-water coordination:
+
+Once you control water, you can:
+
+Attack coastal Town Centers with warships
+Land troops behind enemy base via transport
+Force enemy to defend multiple angles
+Create unwinnable strategic situations
+Tactic #25: "The Lightning Sequence"
+Zeus God Power Chain for Maximum Devastation
+Zeus's god powers are all offensively oriented. Chain them together for devastating effect.
+
+The god power lineup (assuming Athena → Dionysus → Hera path):
+
+text
+
+Bolt (Archaic): Kills one unit instantly
+Restoration (Classical, via Athena): Fully heals all units in area
+Bronze (Heroic, via Dionysus): All human soldiers gain armor
+Tartarian Gate (Mythic, via Hera): Spawns endless monsters in target area
+The chain execution:
+
+Move army to engage enemy
+Cast Bolt on enemy's most valuable unit (Colossus, Pharaoh, etc.) before battle
+Cast Bronze immediately as battle begins
+Fight for 30-45 seconds with armor advantage
+Cast Restoration when your army is damaged
+You now have a fully healed army vs their damaged one
+Mop up survivors
+If enemy retreats to their base and turtles, cast Tartarian Gate inside their walls
+Monsters destroy everything from within
+Timing window:
+
+This full chain works best in mid-Mythic Age (17:00-20:00).
+Save god powers specifically for this sequence.
+Partial chains work throughout the game.
+
+PART V: MAP CONTROL MASTERY
+Tactic #26: "The Aegean Web"
+Greek Vision Control Through Strategic Building Placement
+Greeks lack special scouting mechanics (unlike Egyptian Pharaoh vision or Norse Odin ravens). Compensate with buildings.
+
+Vision structure across the map:
+
+text
+
+Building 1: Tower at map center (permanent contested area vision)
+Building 2: Temple at forward gold (vision + function)
+Building 3: House at enemy approach route (cheap early warning)
+Building 4: Dock at water's edge (naval vision)
+The house trick:
+
+Houses cost only 50 wood in Extended Edition.
+Build them in sneaky locations purely for vision.
+If enemy destroys them, you've learned their army position for 50 wood.
+Best locations: behind trees near enemy approach, at map edges, near relics.
+
+Scout preservation:
+
+Your starting Kataskopos (scout) is irreplaceable—you cannot build more.
+Keep it alive for the entire game.
+Station it at critical approach routes or map edges.
+It provides permanent vision for zero ongoing investment.
+
+Pro tip: In late game, your scout should orbit the enemy base just outside Tower range, providing constant intelligence.
+
+Tactic #27: "The Delian League"
+Controlling Multiple Gold Mines
+Gold wins games. Greeks need gold for Hoplites, Toxotes, cavalry, upgrades, and myth units. Control gold or die.
+
+Expansion doctrine:
+
+text
+
+Primary gold: Near starting Town Center (always controlled first)
+Secondary gold: First expansion target (7:00-9:00)
+Tertiary gold: Contested center or enemy side of map (only when ahead)
+Claiming procedure:
+
+Scout gold location in early game (mark it mentally)
+Clear any neutral animals that might interfere
+Build Tower adjacent to gold mine
+Build Storehouse at optimal distance
+Assign 8-10 villagers for maximum efficiency
+Station 4-6 military units for defense
+Wall approaches if time permits
+The "golden triangle" strategy:
+
+Control 3 gold sources simultaneously.
+Enemy can only threaten 1 at any time.
+You always have 2 producing safely.
+Sustained gold income = sustained military production = victory.
+
+Tactic #28: "The Pylae Protocol"
+Chokepoint Identification and Exploitation
+Every map has chokepoints—narrow passages where large armies cannot maneuver effectively. Greeks are strongest when fighting in chokepoints.
+
+Why chokepoints favor Greeks:
+
+Hoplites form unbreakable wall across narrow passages
+Toxotes fire over Hoplites from safety
+Enemy cavalry cannot flank (no room)
+Numerical advantage is negated (only front line fights)
+Your smaller army can defeat their larger one
+Finding chokepoints:
+
+Look for:
+
+Gaps between forests
+Narrow passages between cliff faces
+Bridge crossings
+Paths around lakes or water features
+Relic locations (often positioned at strategic crossroads)
+Fortifying chokepoints:
+
+text
+
+[CLIFF/FOREST]          [CLIFF/FOREST]
+       |                      |
+       |    [TOWER]           |
+       |   /       \          |
+[HOPLITES]  [TOXOTES]  [HOPLITES]
+       |                      |
+       | [REINFORCEMENT ZONE] |
+If you can force fights at chokepoints, you win even when outnumbered 2:1.
+
+Tactic #29: "The Themistocles Gambit"
+Walls as Offensive Weapons
+Walls aren't just for defense. Use them to control enemy movement and create favorable engagements.
+
+Offensive wall applications:
+
+Application 1: The Cage
+
+Build wall segments around enemy expansion.
+They can't easily move villagers in or out.
+Any raid becomes trivially effective.
+Even partial walls slow their economy dramatically.
+
+Application 2: The Funnel
+
+Build walls that force enemy army through a specific narrow path.
+Position your army at the exit in optimal formation.
+Enemy arrives in thin, disorganized line.
+You have perfect formation advantage.
+
+Application 3: The Denial
+
+Build wall segments at resource locations you cannot take yourself.
+If you can't mine that gold, deny it to them.
+Strategic denial is often as valuable as control.
+
+Application 4: The Maze
+
+Build confusing wall patterns near your base.
+Enemy army gets lost or separated.
+You pick off isolated units.
+Works especially well against AI.
+
+Tactic #30: "The Marathon Circuit"
+Continuous Map Rotation for Pressure
+Static armies lose games. Keep moving constantly.
+
+The circuit formation:
+
+Divide your army into two groups:
+
+Main Army (70%): Hoplites, Toxotes, Heroes, Myth Units
+Raiding Party (30%): Cavalry only (Hippikons, Prodromos, Hetairoi)
+The pressure pattern:
+
+text
+
+Main Army holds map center (threatening multiple angles)
+Raiding Party moves in circular pattern around enemy base
+Every 60-90 seconds, Raiding Party attacks different location:
+  - First raid: enemy woodcutters
+  - Second raid: enemy gold miners
+  - Third raid: enemy farms
+  - Fourth raid: back to woodcutters
+Enemy must constantly react and reposition
+Eventually enemy makes mistake (army out of position)
+Main Army punishes mistake with devastating push
+Greek advantage for this tactic:
+
+Hippikons and Prodromos are excellent raiders in Extended Edition.
+They move fast, kill villagers in 2-3 hits, and escape before response arrives.
+Keep cavalry circulating constantly—idle cavalry is wasted cavalry.
+
+Tactic #31: "The Argonaut Expedition"
+Forward Base Establishment
+In longer games, forward bases provide strategic advantages.
+
+Forward base components:
+
+text
+
+1 Fortress (for myth unit production + defense)
+1 Barracks (for infantry reinforcement)
+1 Stable (for cavalry production)
+1 Tower (for vision + defense)
+Optional: Temple (for favor generation at forward location)
+Placement considerations:
+
+Build forward base:
+
+Near contested gold (control the resource)
+At strategic chokepoint (control movement)
+Just outside enemy maximum tower range (threaten their base)
+The "double production" advantage:
+
+With forward base + home base both producing:
+
+Your reinforcements arrive faster
+Your army sustains longer
+Enemy must fight through your forward units to reach your base
+PART VI: COUNTERING EACH CIVILIZATION
+Tactic #32: "The Persian Answer"
+Countering Egyptian Civilization
+Egypt is slow to start but builds toward overwhelming power. Counter with early pressure and sustained aggression.
+
+Phase 1: Early pressure (5:00-8:00)
+
+Egypt wants to boom to Heroic Age for powerful myth units (Wadjet, Mummy, War Elephant).
+Don't let them.
+Attack at 6:30 with Spartan Rush.
+Force their Pharaoh to fight (healing wastes the Pharaoh's empowering time).
+Kill Monuments under construction.
+
+Phase 2: Deny Monument economy
+
+Egyptian Monuments generate favor passively.
+Fewer Monuments = slower favor = fewer myth units.
+If you can keep them to 3-4 Monuments instead of 8-10, you've crippled them.
+
+Phase 3: Hero focus in mid-game
+
+Egyptian myth units (especially War Elephants) are powerful but expensive.
+Train 3-4 heroes specifically to counter their myth units.
+Focus-fire War Elephants with all heroes—they die fast.
+Once myth units are dead, your Hoplites crush their infantry.
+
+Unit matchups:
+
+text
+
+Egyptian Spearmen → Your Toxotes (kite them)
+Egyptian Slingers → Your Hippikons (dive and kill)
+Egyptian Chariot Archers → Your Hoplites (they're weak vs infantry)
+Egyptian War Elephants → Your Heroes (massive bonus damage)
+Tactic #33: "The Olympian Bulwark"
+Countering Norse Civilization
+Norse will rush you. Every game. Without exception. Prepare for it.
+
+Phase 1: Wall immediately (3:00-4:00)
+
+At the 3:00 mark, start building walls at key approaches.
+Norse Ulfsarks can build, so expect forward military buildings.
+Scout their base at 3:30 to see if they're preparing Longhouse rush.
+
+Phase 2: Tower placement (4:00-6:00)
+
+Build 1-2 Towers at key approaches by 5:00.
+Norse have no early siege options.
+Towers + walls hold indefinitely against early rushes.
+
+Phase 3: Counter-attack timing (8:00-10:00)
+
+After stopping the initial rush (around 7:00-8:00), immediately counter-attack.
+Norse economy is weak if their rush failed.
+They invested resources into military that died against your walls.
+Your Hoplites crush their Ulfsarks efficiently.
+
+Unit matchups:
+
+text
+
+Ulfsarks → Your Hoplites (easy victory)
+Throwing Axemen → Your Hippikons (dive past frontline)
+Huskarls → Your Toxotes (they're slow, kite forever)
+Jarls → Your Hoplites (but these are rare early)
+Einherjar → Your Heroes + focused attacks
+Tactic #34: "The Titanomachy"
+Countering Atlantean Civilization
+Atlanteans are dangerous because of citizen-soldiers, time-shifting tricks, and powerful Titan access.
+
+Phase 1: Deny Oracles (ongoing)
+
+Atlantean Oracle scouts give them free permanent line of sight.
+If you find an Oracle near your base, kill it immediately.
+Their information advantage disappears.
+Check common Oracle hiding spots regularly.
+
+Phase 2: Kronos counter (if applicable)
+
+Kronos can Time Shift buildings—instantly teleport them.
+If you see a Tower suddenly appear near your base, don't panic.
+Time Shifted buildings have low HP initially (building construction status).
+Attack immediately with 8-10 infantry—it dies before becoming dangerous.
+
+Phase 3: Titan prevention (15:00-18:00)
+
+Atlanteans get Titans from Titan Gate building.
+Scout their base at 12:00, 14:00, and 16:00.
+If you see Titan Gate construction, attack immediately with everything.
+Titan Gate has low HP during construction and cannot be repaired.
+
+If Titan is already spawned:
+
+Option A: Mass heroes (4-6 heroes focusing Titan deal significant damage)
+Option B: Ignore Titan, destroy their base (Titan without production is useless)
+Option C: Kite Titan with fast units while destroying their economy
+
+Tactic #35: "The Dragon Slayers"
+Countering Chinese Civilization (Tale of the Dragon Core Matchup)
+The Chinese were added in Tale of the Dragon and present unique challenges. Their Garden economy scales infinitely, their Immortals counter myth units, and their late-game is devastating.
+
+Phase 1: Understand the Garden threat
+
+Chinese Gardens generate resources passively without any villager investment.
+The longer the game goes, the more cumulative value Gardens provide.
+You MUST apply early pressure to prevent Garden scaling.
+
+Phase 2: Early aggression (6:00-9:00)
+
+Attack at 6:30 with Spartan Rush.
+Target Gardens specifically if you can reach them.
+Even damaging Gardens slows their economy.
+Force them to build military instead of economy.
+
+Phase 3: Raid obsessively (ongoing)
+
+Chinese villagers are just as vulnerable as any other civilization's.
+Hippikons kill villagers in 2-3 hits.
+Raid every 60-90 seconds throughout the mid-game.
+Keep them building military instead of scaling economy.
+
+Phase 4: Kill Gardens when possible
+
+If you ever penetrate their base, prioritize Garden destruction.
+Gardens are their economic engine.
+A Chinese player without Gardens is dramatically weaker.
+
+Phase 5: Avoid late-game if possible
+
+Chinese late-game with Azure Dragon, Vermilion Bird, and fully scaled Gardens is extremely powerful.
+End the game before 20:00 if at all possible.
+If game goes late, prioritize Colossi (very strong against Chinese myth units).
+
+Unit matchups:
+
+text
+
+Chinese Chu Ko Nu → Your Hippikons (dive and eliminate)
+Chinese Halberdiers → Your Toxotes (kite them to death)
+Chinese Cataphracts → Your Hoplites + focus fire
+Chinese Mounted Archers → Your Hippikons (cavalry vs cavalry)
+Chinese Immortals → Your focused military (avoid myth units when Immortals present)
+Chinese Myth Units → Your Heroes (standard counter)
+Chinese god-specific notes:
+
+Against Fu Xi: Expect fast Castle rush. Wall early, Tower exposed locations.
+Against Nü Wa: Expect powerful myth units. Build extra heroes.
+Against Shennong: Expect economic boom. Apply maximum early pressure.
+
+Tactic #36: "The Hellenic Mirror"
+Winning Greek vs Greek Matchups
+The mirror matchup is about pure execution—no civilization advantages, no gimmicks.
+
+Key differentiators:
+
+Favor efficiency: Whoever manages prayer economy better has more myth units
+Hero preservation: Whoever keeps heroes alive longer dominates myth unit fights
+Upgrade timing: First player to Heavy Infantry (Heroic) wins Classical-era engagements
+Focus fire discipline: Better Toxotes micro wins battles
+Colossus race: First Colossus in Mythic usually wins
+The winning edge:
+
+Scout more frequently (know their composition before engagement)
+Focus-fire better (manual Toxotes targeting is essential)
+Execute flanks perfectly (Hippikons decide close games)
+Preserve heroes obsessively (they're irreplaceable value)
+God-specific mirror notes:
+
+Zeus vs Zeus: Whoever reaches Mythic with more resources wins via Colossus spam
+Zeus vs Poseidon: Zeus wins land fights, Poseidon wins water/cavalry maps
+Zeus vs Hades: Zeus wins aggressive games, Hades wins defensive/late games
+Poseidon vs Poseidon: Cavalry micro determines winner
+Poseidon vs Hades: Poseidon must win early, Hades wins late
+Hades vs Hades: Extreme attrition—Shades favor the better micro player
+
+PART VII: MYTH UNIT TACTICS
+Tactic #37: "The Cyclops Catapult"
+Using Cyclops as Living Siege
+Cyclops (available via Ares in Classical Age) have a unique ability: grabbing enemy units and throwing them.
+
+The exploitation:
+
+Cyclops grab attack deals massive damage.
+Thrown units ragdoll into other units, dealing splash damage.
+Single Cyclops can devastate clustered formations.
+
+Target priority for grabs:
+
+Enemy heroes (removes their myth unit counter)
+Enemy myth units (high resource value eliminated)
+Clustered infantry (chain damage to multiple units)
+Positioning:
+
+Keep Cyclops slightly behind your Hoplite frontline.
+When enemy engages, Cyclops grabs and throws.
+Enemy loses key unit immediately.
+Repeat throughout engagement.
+
+Micro tip:
+
+Cyclops grab has a cooldown. Count approximately 8-10 seconds between grabs.
+After each grab, reposition Cyclops slightly to grab next priority target.
+
+Tactic #38: "The Minotaur Maze"
+Using Minotaurs for Area Denial
+Minotaurs (available via Athena in Classical Age) have a gore attack that sends enemy units flying.
+
+The technique:
+
+Position Minotaurs at chokepoints.
+When enemy tries to push through, Minotaurs gore leading units.
+Gored units are knocked back, breaking formation.
+Your ranged units shred the disorganized enemies.
+
+The disruption math:
+
+1 Minotaur gore attack can disrupt 3-5 enemy units simultaneously.
+Disrupted units are temporarily unable to attack.
+Your formation stays intact while theirs collapses.
+Massive engagement advantage from single ability.
+
+Tactic #39: "The Hydra Farm"
+Leveraging Hydra's Regeneration and Multi-Head Scaling
+Hydras (available via Dionysus in Heroic Age) grow additional heads as they gain veterancy. More heads = more attacks per strike.
+
+The farming strategy:
+
+Build 1-2 Hydras in early Heroic Age
+Keep them alive obsessively (pull back when damaged)
+Hydras regenerate HP over time out of combat
+By late Heroic or Mythic, your veteran Hydras have 5+ heads each
+Each attack from veteran Hydra hits 5+ times simultaneously
+They're now dealing area-of-effect devastation
+Protection doctrine:
+
+Hydras are slow-moving.
+Always protect them with Hoplites.
+Never let Hydras lead the charge.
+They arrive after battle is joined, then devastate from safety.
+
+Veterancy note:
+
+A fresh Hydra has 1 head.
+A fully veteran Hydra has 5+ heads.
+A 5-head Hydra deals roughly 5x the damage of a fresh one.
+Preservation is everything.
+
+Tactic #40: "The Manticore Barrage"
+Using Manticores for Ranged Myth Unit Pressure
+Manticores (available via Artemis in Heroic Age) shoot volleys of tail spikes at range.
+
+Usage:
+
+Mass 4-6 Manticores behind your Hoplite line.
+They function as "super Toxotes" with much higher damage.
+Their ranged attacks shred enemy formations.
+
+Focus fire (essential):
+
+Like Toxotes, Manticores should never attack-move.
+Select all Manticores.
+Right-click on one enemy unit.
+Unit dies almost instantly.
+Repeat on next unit.
+
+Counter-awareness:
+
+Manticores are weak to enemy cavalry dives.
+If enemy cavalry flanks your Manticores, you lose them.
+Position Hoplites to intercept cavalry before it reaches Manticores.
+Consider keeping 2-3 Hippikons as anti-cavalry screen.
+
+Tactic #41: "The Centaur Harassment"
+Using Centaurs for Endless Map Pressure
+Centaurs (available via Hermes in Classical Age) are fast, ranged, and relatively cheap.
+
+The harassment doctrine:
+
+Build 4-6 Centaurs.
+Never group them with your main army.
+Instead, use them as independent harassment force.
+
+Harassment pattern:
+
+text
+
+1. Centaurs move to enemy woodcutters
+2. Fire 2-3 volleys, kill 1-2 villagers
+3. Retreat before enemy military arrives
+4. Circle around to enemy gold miners
+5. Fire 2-3 volleys, kill 1-2 villagers
+6. Retreat again
+7. Repeat continuously
+The accumulating damage:
+
+Every 60-90 seconds, you kill 1-2 villagers.
+Over 10 minutes = 8-15 villagers dead.
+Enemy economy is crippled without direct engagement.
+Your main army eventually pushes and wins easily.
+
+Tactic #42: "The Nemean Lion Stand"
+Using Nemean Lion for Hero Assassination
+Nemean Lion (available via Aphrodite in Heroic Age) is specifically strong vs heroes.
+
+The setup:
+
+Enemy has heroes protecting their army from your myth units.
+Your Nemean Lion targets and kills enemy heroes.
+Once heroes are dead, your other myth units rampage freely.
+
+Micro:
+
+Manually control Nemean Lion in every engagement.
+Right-click on enemy hero.
+Stay focused on that hero until dead.
+Then switch to next enemy hero.
+Then unleash your myth units.
+
+Tactic #43: "The Colossus Rampage"
+Maximizing Colossus Effectiveness
+Colossus (available via Hephaestus in Mythic Age) is the ultimate Greek myth unit.
+
+Colossus strengths:
+
+Highest HP pool in game (1400+ base)
+Massive damage output
+Self-heals by consuming trees and gold mines
+Terrifying psychological effect
+Self-heal exploitation:
+
+When Colossus is damaged, walk it to a forest.
+It consumes trees and regains HP rapidly.
+This makes Colossi nearly impossible to kill without overwhelming force.
+
+The 3-Colossus deathball:
+
+3 Colossi + 20 Champion Hoplites + 3-4 Heroes = nearly unbeatable army.
+Heroes protect Colossi from enemy myth units and heroes.
+Hoplites protect Colossi from mass infantry.
+Colossi destroy everything else.
+
+Counter-awareness:
+
+Enemy will try to focus all heroes on your Colossi.
+Use your own heroes to intercept and kill their heroes first.
+Once enemy heroes are dead, Colossi are unstoppable.
+
+Tactic #44: "The Chimera Strike"
+Using Chimera for Burst Damage
+Chimera (available via Artemis in Mythic Age) has devastating burst damage and flying mobility.
+
+Usage:
+
+Chimera should target:
+
+Enemy siege (highest priority—siege dies in 1-2 hits)
+Enemy myth units
+Clustered enemy ranged units
+The siege snipe:
+
+Enemy brings Petroboloi or other siege to attack your base.
+Your Chimera flies over their army.
+Chimera kills siege in 2-3 attacks.
+Flies back to safety.
+Enemy push collapses.
+
+Survival note:
+
+Chimera is fragile for a flying myth unit.
+Don't leave it hovering over enemy archers.
+Strike, kill target, retreat.
+
+PART VIII: GOD-SPECIFIC STRATEGIC FRAMEWORKS
+Tactic #45: "The Thunderer's Path"
+Complete Zeus Strategic Framework
+Zeus identity:
+
+Strongest myth units, fastest favor generation, aggressive and straightforward playstyle.
+
+Recommended age-up paths:
+
+Path A: Aggressive (standard)
+
+text
+
+Classical: Ares (Cyclops + Pestilence for aggression)
+Heroic: Dionysus (Bronze for army buff + Scylla on water)
+Mythic: Hephaestus (Colossus + Plenty for late-game)
+Path B: Flexible
+
+text
+
+Classical: Athena (Minotaurs + Restoration for sustain)
+Heroic: Apollo (Manticore + Underworld Passage for surprise)
+Mythic: Hera (Medusa + Tartarian Gate for base assault)
+Zeus power spikes:
+
+Classical (4:30): Strong Cyclops/Minotaurs with +10% HP bonus
+Heroic (11:00): Bronze god power makes army nearly invincible for 90 seconds
+Mythic (15:30): Colossus is the best single myth unit in the game
+Zeus weaknesses:
+
+No economic bonuses (pure military god)
+Infantry no stronger than other Greeks
+If myth units die without value, advantage disappears
+Relies on aggression—can struggle if forced defensive
+Tactic #46: "The Earthshaker's Domain"
+Complete Poseidon Strategic Framework
+Poseidon identity:
+
+Cavalry master, water dominator, economic bonuses through Market and horses.
+
+Recommended age-up paths:
+
+Path A: Cavalry aggression
+
+text
+
+Classical: Hermes (Centaurs + Ceasefire for tempo)
+Heroic: Dionysus (Bronze + Scylla for combined arms)
+Mythic: Artemis (Chimera + Earthquake for base destruction)
+Path B: Naval/economic
+
+text
+
+Classical: Athena (Minotaurs + Restoration for defense)
+Heroic: Aphrodite (Nemean Lion + Curse)
+Mythic: Hephaestus (Colossus + Plenty)
+Poseidon power spikes:
+
+Classical (4:30): Free Hippocampus, Militia from destroyed Stables
+Heroic (11:00): Hetairoi cavalry dominance, potential naval supremacy
+Mythic (15:30): Strong late-game from passive Market gold income
+Poseidon unique mechanics:
+
+Stables spawn Militia when destroyed (free units on building death)
+Market generates small gold income over time (passive economy)
+Cavalry has bonus HP (makes cavalry-heavy viable)
+Cheaper Stables (economic advantage)
+Tactic #47: "The Unseen Lord's Reign"
+Complete Hades Strategic Framework
+Hades identity:
+
+Defensive powerhouse, attrition warfare, death recycling through Shades.
+
+Recommended age-up paths:
+
+Path A: Defensive attrition
+
+text
+
+Classical: Athena (Minotaurs + Restoration for sustain)
+Heroic: Aphrodite (Nemean Lion + Curse for disruption)
+Mythic: Hephaestus (Colossus + Plenty)
+Path B: Ranged focus
+
+text
+
+Classical: Ares (Cyclops + Pestilence)
+Heroic: Apollo (Manticore + Temple of Healing)
+Mythic: Artemis (Chimera + Earthquake)
+Hades power spikes:
+
+Passive: Shades spawn from dead soldiers (constant value generation)
+Heroic: Stronger buildings make turtling highly effective
+Mythic: Earthquake god power devastates enemy bases
+Hades unique mechanics:
+
+20-25% of dead human soldiers return as Shades (free reinforcements)
+Buildings have +25% HP and deal more damage (defensive strength)
+Archers have +10% attack (ranged composition bonus)
+Hades playstyle:
+
+More defensive than Zeus or Poseidon.
+Wall heavily, build Towers, accumulate massive army.
+Fight in your territory where Shades reinforce you.
+Push only when you have overwhelming advantage.
+Attrition favors Hades—long games are Hades games.
+
+Tactic #48: "The Olympian Quartet"
+Mixing Minor God Bonuses for Maximum Synergy
+Your minor god choices should complement each other and your major god.
+
+Aggressive Zeus combo:
+
+text
+
+Classical: Ares → Cyclops + Pestilence
+Heroic: Dionysus → Bronze + Scylla
+Mythic: Hera → Medusa + Tartarian Gate
+All three gods favor constant aggression and base assault.
+
+Defensive Hades combo:
+
+text
+
+Classical: Athena → Minotaurs + Restoration
+Heroic: Apollo → Manticores + Temple of Healing
+Mythic: Hephaestus → Colossus + Plenty
+All three gods favor sustain and late-game scaling.
+
+Cavalry Poseidon combo:
+
+text
+
+Classical: Hermes → Centaurs + Ceasefire
+Heroic: Dionysus → Bronze + Scylla
+Mythic: Artemis → Chimera + Earthquake
+Hermes provides mobile Centaurs, Bronze buffs all units, Earthquake finishes bases.
+
+Anti-Chinese combo (any Greek god):
+
+text
+
+Classical: Ares → Cyclops + Pestilence (cripple Gardens)
+Heroic: Dionysus → Bronze (win mid-game fights)
+Mythic: Hephaestus → Colossus (beat Chinese late-game myth units)
+Designed specifically to pressure Chinese before they scale.
+
+PART IX: BUILD ORDER COMPENDIUM
+Build #1: "The Spartan Rush" (6:30 Timing Attack)
+text
+
+0:00 - 4 villagers to food
+0:00 - Queue villagers continuously
+0:15 - Scout moves toward enemy base
+0:30 - 5th villager to food
+1:00 - 6th villager to food
+1:30 - 7th villager to wood
+2:00 - 8th villager to wood
+2:00 - Build house
+2:30 - 9th villager to food
+3:00 - 10th villager to gold
+3:15 - Advance to Classical Age (Ares)
+3:15 - 11th villager to gold
+3:45 - Build Barracks during age advance
+4:15 - Classical Age hits
+4:15 - Queue 4 Hoplites immediately
+4:30 - 12th villager to gold
+4:45 - Build Academy
+5:00 - Queue 4 Toxotes
+5:30 - Queue 4 more Hoplites
+5:45 - Build Temple, 3 villagers pray
+6:00 - Move out
+6:30 - Attack
+Goal: Kill 8+ villagers, cripple enemy economy.
+
+Build #2: "The Thermopylae" (Defensive Boom)
+text
+
+0:00-3:00 - Standard opening
+3:00 - 12 villagers
+3:15 - Advance to Classical Age (Athena)
+4:15 - Classical Age
+4:15 - Build Temple, 3 villagers pray
+4:30 - Begin walling key approaches
+5:00 - Build Tower at exposed gold
+5:00-9:00 - Boom to 28-30 villagers
+7:00 - Build Barracks, minimal military (6 Hoplites)
+9:00 - Build Academy, produce 10 Toxotes
+10:00 - Begin advancing to Heroic Age (Dionysus)
+11:30 - Heroic Age hits
+Something went wrong with this response, please try again.
+===================================================================
+=================================================================== Claude 4.5 Opus
+#And give me the Tale of the Dragon Greek Compendium
+
+The user is asking me to write a comprehensive strategy guide for playing the Greek civilization in Age of Mythology: Tale of the Dragon expansion (2016). This is for the Extended Edition version of the game, not the newer Definitive Edition.
+
+Earlier in the conversation, I wrote a detailed Greek guide but mistakenly targeted the Definitive Edition. The user caught this and asked me to rewrite it for Tale of the Dragon specifically.
+
+This is a request for original strategy content about a video game, which is not copyrighted material. I'm creating original strategic advice, tips, and tactics for playing the game. This is similar to the kind of content you'd find in a strategy guide or wiki.
+
+Let me write a comprehensive Tale of the Dragon-specific Greek strategy compendium. I need to:
+
+Focus on the 2016 Extended Edition mechanics
+Adjust for the balance that existed in that version
+Include matchup strategies specifically against the Chinese civilization (the main addition in Tale of the Dragon)
+Use the correct stats and timings for that version of the game
+This is original content creation, not reproduction of copyrighted material, so I can proceed with writing this guide.
+-----------------------------------------------------------------------------------------------
+
+Age of Mythology: Tale of the Dragon
+The Complete Greek Strategy Compendium
+Mastering Hellenic Warfare in the Extended Edition Era
+PART I: THE GREEK IDENTITY IN TALE OF THE DRAGON
+Understanding the Greeks in This Era
+Tale of the Dragon (2016) introduced the Chinese civilization to Age of Mythology Extended Edition. This fundamentally altered the competitive landscape. Greeks, the original "fundamental" civilization, now faced an opponent with unique mechanics: the Garden for passive resource generation, Immortals as infinitely trainable heroes, and god powers that could reshape battles.
+
+The Greeks remain the civilization of pure execution. Where Chinese players manipulate economy through Gardens, Norse players build with infantry, Atlanteans field citizen-soldiers, and Egyptians empower through monuments, Greeks simply execute the fundamentals better than anyone else.
+
+The Greek Advantage in Tale of the Dragon:
+
+Greeks have the most cost-efficient core army in the game. Hoplites trade favorably against almost every infantry unit. Toxotes deal consistent damage from safety. Greek heroes are trained from the Town Center, meaning military production buildings remain dedicated to military units.
+
+The Greek Challenge Against Chinese:
+
+Chinese late-game scaling through Gardens creates pressure to end games early or mid-game. The Chinese Immortal hero system means they always have myth unit counters available. Chinese siege (Sitting Tigers) outranges Greek Petrobolos. Greek players must adapt their timing and aggression.
+
+The Prayer Economy
+Greeks generate favor through villagers worshipping at Temples. This creates a fundamental economic trade-off unique to Greeks: every praying villager produces favor but gathers no food, wood, or gold.
+
+The Economic Mathematics:
+
+A villager gathering food produces approximately 0.45 food per second on berries, higher on hunt. A villager gathering gold produces approximately 0.40 gold per second. Praying villagers produce favor at a rate dependent on how many are praying, with diminishing returns beyond five villagers per Temple.
+
+Optimal Prayer Allocation:
+
+text
+
+Classical Age: 3-4 villagers per Temple
+Heroic Age: 4-5 villagers per Temple
+Mythic Age: 5-6 villagers per Temple
+Maximum useful per Temple: 7-8 (severe diminishing returns beyond)
+The Pulse Technique:
+
+Rather than maintaining constant prayer, pulse villagers to Temples when you need favor bursts. Need a Minotaur immediately? Temporarily assign eight villagers to pray. Once favor is sufficient, return them to economy. This maximizes economic efficiency while still generating favor when needed.
+
+Zeus Favor Advantage:
+
+Zeus generates favor 30% faster than Poseidon or Hades. This means Zeus can maintain equivalent favor income with fewer praying villagers, freeing more for economy. Over a full game, this translates to hundreds of additional resources.
+
+PART II: THE THREE OLYMPIANS
+Zeus: The Thunderer
+Zeus is the aggressive Greek god. His bonuses favor myth units and direct combat.
+
+Unique Bonuses:
+
+Zeus grants all myth units 10% additional hit points. This makes every myth unit from Minotaur to Colossus noticeably more durable. Additionally, favor generation is 30% faster, enabling more frequent myth unit production.
+
+Unique Technologies:
+
+Olympic Parentage increases hero hit points by 25%. This makes Greek heroes even more effective against myth units. Combined with the hero's natural bonus damage, Zeus heroes are formidable.
+
+God Power - Bolt:
+
+Bolt instantly kills a single enemy unit. This is extraordinarily powerful against expensive myth units or enemy heroes. Save Bolt for high-value targets: Colossi, War Elephants, Frost Giants, or enemy heroes threatening your myth units.
+
+Zeus Strategic Identity:
+
+Zeus wants to build more myth units than other Greek players. His 10% HP bonus compounds with each myth unit fielded. A Zeus player with four myth units has effectively 0.4 extra myth units worth of HP compared to Poseidon or Hades.
+
+Ideal Minor God Path:
+
+Classical: Athena (Restoration provides army sustain; Minotaurs are excellent)
+Heroic: Apollo (Underworld Passage enables surprise attacks) or Dionysus (Bronze buffs entire army)
+Mythic: Hephaestus (Colossus is devastating with Zeus HP bonus) or Hera (Medusa for petrification, Tartarian Gate for finishing)
+
+Poseidon: The Earthshaker
+Poseidon is the cavalry and naval god. His bonuses favor mobility and water control.
+
+Unique Bonuses:
+
+Cavalry units cost 10% less and have 10% bonus hit points. Stables produce Militia when destroyed, providing free defensive units. Markets generate a slow trickle of gold. The Hippocampus, a free naval myth unit, scouts the seas.
+
+Unique Technology:
+
+Lord of Horses further increases cavalry hit points and speed. Combined with the baseline bonus, Poseidon cavalry is the most durable in the game.
+
+God Power - Lure:
+
+Lure creates a stone that attracts all animals on the map toward your Town Center. This effectively gathers huntable food sources to your base, saving villager travel time and providing concentrated early food.
+
+Poseidon Strategic Identity:
+
+Poseidon wants cavalry-heavy armies and water control. His Hetairoi are superior to standard Hippikon. On water maps, Poseidon's free Hippocampus and naval bonuses make him dominant.
+
+Ideal Minor God Path:
+
+Classical: Hermes (Ceasefire for emergency defense; Centaurs for mobile harassment) or Ares (aggression)
+Heroic: Dionysus (Bronze for army-wide buffs; Scylla on water) or Aphrodite (Curse turns enemy units to pigs)
+Mythic: Artemis (Earthquake destroys buildings; Chimera is powerful) or Hephaestus (Colossus)
+
+Hades: The Unseen
+Hades is the defensive god. His bonuses favor attrition warfare and building durability.
+
+Unique Bonuses:
+
+When human soldiers die in combat, 20% return as Shades—ghostly reinforcements that fight for Hades. All buildings have increased attack and hit points. Archers deal 10% more damage.
+
+Unique Technology:
+
+Vaults of Erebus increases the frequency and duration of Shade spawning. In prolonged battles, Shades can turn the tide by providing constant free reinforcements.
+
+God Power - Sentinel:
+
+Sentinel creates four stone statues at your Town Center that attack nearby enemies. This provides early game defense against rushes without requiring military investment.
+
+Hades Strategic Identity:
+
+Hades excels in defensive positions and long games. His Shade mechanic rewards trading armies: even losses generate Shade reinforcements. His building bonuses make turtling viable. His archer bonus makes Toxotes even more effective.
+
+Ideal Minor God Path:
+
+Classical: Athena (Minotaurs; Restoration for sustain) or Ares (aggression if needed)
+Heroic: Aphrodite (Curse; Nemean Lion hunts enemy heroes) or Apollo (Temple of Healing for sustain)
+Mythic: Hephaestus (Colossus; Plenty for resource generation) or Artemis (Earthquake to break sieges)
+
+PART III: MINOR GODS AND THEIR GIFTS
+Classical Age Minor Gods
+Athena
+Athena provides defensive and sustaining bonuses.
+
+Myth Unit - Minotaur:
+
+Minotaurs are powerful melee myth units with a gore attack that sends enemies flying. They disrupt enemy formations and deal significant damage. Excellent as frontline myth units.
+
+God Power - Restoration:
+
+Restoration instantly heals all your units and buildings to full health. This is extraordinarily powerful when cast mid-battle. An army that should lose suddenly wins because it's at full health while the enemy is damaged.
+
+Key Technologies:
+
+Aegis Shield increases building pierce armor, making them more resistant to arrow fire and siege. Sarissa increases Hoplite damage against cavalry, strengthening your counter to cavalry-heavy opponents.
+
+When to Choose Athena:
+
+Choose Athena when facing aggressive opponents, when you plan for longer games, or when you want the flexibility of Restoration. Athena is the "safe" Classical choice.
+
+Ares
+Ares provides aggressive bonuses focused on direct combat.
+
+Myth Unit - Cyclops:
+
+Cyclopes are powerful myth units that can pick up and throw enemy units. Thrown units take massive damage and can damage units they collide with. Cyclopes are excellent against clustered enemies and for assassinating key targets.
+
+God Power - Pestilence:
+
+Pestilence prevents enemy buildings from functioning for a duration. Production buildings cannot train units. Towers cannot attack. Town Centers cannot garrison or produce villagers. Cast on enemy production buildings during a push to prevent reinforcements.
+
+Key Technologies:
+
+Will of Kronos increases Cyclops hit points and damage. Phobos decreases enemy unit damage when near your myth units, making your entire army more survivable.
+
+When to Choose Ares:
+
+Choose Ares for aggressive Classical Age timing attacks. Cyclops throwing attacks devastate tightly packed enemy armies. Pestilence shuts down enemy production during crucial pushes.
+
+Hermes
+Hermes provides mobility and utility.
+
+Myth Unit - Centaur:
+
+Centaurs are fast ranged myth units. They excel at harassment and hit-and-run tactics. Their speed lets them raid villagers and escape before defenders arrive.
+
+God Power - Ceasefire:
+
+Ceasefire prevents all combat for one minute. All attacks stop. This provides an emergency escape from losing battles, time to rebuild after a devastating attack, or disruption of enemy timing attacks.
+
+Key Technologies:
+
+Winged Messenger increases unit line of sight, improving map awareness. Sylvan Lore increases Centaur speed and attack.
+
+When to Choose Hermes:
+
+Choose Hermes when you need mobility (especially as Poseidon with cavalry focus) or when facing overwhelming aggression where Ceasefire could save you.
+
+Heroic Age Minor Gods
+Apollo
+Apollo provides healing and surprise attack capabilities.
+
+Myth Unit - Manticore:
+
+Manticores are ranged flying myth units. They shoot volleys of tail spikes that damage multiple enemies. They can fly over walls and obstacles.
+
+God Power - Underworld Passage:
+
+Underworld Passage creates two linked tunnels. Units entering one emerge from the other. This enables instant teleportation of your entire army anywhere on the map. Attack from unexpected angles. Defend multiple locations. Escape from traps.
+
+Key Technologies:
+
+Temple of Healing causes Temples to slowly heal nearby units. Sun Ray increases Manticore damage.
+
+When to Choose Apollo:
+
+Choose Apollo for map control through Underworld Passage or sustained warfare through Temple of Healing. Manticores provide excellent ranged support.
+
+Dionysus
+Dionysus provides army-wide combat bonuses.
+
+Myth Unit - Scylla:
+
+Scylla is a naval myth unit, a massive sea serpent that devastates enemy ships. Only available on water maps.
+
+Myth Unit - Hydra:
+
+Hydra is a multi-headed serpent that gains additional heads (and attacks) as it gains veterancy. A fully leveled Hydra is devastating. Hydras should be protected and preserved to maximize their scaling.
+
+God Power - Bronze:
+
+Bronze temporarily grants all your human soldiers bonus armor. This significantly increases army durability during major engagements. Cast at the start of important battles.
+
+Key Technologies:
+
+Thracian Horses increases cavalry speed and hit points. Anastrophe increases Hydra damage.
+
+When to Choose Dionysus:
+
+Choose Dionysus for major army clashes where Bronze can swing battles. Hydra is an excellent long-term investment. On water maps, Scylla dominates naval combat.
+
+Aphrodite
+Aphrodite provides utility and enemy disruption.
+
+Myth Unit - Nemean Lion:
+
+Nemean Lion is a powerful melee myth unit with bonus damage against other myth units. Uniquely, it's effective against enemy heroes too. Use Nemean Lions to hunt enemy heroes, removing their myth unit counters.
+
+God Power - Curse:
+
+Curse transforms enemy units into pigs. Pigs cannot attack and have minimal hit points. Cast on expensive enemy units (cavalry, siege, myth units) for maximum value.
+
+Key Technologies:
+
+Golden Apples increases villager gathering speed. Roar of Orthus increases Nemean Lion attack.
+
+When to Choose Aphrodite:
+
+Choose Aphrodite when enemy relies heavily on myth units (Nemean Lion counters them) or when you want Curse for its disruption potential. Golden Apples provides strong economic value.
+
+Mythic Age Minor Gods
+Hephaestus
+Hephaestus provides the mighty Colossus and resource generation.
+
+Myth Unit - Colossus:
+
+The Colossus is a massive bronze automaton, one of the most powerful myth units in the game. It has enormous hit points, devastating attacks, and can eat trees and gold mines to regenerate health. With Zeus's 10% HP bonus, Colossus becomes nearly unstoppable.
+
+God Power - Plenty:
+
+Plenty creates a vault that slowly generates food, wood, and gold. This provides sustained income in long games and helps recover from economic damage.
+
+Key Technologies:
+
+Forge of Olympus reduces armory upgrade costs. Weapon of the Titans increases Colossus damage.
+
+When to Choose Hephaestus:
+
+Choose Hephaestus when the game will reach Mythic Age and you can protect a Colossus. The Colossus is game-ending if not countered effectively.
+
+Artemis
+Artemis provides ranged power and building destruction.
+
+Myth Unit - Chimera:
+
+Chimera is a flying myth unit with a powerful breath attack. It can attack ground targets while flying, making it difficult to counter with melee units.
+
+God Power - Earthquake:
+
+Earthquake deals massive damage to enemy buildings over a large area. Cast on clustered enemy production buildings or Town Centers to cripple their infrastructure.
+
+Key Technologies:
+
+Shafts of Plague causes arrows to do additional damage over time. Flames of Typhon increases Chimera damage.
+
+When to Choose Artemis:
+
+Choose Artemis when enemy is turtling behind walls and buildings. Earthquake breaks defensive positions. Chimera provides air superiority.
+
+Hera
+Hera provides Medusa and the devastating Tartarian Gate.
+
+Myth Unit - Medusa:
+
+Medusa can petrify enemy units, instantly killing them regardless of hit points. This is extraordinarily powerful against expensive units. A single Medusa can eliminate enemy Colossi, War Elephants, or Titans through petrification.
+
+God Power - Tartarian Gate:
+
+Tartarian Gate opens a portal that continuously spawns hostile myth creatures. Cast inside enemy bases to force them to deal with endless attackers while your main army pushes elsewhere.
+
+Key Technologies:
+
+Monstrous Rage increases all myth unit attack. Face of the Gorgon increases Medusa attack range and damage.
+
+When to Choose Hera:
+
+Choose Hera when enemy relies on expensive myth units (Medusa counters them) or when you need Tartarian Gate to break defensive positions.
+
+Hades-Specific: Poseidon-Specific Notes
+Hades can also access some unique synergies:
+
+His Shade mechanic works with any minor god choice. More battles mean more Shades. Aphrodite's Nemean Lion helps protect his archer-heavy armies. Artemis's archer-boosting technologies stack with his archer bonus.
+
+Poseidon benefits most from cavalry-enhancing choices:
+
+Hermes provides Centaurs for ranged cavalry options. Dionysus's Thracian Horses technology directly buffs his already-powerful cavalry. His naval dominance makes water map minor god choices less critical—he wins water regardless.
+
+PART IV: MILITARY DOCTRINE
+The Hoplite: Backbone of Hellas
+The Hoplite is the foundation of Greek military power. Understanding Hoplites completely is essential.
+
+Statistics and Role:
+
+Hoplites are heavy infantry with high hit points, good pierce armor, and bonus damage against cavalry. They move slowly but fight effectively. Their role is absorbing damage while your other units deal damage.
+
+When Hoplites Excel:
+
+Against cavalry of all types. Against other infantry in straight fights. As the front line protecting ranged units. In chokepoints where their slow speed doesn't matter.
+
+When Hoplites Struggle:
+
+Against massed archers (they take damage while closing distance). Against myth units (heroes counter those, not Hoplites). When chasing faster units.
+
+Upgrade Priority:
+
+Medium Infantry and Heavy Infantry from the Armory are essential. Champion Infantry in Mythic is expensive but powerful. Armory weapon and armor upgrades apply to Hoplites.
+
+The Toxotes: Death from Distance
+Toxotes are Greek archers, the primary damage dealers in Greek armies.
+
+Statistics and Role:
+
+Toxotes deal pierce damage from range. They're fragile but deadly when protected. Their role is dealing damage while Hoplites absorb it.
+
+Focus Fire Doctrine:
+
+Select all Toxotes. Right-click on a single enemy unit. All arrows hit that target. It dies quickly. Repeat on the next target. Never attack-move with Toxotes—spreading damage kills nothing.
+
+Positioning:
+
+Toxotes must remain behind Hoplites. If enemies reach your Toxotes, they die rapidly. Create a clear line: Hoplites in front, Toxotes behind.
+
+Hades Bonus:
+
+Hades Toxotes deal 10% additional damage. This makes Hades particularly effective with archer-heavy compositions.
+
+Greek Cavalry
+Greek cavalry includes Hippikon (standard cavalry) and Prodromos (faster, lighter cavalry).
+
+Role:
+
+Greek cavalry are not frontline units. They die quickly to Hoplites. Their role is:
+
+Killing enemy archers
+Killing enemy villagers
+Killing enemy siege
+Chasing fleeing enemies
+The Flank Attack:
+
+During a battle, send cavalry around the engagement to attack enemy archers from behind. The enemy must choose: turn archers to fight cavalry (exposing them to your infantry) or let cavalry destroy them.
+
+Poseidon Cavalry:
+
+Poseidon's cavalry have bonus hit points and reduced cost. His unique Hetairoi replace Hippikon with superior stats. Poseidon can build cavalry-centric armies that other Greeks cannot.
+
+Greek Heroes
+Greeks train heroes from the Town Center, unlike other civilizations.
+
+Available Heroes:
+
+Bellerophon, Heracles, Theseus, and Jason. Each has high hit points, bonus damage against myth units, and special abilities or bonuses.
+
+Role:
+
+Heroes exist to kill myth units. They should target myth units exclusively during battle. A hero attacking regular infantry wastes its potential.
+
+Preservation:
+
+Dead heroes can be retrained, but veteran heroes are much stronger than fresh ones. Retreat heroes below 30% HP. A preserved veteran hero accumulates value over the game.
+
+Rotation:
+
+Keep two heroes with your army at all times. If one dies, immediately train a replacement. Never have zero heroes against a myth-unit-using opponent.
+
+Greek Siege
+The Petrobolos is the Greek siege weapon.
+
+Role:
+
+Petrobolos destroy buildings and walls. They're devastating against clustered units but vulnerable to cavalry.
+
+Protection:
+
+Never move siege without protection. Minimum escort: six Hoplites plus four cavalry per two Petroboloi. The Hoplites block melee attackers. The cavalry intercept cavalry trying to snipe siege.
+
+Targeting Priority:
+
+Enemy siege first (counter-battery). Production buildings second. Town Centers third. Walls last.
+
+Army Composition by Game Phase
+Classical Age:
+
+Core: 8-12 Hoplites
+Support: 6-8 Toxotes
+Hero: 1-2
+Cavalry: 0-4 (for raiding)
+Myth Unit: 1-2 if favor allows
+
+Heroic Age:
+
+Core: 15-20 Hoplites
+Support: 10-15 Toxotes
+Hero: 2-3
+Cavalry: 6-10 (flanking/raiding)
+Myth Unit: 2-4
+Siege: 2-4 Petroboloi (if pushing)
+
+Mythic Age:
+
+Core: 20-25 Champion Hoplites
+Support: 12-18 Champion Toxotes
+Hero: 3-4
+Cavalry: 8-12
+Myth Unit: 4-6 (including Colossus if available)
+Siege: 4-6 Petroboloi
+
+PART V: TIMING ATTACKS
+The Classical Rush (6:30-7:00)
+The Greek Classical Rush is one of the strongest timing attacks in the game.
+
+Build Order:
+
+text
+
+0:00 - Four villagers to nearest food source
+0:00 - Queue villagers continuously
+0:15 - Scout begins exploration toward enemy
+0:30 - Fifth villager to food
+1:00 - Sixth villager to food
+1:30 - Seventh villager to wood
+2:00 - Eighth villager to wood
+2:00 - Build House if needed
+2:30 - Ninth villager to food
+3:00 - Tenth villager to gold
+3:00 - Advance to Classical Age (choose Ares or Athena)
+3:30 - Build Barracks during advance
+3:30 - Eleventh villager to gold
+4:00 - Twelfth villager to gold
+4:15 - Classical Age arrives
+4:15 - Immediately train four Hoplites
+4:30 - Thirteenth villager to wood
+4:45 - Build Academy
+5:00 - Train four Toxotes
+5:30 - Train four more Hoplites
+5:30 - Build Temple, assign three villagers to pray
+6:00 - Entire army moves toward enemy
+6:30 - Attack arrives at enemy base
+Execution:
+
+Target enemy gold miners first. Hoplites absorb Tower fire. Toxotes focus-fire villagers. If you kill eight or more villagers, you've likely won the game.
+
+Against Chinese:
+
+Chinese players often wall early. Scout for wall gaps. If fully walled, transition to economic focus rather than dying against walls.
+
+The Defensive Boom into Heroic Timing
+When rushing isn't viable, boom defensively and strike with Heroic Age power.
+
+Build Order:
+
+text
+
+0:00-4:00 - Standard opening, reach 15 villagers
+4:00 - Advance to Classical Age (Athena for Restoration)
+5:00 - Classical Age arrives
+5:00 - Build Temple, assign three villagers to pray
+5:00 - Begin walling key approaches
+5:30 - Build Tower at exposed gold
+6:00-9:00 - Boom economy to 25-30 villagers
+7:00 - Build Barracks and Academy
+8:00 - Begin military production (8 Hoplites, 6 Toxotes)
+9:00 - Advance to Heroic Age
+10:30 - Heroic Age arrives
+10:30 - Push with Heroic-upgraded army
+The Power Spike:
+
+Your Heroic Age army dramatically outclasses their Classical Age army. Heavy Infantry and Bronze Weapons upgrades make your Hoplites vastly superior. Attack immediately upon aging.
+
+The Colossus Timing (Mythic Power Spike)
+End games with overwhelming Mythic Age power.
+
+Build Order:
+
+text
+
+0:00-5:00 - Standard opening
+5:00 - Classical Age (Athena)
+5:00-10:00 - Heavy economic focus (35+ villagers)
+6:00-9:00 - Minimal military, maximum economy
+10:00 - Advance to Heroic Age
+11:30 - Heroic Age
+11:30-13:00 - Continue economy to 40+ villagers
+13:00 - Advance to Mythic Age (Hephaestus)
+14:30 - Mythic Age arrives
+14:30 - Build Fortress
+14:30 - Assign 10 villagers to pray (favor burst)
+15:00 - Train Colossus immediately
+15:30 - Train second Colossus
+16:00 - Push with Colossi and Champion army
+With Zeus:
+
+Zeus's 10% myth unit HP bonus makes Colossi exceptionally durable. Two Zeus Colossi are nearly unstoppable without dedicated counter-play.
+
+The Underworld Passage Surprise
+Use Apollo's god power for devastating surprise attacks.
+
+Setup:
+
+Build your army at home
+Create Underworld Passage with one entrance hidden near enemy base
+Move entire army through Passage
+Army appears inside or behind enemy base
+Destroy economy before enemy can respond
+Timing:
+
+Execute in Heroic Age before enemy expects Mythic timing. The surprise factor is essential. If enemy scouts the Passage entrance, the attack fails.
+
+PART VI: COUNTERING THE CHINESE
+Understanding Chinese Mechanics
+The Chinese civilization has unique mechanics that require specific counters.
+
+The Garden:
+
+Gardens passively generate one resource type. Chinese players can oscillate Garden production to cover economic gaps. Gardens make Chinese late-game economy extremely strong.
+
+Counter:
+
+End games before Chinese scale. Raid Gardens directly when possible. One destroyed Garden costs them significant long-term income.
+
+The Immortal:
+
+Immortals are Chinese heroes trainable from the Castle. Unlike Greek heroes, Immortals cost resources but can be produced infinitely from a military building.
+
+Counter:
+
+Your myth units can fight Immortals, but heroes are still more efficient. Greek heroes trained from Town Center mean your military production stays on military units while theirs produces heroes.
+
+Chinese Siege:
+
+Sitting Tigers have longer range than Petroboloi. In siege duels, Chinese siege wins.
+
+Counter:
+
+Don't engage in siege duels. Use cavalry to assassinate Sitting Tigers. Use Underworld Passage to bypass walls rather than sieging.
+
+Early Game Against Chinese
+Chinese players typically wall early and boom toward strong mid-game timing with Chu Ko Nu (repeating crossbows) and War Chariots.
+
+Strategy:
+
+Scout aggressively to see when they're walling. If they wall before you can attack, don't suicide into walls. Instead, match their economic focus while preparing for Heroic timing.
+
+If they don't wall quickly, punish with Classical Rush. Chinese Classical Age military is not particularly strong. Hoplites trade well against early Chinese infantry.
+
+Mid Game Against Chinese
+Chinese Heroic Age is dangerous. Chu Ko Nu deal massive damage. Cataphracts are strong cavalry. War Chariots provide mobile archer support.
+
+Army Composition:
+
+Core: Hoplites (counter Cataphracts)
+Support: Toxotes (trade with Chu Ko Nu at range)
+Cavalry: Hippikons (flank and destroy Chu Ko Nu)
+Heroes: Essential (Chinese will have myth units)
+
+The Engagement:
+
+Don't fight in the open where Chinese can kite. Force fights at chokepoints where your Hoplite line blocks everything and your Toxotes can focus fire.
+
+Target Chu Ko Nu with cavalry flanks. Chu Ko Nu are fragile; a successful cavalry dive eliminates their primary damage source.
+
+Late Game Against Chinese
+Chinese late game is extremely strong. Garden economy provides resource advantages. Azure Dragons and Vermilion Birds are powerful myth units. White Tiger creates fear effects.
+
+Strategy:
+
+If the game reaches late Mythic Age, you need god power advantages or Colossus superiority.
+
+Colossus vs Chinese Myth Units:
+
+Colossi can fight Azure Dragons directly. Azure Dragons deal magic damage which Colossi resist. A Zeus Colossus with HP bonus can destroy multiple Azure Dragons.
+
+Medusa Strategy:
+
+If you chose Hera, Medusa's petrification instantly kills Azure Dragons regardless of HP. One Medusa can eliminate multiple expensive Chinese myth units.
+
+Tartarian Gate:
+
+Cast Tartarian Gate inside Chinese base. They must deal with endless monsters while you push from outside. Chinese bases typically have many buildings; the monsters will rampage effectively.
+
+Chinese Player Tendencies
+Understanding common Chinese strategies helps you counter them.
+
+The Garden Boom:
+
+Chinese players often focus heavily on economy, trusting Gardens to provide advantages. Punish with early pressure.
+
+The Chu Ko Nu Mass:
+
+Chu Ko Nu in large numbers shred everything except cavalry. Cavalry flanks are essential.
+
+The Sitting Tiger Siege:
+
+Chinese siege outranges yours. Don't try to out-siege them. Assassinate siege with cavalry or bypass with Underworld Passage.
+
+The Immortal Spam:
+
+Late-game Chinese can produce many Immortals from multiple Castles. Your myth units become less effective. Transition to Champion infantry with heavy hero support.
+
+PART VII: COUNTERING OTHER CIVILIZATIONS
+Against Egyptians
+Egyptians are slow but powerful. Their economy relies on the Pharaoh's empowerment. Their myth units (War Elephants, Sphinxes) are expensive but strong.
+
+Strategy:
+
+Attack early before Egyptians reach Heroic Age. Egyptian Classical Age military is weak.
+
+Kill the Pharaoh whenever possible. Without Pharaoh empowerment, Egyptian economy suffers significantly. The Pharaoh respawns, but each death costs them time.
+
+In late game, focus heroes on War Elephants. A single War Elephant can devastate your infantry; heroes counter them efficiently.
+
+Against Norse
+Norse will rush. Always. Their infantry builds buildings, enabling forward military production. Their Hersirs gain favor through combat.
+
+Strategy:
+
+Wall immediately upon reaching Classical Age. Build Towers at key approaches. Norse have no early siege; your walls buy time.
+
+Your Hoplites crush their Ulfsarks in direct combat. If you survive the rush, counter-attack while their economy is weak from aggressive investment.
+
+Against Atlanteans
+Atlanteans field citizen-soldiers who cost more but fight better. Their Oracles provide map vision. Their Time Shift (Kronos) can teleport buildings.
+
+Strategy:
+
+Kill Oracles immediately. Without Oracle vision, Atlanteans lose their information advantage.
+
+Scout for Titan Gate construction. Atlantean Titans end games. If you see Titan Gate, attack immediately—it's vulnerable during construction.
+
+Against Greeks (Mirror)
+Greek mirrors are pure execution matches.
+
+Decisive Factors:
+
+Who focus-fires better (Toxotes micro)
+Who flanks better (cavalry positioning)
+Who preserves heroes better (myth unit fighting)
+Who reaches key upgrades first (economic efficiency)
+Scout their god choices. Adapt your army composition to counter their likely strategy. If they choose Apollo, expect Underworld Passage attacks; watch for Passage construction.
+
+PART VIII: MAP CONTROL
+Vision Control
+Greeks have no special scouting mechanics. Use buildings and scouts for vision.
+
+Vision Network:
+
+text
+
+Tower 1: At your base (default)
+Tower 2: At forward gold mine (protects economy + vision)
+Tower 3: At map center (strategic vision)
+House 4: At enemy approach route (early warning)
+Scout: Patrol critical lanes (mobile vision)
+The House Trick:
+
+Houses are cheap (50 wood). Build them in hidden locations purely for vision. If enemies destroy them, you've learned their army position.
+
+Chokepoint Control
+Greeks excel at chokepoint fighting. Hoplites form impassable lines. Toxotes fire from behind. Cavalry can't flank through narrow passages.
+
+Finding Chokepoints:
+
+Look for gaps between forests, narrow cliff passages, bridge crossings, and relic locations.
+
+Fortifying Chokepoints:
+
+Build Towers covering the passage. Station Hoplites in a line across it. Position Toxotes behind the line. Keep cavalry to the side for counter-flanks.
+
+The Chokepoint Fight:
+
+In a chokepoint, your Hoplite line blocks everything. Enemy cavalry cannot circle around. Enemy numbers mean nothing—only the front line fights. Your Toxotes focus-fire freely.
+
+Expansion Control
+Gold wins games. Control multiple gold sources.
+
+Expansion Priority:
+
+Primary gold: Near starting Town Center
+Secondary gold: First expansion (claim by 7:00-9:00)
+Tertiary gold: Contested center gold (if ahead)
+
+Securing Expansions:
+
+Scout the gold location early. Build Tower next to gold. Build Storehouse. Assign eight villagers. Station four to six military units for defense.
+
+PART IX: GOD POWER USAGE
+Bolt (Zeus)
+Bolt instantly kills one unit. Save it for high-value targets.
+
+Priority Targets:
+
+Enemy Colossi or equivalent high-tier myth units
+Enemy heroes during crucial engagements
+Enemy Pharaohs (for Egyptians)
+War Elephants
+Never Bolt:
+
+Regular infantry (waste of power). Cheap myth units. Units you could kill normally.
+
+Restoration (Athena)
+Restoration heals all your units and buildings to full health.
+
+Optimal Usage:
+
+Cast mid-battle when your army is at 30-50% health. An army that was losing suddenly wins because it's at full health while enemies remain damaged.
+
+Never Cast:
+
+When your army is healthy. When enemies can simply retreat and wait.
+
+Bronze (Dionysus)
+Bronze gives all human soldiers temporary armor bonus.
+
+Optimal Usage:
+
+Cast at the beginning of major engagements. The armor bonus makes your entire army significantly more durable.
+
+Duration Awareness:
+
+Bronze lasts limited time. Engage immediately after casting. Don't let enemies kite until Bronze expires.
+
+Underworld Passage (Apollo)
+Creates two linked teleportation tunnels.
+
+Offensive Use:
+
+Place one entrance hidden near enemy base. Place other at your military production. Teleport entire army behind enemy defenses.
+
+Defensive Use:
+
+Place entrances at your main base and expansion. Teleport defenders between bases instantly.
+
+Escape Use:
+
+If your army is trapped, Underworld Passage provides instant extraction.
+
+Earthquake (Artemis)
+Deals massive damage to buildings over large area.
+
+Optimal Targets:
+
+Clustered production buildings. Multiple Town Centers if enemy has expanded tightly. Enemy Castles (for Chinese/Atlanteans).
+
+Timing:
+
+Cast during your push so enemies cannot rebuild. Cast on production to prevent reinforcements during battle.
+
+Tartarian Gate (Hera)
+Opens portal spawning endless hostile myth creatures.
+
+Placement:
+
+Inside enemy base, away from their Town Center (which can garrison villagers). Near enemy production buildings. The monsters will attack buildings and villagers.
+
+Combination:
+
+Cast Tartarian Gate in enemy base. While they deal with monsters, push main army from outside. Enemy must fight on two fronts.
+
+PART X: ADVANCED TACTICS
+The Hammer and Anvil
+Classic military maneuver adapted for Greek warfare.
+
+Setup:
+
+Anvil: Hoplites and Toxotes (main army)
+Hammer: Cavalry (flanking force)
+
+Execution:
+
+Anvil engages enemy frontally. Enemy focuses on fighting Anvil. Hammer circles around and hits enemy rear (targeting archers/siege). Enemy is now sandwiched.
+
+The Feigned Retreat
+Bait enemies into overextension.
+
+Setup:
+
+Position hidden reserve force behind terrain.
+Send main army toward enemy.
+Engage briefly then retreat as if losing.
+Enemy chases into your reserve.
+Hidden force emerges, sandwiching pursuers.
+
+The Hero Hunt
+Systematically eliminate enemy myth unit counters.
+
+With Nemean Lion (Aphrodite):
+
+Nemean Lion has bonus damage against myth units AND heroes. Use it to hunt enemy heroes. Once heroes are dead, your other myth units rampage freely.
+
+Standard Hero Hunt:
+
+Assign your heroes to a control group. During battle, heroes target enemy heroes exclusively. Win the hero fight; win the myth unit fight.
+
+The Shade Farm (Hades)
+Leverage Hades' unique mechanic for value.
+
+The Technique:
+
+Build extra infantry beyond what you'd normally field. Engage in fights even when only slightly favored. 20% of your dead human soldiers return as Shades. Shades tip subsequent fights in your favor.
+
+The Math:
+
+If you lose 20 Hoplites, four Shades spawn. Those Shades cost you nothing. Over multiple engagements, Shades accumulate significant value.
+
+The Cavalry Carousel
+Continuous cavalry harassment without commitment.
+
+Setup:
+
+Dedicate six to ten cavalry purely to raiding.
+Never group them with main army.
+
+The Pattern:
+
+Cavalry raid enemy woodcutters. Kill two villagers. Retreat before response. Circle to enemy gold miners. Kill two villagers. Retreat. Repeat every 60-90 seconds.
+
+Cumulative Effect:
+
+Over 10 minutes, 10-15 villagers die. Enemy economy is crippled. Your main army walks in for the kill.
+
+The Temple Fortress
+Use Temples as defensive structures.
+
+The Build:
+
+Position Temple at forward gold mine. Assign villagers to pray there. Temple has high HP and provides population. If raiders come, villagers garrison in Temple (if using Town Center) or flee behind Temple.
+
+The Synergy:
+
+You're generating favor while defending economy. Enemies must destroy a high-HP building to access your villagers.
+
+PART XI: MICRO TECHNIQUES
+Toxotes Focus Fire
+The single most important Greek micro skill.
+
+Execution:
+
+Select all Toxotes (control group recommended).
+Right-click one enemy unit.
+All arrows hit that unit.
+It dies quickly.
+Immediately right-click next target.
+Repeat.
+
+Target Priority:
+
+Enemy siege (most dangerous to your buildings/army)
+Enemy ranged units (their damage dealers)
+Enemy cavalry (if threatening your Toxotes)
+Enemy infantry (only if nothing else available)
+Hoplite Line Maintenance
+Keep your Hoplites in a line during battle.
+
+The Problem:
+
+When Hoplites attack, they bunch up. Bunched Hoplites take more area damage and block each other's attacks.
+
+The Solution:
+
+Use formation mode (F key). Move Hoplites in formation to maintain spacing. If they bunch, briefly pull them back to reform, then re-engage.
+
+Cavalry Flanking
+Execute flanks without losing cavalry.
+
+The Route:
+
+Never attack through the enemy army. Circle around the engagement's edge. Approach from behind or the side.
+
+The Target:
+
+Toxotes, Chu Ko Nu, or equivalent ranged units. Kill them quickly. Retreat before enemy melee reaches you.
+
+The Retreat:
+
+After killing ranged units, retreat cavalry immediately. They've done their job. Staying to fight infantry gets cavalry killed.
+
+Hero Preservation
+Keep heroes alive across multiple battles.
+
+HP Threshold:
+
+When a hero drops below 30% HP, pull them out of combat. A dead hero is worth nothing. A damaged hero can heal and return.
+
+Rotation:
+
+Keep two heroes active. When one retreats to heal, the other continues fighting myth units.
+
+Veterancy:
+
+Veteran heroes are dramatically stronger. Preserve the same heroes throughout the game rather than letting them die and retraining.
+
+Siege Protection
+Keep Petroboloi alive during pushes.
+
+Positioning:
+
+Siege behind all other units. Minimum distance from front line. Never lead with siege.
+
+Escort:
+
+Hoplites in front block melee attackers. Cavalry to the sides intercept enemy cavalry diving siege.
+
+Retreat Trigger:
+
+If enemy cavalry breaks through, immediately pull siege backward. Losing siege is devastating.
+
+PART XII: ECONOMIC OPTIMIZATION
+Villager Gathering Rates
+Understanding gathering rates helps optimize economy.
+
+Approximate Rates:
+
+Food (berries): 0.45/second
+Food (farms): 0.50/second
+Food (hunt): 0.60/second
+Wood: 0.50/second
+Gold: 0.40/second
+Favor: Varies by prayer count
+
+Implication:
+
+Hunt is significantly more efficient than berries or farms. Prioritize hunt early game. Transition to farms when hunt exhausts.
+
+Villager Allocation by Age
+Archaic Age Target (Age up around 3:00-3:30):
+
+Food: 7-8 villagers
+Wood: 3-4 villagers
+Gold: 2 villagers
+Total: 12-14 villagers
+
+Classical Age Target:
+
+Food: 10-12 villagers
+Wood: 6-8 villagers
+Gold: 6-8 villagers
+Praying: 3-4 villagers
+Total: 25-32 villagers
+
+Heroic Age Target:
+
+Food: 12-15 villagers
+Wood: 8-10 villagers
+Gold: 10-12 villagers
+Praying: 5-6 villagers
+Total: 35-43 villagers
+
+Mythic Age Target:
+
+Food: 15-18 villagers
+Wood: 10-12 villagers
+Gold: 12-15 villagers
+Praying: 6-8 villagers
+Total: 43-53 villagers
+
+Resource Float Management
+Floating resources means wasted potential.
+
+The Check:
+
+Every 60 seconds, glance at resource bar.
+
+text
+
+Food > 500 and not aging → Train villagers or military
+Wood > 800 → Build buildings or research
+Gold > 600 → Train military or research
+Favor > 50 → Train myth units or research
+Garden Lesson (Inverted):
+
+Chinese use Gardens to cover resource gaps. You use prayer villagers similarly. If you're floating favor, reduce prayer. If you're starving for favor, increase prayer.
+
+PART XIII: BUILD ORDER REFERENCE
+Standard Rush (Zeus/Ares)
+text
+
+0:00 - 4 villagers to food
+0:00 - Queue villagers continuously
+0:15 - Scout toward enemy
+0:30 - 5 to food
+1:00 - 6 to food
+1:30 - 7 to wood
+2:00 - 8 to wood + House
+2:30 - 9 to food
+3:00 - 10 to gold + Advance Classical (Ares)
+3:30 - Build Barracks + 11 to gold
+4:15 - Classical Age + 4 Hoplites
+4:30 - 12 to gold
+4:45 - Build Academy
+5:00 - 4 Toxotes
+5:30 - 4 Hoplites + Temple (3 pray)
+6:00 - Move out
+6:30 - Attack
+Defensive Boom (Hades/Athena)
+text
+
+0:00 - Standard opening
+4:00 - Classical Age (Athena)
+5:00 - Temple (3 pray) + Wall
+5:30 - Tower at gold
+6:00-9:00 - Boom to 28 villagers
+7:00 - Barracks + Academy
+8:00 - 8 Hoplites, 6 Toxotes
+9:00 - Advance Heroic
+10:30 - Heroic Age + Push
+Cavalry Blitz (Poseidon)
+text
+
+0:00 - Standard opening
+4:00 - Classical Age (Hermes)
+4:00 - Build Stable + Stable
+4:30 - 2 Hippikons
+5:00 - 2 Hippikons
+5:30 - 2 Hippikons
+6:00 - 6 Cavalry raid enemy woodcutters
+6:30 - Return, rebuild to 10 cavalry
+7:30 - Raid again
+8:00 - Transition to Hetairoi
+9:30 - All-in cavalry attack
+Colossus Rush (Zeus/Hephaestus)
+text
+
+0:00-5:00 - Standard opening
+5:00 - Classical Age (Athena)
+5:00-10:00 - Heavy boom (35+ villagers)
+10:00 - Advance Heroic
+11:30 - Heroic Age
+11:30-13:00 - Boom to 40+ villagers
+13:00 - Advance Mythic (Hephaestus)
+14:30 - Mythic Age + Fortress
+14:30 - 10 villagers pray (burst)
+15:00 - Colossus #1
+15:30 - Colossus #2
+16:00 - Push with Colossi
+PART XIV: MATCHUP SUMMARY
+Enemy	Their Strength	Your Counter	Win Condition
+Chinese	Late-game scaling	Early/mid aggression	End before 20:00
+Egypt	Powerful myth units	Rush; kill Pharaoh	Don't let them boom
+Norse	Early aggression	Wall + Tower + Hoplites	Survive rush, counter
+Atlantean	Time Shift; Titans	Scout; prevent Titan	Kill Titan Gate
+Zeus	Strong myth units	Hero focus; micro	Win myth unit battle
+Poseidon	Cavalry power	Hoplites everywhere	Force static fights
+Hades	Shades; defense	Constant pressure	Don't let them turtle
+PART XV: HOTKEY ESSENTIALS
+Production
+text
+
+Train Villager: Q
+Train Hoplite: Q (Barracks)
+Train Toxotes: W (Archery Range)
+Train Hippikon: Q (Stable)
+Train Hero: Q (Town Center, after age-up)
+Military Control
+text
+
+Select All Military: . (period)
+Select Idle Villagers: , (comma)
+Go to Town Center: H
+Attack Move: A + Left Click
+Stop: S
+Formation Toggle: F
+Control Groups: 1-0
+Set Control Group: Ctrl + 1-0
+Essential Binds
+text
+
+Group 1: Main army
+Group 2: Cavalry (raiding)
+Group 3: Heroes
+Group 4: Siege
+Group 5: Town Center
+FINAL WORDS
+The Greeks in Tale of the Dragon remain what they have always been: the civilization of fundamentals. Where other civilizations have gimmicks—Gardens, building infantry, citizen-soldiers, monuments—Greeks have execution.
+
+Master the Hoplite line. Perfect the Toxotes focus fire. Execute the cavalry flank. Preserve your heroes. Time your god powers.
+
+Against the new Chinese threat, remember: they scale, you strike. End games before Gardens accumulate value. Raid their economy. Assassinate their siege. Force them to fight before they're ready.
+
+The path to mastery is simple but not easy:
+
+Learn one build order perfectly
+Execute it 100 times
+Watch every replay
+Identify and fix mistakes
+Add complexity gradually
+In 90 days of focused practice, you will be among the best Greek players in Tale of the Dragon.
+
+For the glory of Hellas.
+
+Guide written for Age of Mythology: Extended Edition — Tale of the Dragon expansion (2016).
+
+May Olympus favor your campaigns.
+===================================================================
+===================================================================End AOM Strat Guides
 
 ===================================================================
 👁👁🐐🐐🐐🐐
