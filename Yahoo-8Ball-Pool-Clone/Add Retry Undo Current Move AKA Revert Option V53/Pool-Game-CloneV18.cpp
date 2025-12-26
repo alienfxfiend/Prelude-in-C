@@ -3009,7 +3009,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 L"  G: Toggle Cheat Mode\n"
                 L"  K: Toggle Kibitzer Mode\n"
                 L"  T: Test Mode\n"
-                L"  Z: End Action",
+                L"  Z: End Action\n"
+                L"  R: Retry Shot",
                 L"Keyboard Controls", MB_OK | MB_ICONINFORMATION);
             break;
 
