@@ -2984,7 +2984,7 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 
         // Now set the long About text /*4827+ 8903+ 10192+ 10192+ 11578+ 11885+ 11902+ 12014+*/
         const wchar_t* aboutText =
-            L"Direct2D-based StickPool game made in C++ from scratch (12126+ lines of code)\n"
+            L"Direct2D-based StickPool game made in C++ from scratch (12127+ lines of code) (non-OOP-based)\n"
             L"First successful Clone in C++ (no other sites or projects were there to glean from.)\n"
             L"Made with AI assist (others were in JS / non-8-Ball in C# etc.)\n"
             L"Copyright (C) 2025 Evans Thorpemorton, Entisoft Solutions.\n"
