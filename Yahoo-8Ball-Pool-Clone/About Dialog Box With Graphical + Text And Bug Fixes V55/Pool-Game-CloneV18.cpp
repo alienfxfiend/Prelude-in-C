@@ -231,7 +231,7 @@ bool g_isPracticeMode = false; // NEW: Global flag for Practice Mode
 // --- NEW: Debug Mode Flag ---
 bool g_debugMode = false;
 // [+] NEW: Paths Feature Globals
-bool g_showPaths = false;       // Toggle for ball trails
+bool g_tracePaths = false;       // Toggle for ball trails
 std::map<int, std::vector<D2D1_POINT_2F>> g_lastShotTrails; // Trails from the previous shot
 std::map<int, std::vector<D2D1_POINT_2F>> g_tempShotTrails; // Trails being recorded for the current shot
 bool foulCommitted = false;
@@ -3087,7 +3087,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             break;
 
             // [+] NEW: Show Paths Menu Command
-        case ID_GAME_SHOWPATHS:
+        case ID_GAME_TRACEPATHS:
             SendMessage(hwnd, WM_KEYDOWN, 'P', 0);
             break;
 
@@ -3137,7 +3137,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 L"  T: Test Mode\n"
                 L"  Z: End Action\n"
                 L"  R: Retry Shot\n"
-                L"  P: Show Paths\n",
+                L"  P: Trace Paths\n",
                 L"Keyboard Controls", MB_OK | MB_ICONINFORMATION);
             break;
 
@@ -3216,8 +3216,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         else if (wParam == VK_F1) {
             // [+] NEW: Create and show the custom modal dialog box
             DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ABOUTBOX), hwnd, AboutDlgProc);
+            return 0;
         }
-        break;
+        //break;
         if (wParam == 'M' || wParam == 'm') {
             // --- FOOLPROOF Mute Toggle Logic ---
             // 1. Toggle the sound effects mute flag.
@@ -3308,12 +3309,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
         // [+] NEW: Toggle "Show Paths" with 'P'
         if (wParam == 'P' || wParam == 'p') {
-            g_showPaths = !g_showPaths;
+            g_tracePaths = !g_tracePaths;
 
             // Update menu checkmark
             HMENU hMenu = GetMenu(hwnd);
             if (hMenu) {
-                CheckMenuItem(hMenu, ID_GAME_SHOWPATHS, g_showPaths ? MF_CHECKED : MF_UNCHECKED);
+                CheckMenuItem(hMenu, ID_GAME_TRACEPATHS, g_tracePaths ? MF_CHECKED : MF_UNCHECKED);
             }
 
             InvalidateRect(hwnd, NULL, FALSE);
@@ -8754,7 +8755,7 @@ void OnPaint() {
 
 // --- REPLACED: Professional Path Geometry Drawing for High-Fidelity Trails ---
 void DrawBallTrails(ID2D1RenderTarget* pRT, ID2D1Factory* pFactory) {
-    if (!g_showPaths || !pRT || !pFactory) return;
+    if (!g_tracePaths || !pRT || !pFactory) return;
 
     ID2D1SolidColorBrush* pTrailBrush = nullptr;
     HRESULT hr = pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White, 0.5f), &pTrailBrush);

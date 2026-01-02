@@ -6,9 +6,9 @@
 #define IDD_NEWGAMEDLG                  106
 #define IDD_EDITNAMESDLG                107
 #define IDR_MAIN_MENU                   109
-#define IDB_HACKER_IMG                  109
-#define IDD_ABOUTBOX                    109
-#define IDC_ABOUT_TEXT					110
+#define IDB_HACKER_IMG                  114
+#define IDD_ABOUTBOX                    115
+#define IDC_ABOUT_TEXT					116
 #define SUBVERSION_MASK                 0x000000FF
 #define _WIN32_IE_IE20                  0x0200
 #define _WIN32_IE_IE30                  0x0300
@@ -75,7 +75,7 @@
 #define ID_GAME_TESTMODE                40007
 #define ID_GAME_ENDACTION               40008
 #define ID_GAME_RETRY                   40009
-#define ID_GAME_SHOWPATHS               40010
+#define ID_GAME_TRACEPATHS               40010
 // [+] NEW: IDs for the About Dialog and Image table=11
 //#define IDD_ABOUTBOX                    40011
 //#define IDC_HACKER_PIC                  40012
@@ -91,11 +91,11 @@
 #define SPVERSION_MASK                  0x0000FF00
 
 // Next default values for new objects
-// 
+// res=111 comm=40003 control=1030 symed=101
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        111
-#define _APS_NEXT_COMMAND_VALUE         40003
+#define _APS_NEXT_RESOURCE_VALUE        117
+#define _APS_NEXT_COMMAND_VALUE         40022
 #define _APS_NEXT_CONTROL_VALUE         1030
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

@@ -52,7 +52,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON                    "D:\\Download\\8Ball_Colored.ico"
+IDI_ICON1               ICON                    "8Ball_Colored.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ BEGIN
         MENUITEM "&Test Mode\tT",               ID_GAME_TESTMODE
         MENUITEM "End &Action\tZ",              ID_GAME_ENDACTION
         MENUITEM "&Retry Shot\tR",              ID_GAME_RETRY
-        MENUITEM "Show &Paths\tP",              ID_GAME_SHOWPATHS
+        MENUITEM "Trace &Paths\tP",              ID_GAME_TRACEPATHS
         MENUITEM SEPARATOR
         POPUP "&Table Color"
         BEGIN
