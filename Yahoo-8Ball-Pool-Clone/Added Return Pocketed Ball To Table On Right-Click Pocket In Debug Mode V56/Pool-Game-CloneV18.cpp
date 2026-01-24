@@ -3002,7 +3002,7 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 
         // Now set the long About text /*4827+ 8903+ 10192+ 10192+ 11578+ 11885+ 11902+ 12014+ 12127+*/
         const wchar_t* aboutText =
-            L"Direct2D-based StickPool game made in C++ from scratch (12345+ lines of code) (non-OOP-based)\n"
+            L"Direct2D-based StickPool game made in C++ from scratch (12413+ lines of code) (non-OOP-based)\n"
             L"First successful Clone in C++ (no other sites or projects were there to glean from.)\n"
             L"Made with AI assist (others were in JS / non-8-Ball in C# etc.)\n"
             L"Copyright (C) 2026 Evans Thorpemorton, Entisoft Solutions.\n"
@@ -3154,13 +3154,42 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             UpdateWindowTitle();
             break;
 
-        case ID_GAME_CHEATMODE:
+        /*case ID_GAME_CHEATMODE:
             cheatModeEnabled = !cheatModeEnabled;
             CheckMenuItem(hMenu, ID_GAME_CHEATMODE, cheatModeEnabled ? MF_CHECKED : MF_UNCHECKED);
             if (cheatModeEnabled) MessageBeep(MB_ICONEXCLAMATION);
             else MessageBeep(MB_OK);
             InvalidateRect(hwnd, NULL, FALSE); // Redraw to show/hide "CHEAT MODE" text
-            break;
+            break;*/
+
+            // --- Toggle Cheat Mode (Kinda like your existing handler for cheat) ---
+        case ID_GAME_CHEATMODE:
+        {
+            // Toggle the cheat-mode flag
+            cheatModeEnabled = !cheatModeEnabled;
+
+            // Sync the menu checkbox for cheat mode
+            HMENU hMenu = GetMenu(hwnd);
+            if (hMenu) {
+                CheckMenuItem(hMenu, ID_GAME_CHEATMODE,
+                    cheatModeEnabled ? MF_CHECKED : MF_UNCHECKED);
+
+                // Enable or gray the "Return Sunk Ball" menu item based ONLY on cheatModeEnabled
+                EnableMenuItem(hMenu,
+                    ID_GAME_UNDO_SUNK_BALL,
+                    MF_BYCOMMAND | (cheatModeEnabled ? MF_ENABLED : MF_GRAYED));
+
+                // Refresh the menu visuals immediately
+                DrawMenuBar(hwnd);
+            }
+
+            // Optional audible feedback
+            MessageBeep(cheatModeEnabled ? MB_ICONEXCLAMATION : MB_OK);
+
+            // Redraw window so any cheat-mode visuals update
+            InvalidateRect(hwnd, NULL, FALSE);
+        }
+        break;
 
         case ID_GAME_DEBUGMODE:
             g_debugMode = !g_debugMode;
@@ -3190,7 +3219,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             SendMessage(hwnd, WM_KEYDOWN, 'P', 0);
             break;
 
+        // --- Return Sunk Ball command (guarded so it only runs when Cheat Mode is ON) ---
         case ID_GAME_UNDO_SUNK_BALL:
+        {
+            // Server-side safety: only allow the action when cheatModeEnabled is true.
+            if (!cheatModeEnabled) {
+                MessageBeep(MB_ICONEXCLAMATION);
+                break;
+            }
+
+            // Perform the undo and refresh view
+            DebugReturnLastBall();
+            InvalidateRect(hwnd, NULL, FALSE);
+        }
+        break;
+
+        /*case ID_GAME_UNDO_SUNK_BALL:
         {
             // permissive: allow either Debug Mode or Cheat Mode to use the undo
             if (cheatModeEnabled) {
@@ -3205,7 +3249,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 MessageBeep(MB_ICONEXCLAMATION);
             }
         }
-        break;
+        break;*/
 
             // --- Table Color Hot-Swap ---
         case ID_TABLECOLOR_INDIGO:
@@ -3302,8 +3346,32 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             mciSendCommand(midiDeviceID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)&mciPlay);
         }
         return 0;*/
+    /*case WM_CREATE:
+        return 0;*/
     case WM_CREATE:
+    {
+        // Ensure the "Return Sunk Ball" menu item starts grayed out.
+        HMENU hMenu = GetMenu(hwnd);
+        if (hMenu) {
+            // Make sure ID_GAME_RETURN_SUNK_BALL is defined in resource.h
+            EnableMenuItem(
+                hMenu,
+                ID_GAME_UNDO_SUNK_BALL,
+                MF_BYCOMMAND | MF_GRAYED
+            );
+
+            // Keep Cheat menu checkbox in sync in case cheatModeEnabled has a startup value
+            CheckMenuItem(
+                hMenu,
+                ID_GAME_CHEATMODE,
+                cheatModeEnabled ? MF_CHECKED : MF_UNCHECKED
+            );
+
+            DrawMenuBar(hwnd);
+        }
+
         return 0;
+    }
     case WM_PAINT:
         OnPaint();
         ValidateRect(hwnd, NULL);
