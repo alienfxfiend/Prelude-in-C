@@ -3393,6 +3393,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         cueBall = GetCueBall();
         bool canPlayerControl = ((currentPlayer == 1 && (currentGameState == PLAYER1_TURN || currentGameState == AIMING || currentGameState == BREAKING || currentGameState == BALL_IN_HAND_P1 || currentGameState == PRE_BREAK_PLACEMENT)) ||
             (currentPlayer == 2 && !isPlayer2AI && (currentGameState == PLAYER2_TURN || currentGameState == AIMING || currentGameState == BREAKING || currentGameState == BALL_IN_HAND_P2 || currentGameState == PRE_BREAK_PLACEMENT)));
+        // Check if Ctrl is pressed
+        bool ctrlDown = (GetKeyState(VK_CONTROL) & 0x8000);
         if (wParam == VK_F2) {
             HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
             ResetGame(hInstance);
@@ -3515,7 +3517,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         // ------------------------------------------------
 
         // --- NEW: Handle End Action (Fast-Forward) ---
-        if (wParam == 'Z' || wParam == 'z') {
+        //if (wParam == 'Z' || wParam == 'z') {
+        if ((wParam == 'Z' || wParam == 'z') && !ctrlDown) {
             // Only allow skipping when the shot is actually happening
             if (currentGameState == SHOT_IN_PROGRESS) {
                 SkipCurrentShot();
@@ -3547,8 +3550,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             InvalidateRect(hwnd, NULL, FALSE);
             return 0;
         }
-        // [+] NEW: Ctrl+Y (Undo Pocket) as backup
-        if ((wParam == 'Y' || wParam == 'y') && (GetKeyState(VK_CONTROL) & 0x8000)) {
+        // [+] NEW: Ctrl+Z (Undo Pocket) as backup
+        //if ((wParam == 'Y' || wParam == 'y') && (GetKeyState(VK_CONTROL) & 0x8000)) {
+        if ((wParam == 'Z' || wParam == 'z') && ctrlDown) {
             if (cheatModeEnabled) {
                 DebugReturnLastBall();
                 InvalidateRect(hwnd, NULL, FALSE);
