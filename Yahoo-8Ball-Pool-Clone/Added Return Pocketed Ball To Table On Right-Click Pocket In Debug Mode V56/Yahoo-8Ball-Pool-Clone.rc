@@ -129,7 +129,7 @@ BEGIN
         MENUITEM "End &Action\tZ",              ID_GAME_ENDACTION
         MENUITEM "&Retry Shot\tR",              ID_GAME_RETRY
         MENUITEM "Trace &Paths\tP",             ID_GAME_TRACEPATHS
-        MENUITEM "&Undo Sunk Ball\tCtrl+Y",     ID_GAME_UNDO_SUNK_BALL
+        MENUITEM "&Undo Sunk Ball\tCtrl+Z",     ID_GAME_UNDO_SUNK_BALL
         MENUITEM SEPARATOR
         POPUP "&Table Color"
         BEGIN

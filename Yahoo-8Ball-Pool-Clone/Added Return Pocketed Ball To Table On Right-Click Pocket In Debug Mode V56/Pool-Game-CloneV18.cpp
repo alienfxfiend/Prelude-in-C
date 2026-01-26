@@ -3298,7 +3298,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 L"  Z: End Action\n"
                 L"  R: Retry Shot\n"
                 L"  P: Trace Paths\n"
-                L"  Ctrl+Y: Return PocketedBall To Table (In DebugMode)\n",
+                L"  Ctrl+Z: Return PocketedBall To Table (In DebugMode)\n",
                 L"Keyboard Controls", MB_OK | MB_ICONINFORMATION);
             break;
 
