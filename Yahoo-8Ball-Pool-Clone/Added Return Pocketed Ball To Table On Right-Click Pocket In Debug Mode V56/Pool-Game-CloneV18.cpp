@@ -421,7 +421,7 @@ struct PocketEvent {
     bool wasOn8Ball; // Was the player "On 8-Ball" before this?
 };
 std::vector<PocketEvent> g_pocketHistory; // Stack LIFO to track order
-//std::atomic<bool> g_debugActionLock(false); // Semaphore for atomic operations
+std::atomic<bool> g_debugActionLock(false); // Semaphore for atomic operations
 
 // Quick helper
 inline D2D1_COLOR_F GetBallColor(int id)
@@ -3028,17 +3028,28 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
     return (INT_PTR)FALSE;
 }
 
-// [+] FINAL FIX: Robust Debug Undo (Lock Removed)
+// [+] FINAL FIX: Robust Debug Undo (With Semaphore Re-enabled)
 void DebugReturnLastBall() {
+    // [+] NEW: Acquire Semaphore to prevent re-entry
+    // If lock is already true, return immediately.
+    bool expected = false;
+    if (!g_debugActionLock.compare_exchange_strong(expected, true)) return;
+
     // 1. Validation
-    if (g_pocketHistory.empty()) return; // Silent return if empty
+    if (g_pocketHistory.empty()) {
+        g_debugActionLock.store(false); // [+] Release lock before returning
+        return;
+    }
 
     // 2. Pop event
     PocketEvent lastEvent = g_pocketHistory.back();
     g_pocketHistory.pop_back();
 
     Ball* b = GetBallById(lastEvent.ballId);
-    if (!b) return;
+    if (!b) {
+        g_debugActionLock.store(false); // [+] Release lock before returning
+        return;
+    }
 
     // 3. Reset State
     b->isPocketed = false;
@@ -3107,6 +3118,9 @@ void DebugReturnLastBall() {
         currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
         if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
     }
+
+    // [+] NEW: Release Semaphore at end of function
+    g_debugActionLock.store(false);
 }
 
 // --- WndProc ---
@@ -4509,7 +4523,9 @@ void InitGame() {
 
     // [+] NEW: Clear pocket history on new game
     g_pocketHistory.clear();
-    //g_debugActionLock.store(false);
+
+    // [+] NEW: Force reset semaphore to unlocked
+    g_debugActionLock.store(false);
 
     // 8-Ball specific resets
     if (currentGameType == GameType::EIGHT_BALL_MODE) {
