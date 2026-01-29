@@ -2522,6 +2522,12 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
 
         // --- End Centering Code ---
 
+        // [+] NEW: Set the Dialog Icon (Small and Big)
+        // This puts the app icon in the top-left corner of the dialog title bar
+        HICON hIcon = LoadIcon((HINSTANCE)GetWindowLongPtr(hDlg, GWLP_HINSTANCE), MAKEINTRESOURCE(IDI_ICON1));
+        SendMessage(hDlg, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+        SendMessage(hDlg, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+
         // --- Populate Game Mode ComboBox ---
         HWND hGameModeCombo = GetDlgItem(hDlg, IDC_COMBO_GAMEMODE);
         SendMessage(hGameModeCombo, CB_ADDSTRING, 0, (LPARAM)gameTypeNames[0]); // 8-Ball
