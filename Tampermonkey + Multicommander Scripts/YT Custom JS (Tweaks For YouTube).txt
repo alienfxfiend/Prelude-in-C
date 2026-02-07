@@ -1,0 +1,6 @@
+document.title = 'World Domination: Total Control Edition';
+/* var domain = 'World Domination: Total Control Edition'; 
+document.title += domain; */
+/* var oc = document.title;
+var new = 'World Domination: Total Control Edition';
+document.title = oc + new; */

@@ -1,0 +1,212 @@
+/* Start JS 23px notch, buffer/ played colors, 10px height */
+// First, inject the CSS
+const style = document.createElement('style');
+style.textContent = `
+.custom-youtube-notch {
+    position: absolute;
+    width: 23px;
+    height: 23px;
+    background-color: black;
+    border: 2px solid white;
+    border-radius: 50%;
+    z-index: 999999;
+    pointer-events: none;
+    /* box-shadow: 0 0 8px indigo; */ /* Add outer glow */
+    -moz-box-shadow:0 0 15px #c00!important;
+    -webkit-box-shadow:0 0 15px #c00!important;
+    box-shadow:0 0 15px #ffffff!important;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+/* Make buffered progress hot pink */
+.html5-load-progress, .ytp-load-progress {
+    background-color: black !important;
+}
+
+/* Make played progress rainbow gradient */
+.html5-play-progress, .ytp-play-progress {
+    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); /* Rainbow gradient */
+    background-color: transparent !important; /* Override any solid background-color */
+}
+
+/* Style the chapter mark separators using ::before */
+.ytp-chapters-container::before,
+.ytp-chapter-hover-container::before {
+    content: ''; /* Required for pseudo-elements */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0; /* Position the separator at the left edge */
+    width: 4px; /* Adjust the width of the separator */
+    background-color: green; /* Adjust the color of the separator */
+    z-index: 1; /* Ensure it's above the background */
+}
+
+/* Remove the border-left from the containers */
+.ytp-chapters-container, .ytp-chapter-hover-container {
+    z-index: 9999999 !important;
+    position: relative;
+    left: 0;
+    height: 100%;
+    /* REMOVE THIS LINE: border-left: 2px solid black !important; */
+}
+
+/* .ytp-chapters-container, .ytp-chapter-hover-container, .ytp-chapters, .ytp-chapter {
+z-index: 9999999 !important;
+position: relative !important;
+left: 0 !important;
+height: 100% !important;
+border-left: 4px solid black !important;
+opacity: 1.0 !important;
+} */
+
+/* Make unplayed progress yellow */
+.ytp-progress-bar-container {
+    background-color: yellow !important;
+    opacity: 1.0 !important;
+    /*opacity: 1.0 0.6 !important;*/
+}
+
+/* Make sure the hover preview also matches indigo */
+.html5-hover-progress, .ytp-hover-progress {
+    background-color: indigo !important;
+}
+
+/* Ensure proper layering */
+.html5-progress-list, .ytp-progress-list {
+    z-index: 99998 !important;
+}
+
+/* Make progress bar thicker */
+.html5-progress-bar-container, .ytp-progress-bar-container {
+    height: 12px !important;
+}
+
+.html5-progress-bar, .ytp-progress-bar {
+    height: 12px !important;
+}
+
+.html5-progress-list, .ytp-progress-list {
+    height: 12px !important;
+}
+
+.ytp-progress-bar .ytp-play-progress,
+.ytp-progress-bar .ytp-load-progress,
+.ytp-progress-bar .ytp-hover-progress {
+    height: 12px !important;
+}
+
+/* Update these styles in your JavaScript */
+/* Make played progress rainbow gradient */
+.ytp-progress-bar .ytp-play-progress,
+.ytp-progress-bar-container .ytp-play-progress,
+.ytp-progress-bar .ytp-play-progress.ytp-swatch-background-color {
+    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet) !important; /* Rainbow gradient */
+    background-color: transparent !important; /* Override any solid background-color */
+}
+
+/* Adjust the scrubber container for the thicker bar */
+.html5-scrubber-container, .ytp-scrubber-container {
+    height: 12px !important;
+}
+
+/* When hovering, make it even thicker */
+.ytp-progress-bar-container:hover {
+    height: 15px !important;
+}
+
+.ytp-progress-bar-container:hover .ytp-progress-bar,
+.ytp-progress-bar-container:hover .ytp-progress-list,
+.ytp-progress-bar-container:hover .ytp-play-progress,
+.ytp-progress-bar-container:hover .ytp-load-progress,
+.ytp-progress-bar-container:hover .ytp-hover-progress {
+    height: 15px !important;
+}
+`;
+document.head.appendChild(style);
+
+function enforceProgressBarColor() {
+    const playProgress = document.querySelector('.ytp-play-progress');
+    if (playProgress) {
+        playProgress.style.setProperty('background', 'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)', 'important');
+        playProgress.style.setProperty('background-color', 'transparent', 'important');
+    }
+    /*if (progressBar) {
+         progressBar.style.setProperty('background', 'yellow', 'important');
+        progressBar.style.setProperty('background-color', 'yellow', 'important');
+
+progressBar.style.setProperty('opacity', '1.0', 'important');
+    }*/
+}
+
+// Function to create or update the notch
+function updateNotch() {
+    let progressBar = document.querySelector('.ytp-progress-bar');
+    let player = document.querySelector('.html5-main-video');
+    let progressBarContainer = document.querySelector('.ytp-progress-bar-container');
+
+    if (!progressBar || !player || !progressBarContainer) return;
+
+    // Create notch if it doesn't exist
+    let notch = document.querySelector('.custom-youtube-notch');
+    if (!notch) {
+        notch = document.createElement('div');
+        notch.className = 'custom-youtube-notch';
+        progressBarContainer.appendChild(notch);
+    }
+
+    // Calculate position
+    let progress = (player.currentTime / player.duration) * 100;
+    let progressBarRect = progressBar.getBoundingClientRect();
+    let position = (progressBarRect.width * progress) / 100;
+
+    // Update notch position
+    notch.style.left = `${position}px`;
+    notch.style.top = '50%';
+    notch.style.display = 'block';
+}
+
+// Function to start the interval
+function startNotchUpdate() {
+    // Initial update
+    updateNotch();
+    //enforceProgressBarColor();
+
+    // Set interval for updates
+    return setInterval(updateNotch, 1000);
+}
+
+// Function to initialize and handle page changes
+function initialize() {
+    let interval;
+
+    // Observer for detecting player load
+    const observer = new MutationObserver((mutations) => {
+        if (document.querySelector('.html5-main-video')) {
+            if (!interval) {
+                interval = startNotchUpdate();
+            }
+        }
+    });
+
+    // Start observing
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Handle navigation (for YouTube's SPA nature)
+    let lastUrl = location.href;
+    new MutationObserver(() => {
+        const url = location.href;
+        if (url !== lastUrl) {
+            lastUrl = url;
+            clearInterval(interval);
+            interval = startNotchUpdate();
+        }
+    }).observe(document.body, {subtree: true, childList: true});
+}
+
+// Start the script
+initialize();
+/* End JS 23px notch, buffer/ played colors, 10px height */

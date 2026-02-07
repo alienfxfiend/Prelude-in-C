@@ -1,0 +1,876 @@
+// ==UserScript==
+// @name         YouTube Auto-Pauser + Persistent Chapter Marks + Hover Titles+Ranges+(Cursor Time) (Cached)
+// @namespace    http://tampermonkey.net/
+// @version      1.6
+// @description  Auto-pauses autoplay; manual resume by mouse/keyboard; draws persistent green chapter marks and shows real chapter titles + (start–end) + hovered cursor time on progress-bar hover. Adds / next-chapter and . previous-chapter hotkeys. Tooltip stays within screen. Shows big on-video chapter title when chapter changes and when using hotkeys.
+// @author       You
+// @match        https://www.youtube.com/watch*
+// @match        https://www.youtube.com/live/*
+// @grant        none
+// @run-at       document-start
+// ==/UserScript==
+
+(() => {
+  'use strict';
+
+  const CFG = {
+    // Auto-pause
+    INTERACTION_WINDOW_MS: 450,
+
+    // Marks (green + thicker)
+    MARK_WIDTH_PX: 4,
+    MARK_COLOR: 'rgba(0, 255, 80, 0.95)',
+    MARK_SHADOW: '0 0 2px rgba(0,0,0,0.95)',
+    OVERLAY_Z: 9999,
+
+    // Tooltip
+    TOOLTIP_BG: 'rgba(0,0,0,0.82)',
+    TOOLTIP_FG: '#fff',
+    TOOLTIP_Z: 10000,
+
+    // Rebuilds (catches “silent refresh” ~10s later)
+    DEBOUNCE_MS: 250,
+    HEARTBEAT_MS: 2000,
+    PLAY_REBUILD_DELAYS_MS: [0, 350, 1200, 3000, 10000],
+
+    // On-video chapter title (OSD)
+    OSD_SHOW_MS: 2500,
+    OSD_FADE_MS: 250,
+
+    DEBUG: false,
+  };
+
+  const log = (...a) => CFG.DEBUG && console.log('[TM Chapters]', ...a);
+
+  // -----------------------------
+  // State
+  // -----------------------------
+  let lastInteraction = 0;
+
+  let rebuildTimer = 0;
+  let rendering = false;
+
+  let cachedChapters = [];     // [{startSec, title}]
+  let cachedVideoId = '';      // current video id for cache key
+  let currentHost = null;
+
+  // Hover
+  let rafHover = 0;
+  let lastHoverEvent = null;
+
+  // OSD (on-video)
+  const OSD_ID = 'tm-chapter-osd';
+  let osdHideTimer = 0;
+  let lastChapterIdx = -1;
+  let lastTimeupdateCheck = 0;
+
+  // IDs
+  const OVERLAY_ID = 'tm-chapter-overlay';
+  const STYLE_ID = 'tm-chapter-overlay-style';
+  const TIP_ID = 'tm-chapter-tooltip';
+
+  // -----------------------------
+  // Interaction tracking (mouse + keyboard)
+  // -----------------------------
+  const stampInteraction = () => { lastInteraction = Date.now(); };
+  window.addEventListener('mousedown', stampInteraction, true);
+  window.addEventListener('pointerdown', stampInteraction, true);
+  window.addEventListener('touchstart', stampInteraction, true);
+  window.addEventListener('keydown', stampInteraction, true); // allow YT hotkeys to unpause
+
+  // -----------------------------
+  // Chapter hotkeys:
+  //   "/" -> next chapter
+  //   "." -> previous chapter
+  // Uses cachedChapters (and cached localStorage fallback) so it still works even if the player bar UI is gone.
+  // -----------------------------
+  function isTypingContext(target) {
+    if (!target) return false;
+    const tag = (target.tagName || '').toLowerCase();
+    return (
+      tag === 'input' ||
+      tag === 'textarea' ||
+      tag === 'select' ||
+      target.isContentEditable === true ||
+      (target.getAttribute && target.getAttribute('contenteditable') === 'true')
+    );
+  }
+
+  function ensureChaptersInMemory() {
+    if (cachedChapters.length) return true;
+
+    const vid = getVideoId();
+    cachedChapters = loadCachedChapters(vid);
+    if (!cachedChapters.length) cachedChapters = getChaptersRobust();
+
+    return !!cachedChapters.length;
+  }
+
+  function seekToChapter(isNext) {
+    const video = getVideo();
+    if (!video || !isFinite(video.duration) || video.duration <= 0) return;
+
+    if (!ensureChaptersInMemory()) return;
+
+    const t = video.currentTime;
+    const EPS = 0.15;
+
+    // Find current chapter index (robust)
+    const curIdx = getChapterIndexAtTime(cachedChapters, t);
+
+    let targetIdx = curIdx;
+    if (isNext) {
+      // Move to the first chapter that starts after current time (+eps)
+      // (If already near a boundary, this prevents "sticking" on the same chapter.)
+      let i = curIdx;
+      while (i < cachedChapters.length && cachedChapters[i].startSec <= t + EPS) i++;
+      if (i < cachedChapters.length) targetIdx = i;
+    } else {
+      // Move to previous chapter start
+      targetIdx = Math.max(0, curIdx - 1);
+    }
+
+    const target = cachedChapters[targetIdx];
+    if (!target) return;
+
+    video.currentTime = target.startSec;
+
+    // Show on-video chapter title immediately (even if paused).
+    showChapterOSD(target.title || `Chapter ${targetIdx + 1}`);
+    lastChapterIdx = targetIdx;
+  }
+
+  function handleChapterHotkeys(e) {
+    if (isTypingContext(e.target)) return;
+    if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+    if (e.key === '/') {
+      e.preventDefault();
+      e.stopPropagation();
+      seekToChapter(true);
+      return;
+    }
+
+    if (e.key === '.') {
+      e.preventDefault();
+      e.stopPropagation();
+      seekToChapter(false);
+      return;
+    }
+  }
+
+  window.addEventListener('keydown', handleChapterHotkeys, true);
+
+  // -----------------------------
+  // Helpers
+  // -----------------------------
+  function setImp(el, prop, val) {
+    el.style.setProperty(prop, val, 'important');
+  }
+
+  function scheduleRebuild(reason = 'unknown', delay = 0) {
+    if (rebuildTimer) return;
+    rebuildTimer = window.setTimeout(() => {
+      rebuildTimer = 0;
+      rebuildOverlay(reason);
+    }, delay);
+  }
+
+  function scheduleRebuildsAfterPlay() {
+    for (const d of CFG.PLAY_REBUILD_DELAYS_MS) scheduleRebuild('after-play', d);
+  }
+
+  function getVideo() {
+    return document.querySelector('video');
+  }
+
+  function getProgressHost() {
+    // Stable hover surface + correct stacking context
+    return document.querySelector('.ytp-progress-bar');
+  }
+
+  function ensureStyleOnce() {
+    if (document.getElementById(STYLE_ID)) return;
+    const st = document.createElement('style');
+    st.id = STYLE_ID;
+    st.textContent = `
+      #${OVERLAY_ID} { pointer-events: none !important; }
+      #${TIP_ID} { pointer-events: none !important; font-family: Roboto, Arial, sans-serif; }
+      #${OSD_ID} { pointer-events: none !important; font-family: Roboto, Arial, sans-serif; }
+    `;
+    document.documentElement.appendChild(st);
+  }
+
+  function ensureTooltip() {
+    ensureStyleOnce();
+    let tip = document.getElementById(TIP_ID);
+    if (tip) return tip;
+
+    tip = document.createElement('div');
+    tip.id = TIP_ID;
+
+    setImp(tip, 'position', 'fixed');
+    setImp(tip, 'z-index', String(CFG.TOOLTIP_Z));
+    setImp(tip, 'display', 'none');
+    setImp(tip, 'padding', '4px 8px');
+    setImp(tip, 'border-radius', '4px');
+    setImp(tip, 'background', CFG.TOOLTIP_BG);
+    setImp(tip, 'color', CFG.TOOLTIP_FG);
+    setImp(tip, 'font-size', '12px');
+    setImp(tip, 'line-height', '1.2');
+    setImp(tip, 'white-space', 'nowrap');
+    setImp(tip, 'box-shadow', '0 2px 10px rgba(0,0,0,0.35)');
+
+    document.documentElement.appendChild(tip);
+    return tip;
+  }
+
+  // Updated: keep tooltip within viewport (left/right AND top).
+  function showTooltip(text, x, y) {
+    const tip = ensureTooltip();
+    const MARGIN = 8;
+
+    tip.textContent = text;
+
+    // Show (but hidden) for measuring
+    setImp(tip, 'display', 'block');
+    setImp(tip, 'visibility', 'hidden');
+    setImp(tip, 'transform', 'translate(-50%, -110%)');
+
+    // Initial position
+    setImp(tip, 'left', `${x}px`);
+    setImp(tip, 'top', `${y}px`);
+
+    // Measure and clamp
+    const rect = tip.getBoundingClientRect();
+    let desiredX = x;
+
+    if (rect.left < MARGIN) desiredX += (MARGIN - rect.left);
+    else if (rect.right > window.innerWidth - MARGIN) desiredX -= (rect.right - (window.innerWidth - MARGIN));
+
+    setImp(tip, 'left', `${desiredX}px`);
+
+    // If it goes above the screen, flip it below the bar/cursor area.
+    const rect2 = tip.getBoundingClientRect();
+    if (rect2.top < MARGIN) {
+      setImp(tip, 'transform', 'translate(-50%, 20%)');
+      setImp(tip, 'top', `${y}px`);
+    }
+
+    setImp(tip, 'visibility', 'visible');
+  }
+
+  function hideTooltip() {
+    const tip = document.getElementById(TIP_ID);
+    if (tip) setImp(tip, 'display', 'none');
+  }
+
+  function formatHMS(sec) {
+    sec = Math.max(0, Math.floor(sec || 0));
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+
+    if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  function getVideoId() {
+    const v = new URLSearchParams(location.search).get('v');
+    if (v) return v;
+
+    const m = location.pathname.match(/\/live\/([a-zA-Z0-9_-]{6,})/);
+    if (m) return m[1];
+
+    const mp = document.getElementById('movie_player');
+    try {
+      const vid = mp?.getVideoData?.().video_id;
+      if (vid) return vid;
+    } catch (_) {}
+
+    return '';
+  }
+
+  // -----------------------------
+  // On-video chapter title (OSD)
+  // -----------------------------
+  function getPlayerContainer() {
+    // Best effort: YouTube often uses these for the visible player area.
+    return (
+      document.querySelector('.html5-video-player') ||
+      document.getElementById('movie_player') ||
+      document.querySelector('#player') ||
+      document.body
+    );
+  }
+
+  function ensureOSD() {
+    ensureStyleOnce();
+    const container = getPlayerContainer();
+    if (!container) return null;
+
+    let osd = document.getElementById(OSD_ID);
+    if (osd && osd.parentElement !== container) {
+      osd.remove();
+      osd = null;
+    }
+
+    if (!osd) {
+      osd = document.createElement('div');
+      osd.id = OSD_ID;
+
+      // Strong styling, bottom-center, big white text
+      setImp(osd, 'position', 'absolute');
+      setImp(osd, 'left', '50%');
+      setImp(osd, 'bottom', '12%');
+      setImp(osd, 'transform', 'translateX(-50%)');
+      setImp(osd, 'z-index', '2147483647');
+      setImp(osd, 'color', '#fff');
+      setImp(osd, 'font-size', '28px');
+      setImp(osd, 'font-weight', '700');
+      setImp(osd, 'text-align', 'center');
+      setImp(osd, 'max-width', '80%');
+      setImp(osd, 'white-space', 'nowrap');
+      setImp(osd, 'overflow', 'hidden');
+      setImp(osd, 'text-overflow', 'ellipsis');
+      setImp(osd, 'padding', '6px 12px');
+      setImp(osd, 'border-radius', '8px');
+      setImp(osd, 'background', 'rgba(0,0,0,0.35)');
+      setImp(osd, 'text-shadow', '0 2px 10px rgba(0,0,0,0.95)');
+      setImp(osd, 'pointer-events', 'none');
+
+      setImp(osd, 'opacity', '0');
+      setImp(osd, 'display', 'block');
+      setImp(osd, 'transition', `opacity ${CFG.OSD_FADE_MS}ms ease`);
+
+      // Ensure container is positioning context
+      const cs = getComputedStyle(container);
+      if (cs.position === 'static') setImp(container, 'position', 'relative');
+
+      container.appendChild(osd);
+    }
+
+    return osd;
+  }
+
+  function showChapterOSD(title) {
+    title = String(title || '').trim();
+    if (!title) return;
+
+    const osd = ensureOSD();
+    if (!osd) return;
+
+    osd.textContent = title;
+
+    // Show now
+    if (osdHideTimer) clearTimeout(osdHideTimer);
+    setImp(osd, 'opacity', '1');
+
+    // Hide later (fade out)
+    osdHideTimer = window.setTimeout(() => {
+      setImp(osd, 'opacity', '0');
+    }, CFG.OSD_SHOW_MS);
+  }
+
+  function maybeShowChapterOnTimeupdate(video) {
+    // Throttle timeupdate checks (timeupdate can be very frequent)
+    const now = Date.now();
+    if (now - lastTimeupdateCheck < 250) return;
+    lastTimeupdateCheck = now;
+
+    if (!ensureChaptersInMemory()) return;
+
+    const idx = getChapterIndexAtTime(cachedChapters, video.currentTime);
+    if (idx < 0) return;
+
+    if (idx !== lastChapterIdx) {
+      lastChapterIdx = idx;
+      const title = (cachedChapters[idx]?.title || `Chapter ${idx + 1}`).trim();
+      showChapterOSD(title);
+    }
+  }
+
+  // -----------------------------
+  // Chapter sources (titles)
+  // -----------------------------
+  function getPlayerResponse() {
+    const mp = document.getElementById('movie_player');
+    if (mp && typeof mp.getPlayerResponse === 'function') {
+      try { return mp.getPlayerResponse(); } catch (_) {}
+    }
+    if (window.ytInitialPlayerResponse) return window.ytInitialPlayerResponse;
+
+    const raw = window.ytplayer?.config?.args?.raw_player_response;
+    if (raw) {
+      try { return typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (_) {}
+    }
+    return null;
+  }
+
+  function textFromAny(t) {
+    if (!t) return '';
+    if (typeof t === 'string') return t;
+    if (typeof t.simpleText === 'string') return t.simpleText;
+    if (Array.isArray(t.runs)) return t.runs.map(r => r?.text || '').join('');
+    const label = t?.accessibility?.accessibilityData?.label;
+    if (typeof label === 'string') return label;
+    return '';
+  }
+
+  function chaptersFromPlayerResponse() {
+    const pr = getPlayerResponse();
+    const markersMap =
+      pr?.playerOverlays?.playerOverlayRenderer
+        ?.decoratedPlayerBarRenderer?.decoratedPlayerBarRenderer
+        ?.playerBar?.multiMarkersPlayerBarRenderer?.markersMap;
+
+    if (!Array.isArray(markersMap)) return [];
+
+    const chaptersEntry = markersMap.find(m => m?.key === 'MARKER_TYPE_CHAPTERS');
+    const chapters = chaptersEntry?.value?.chapters;
+    if (!Array.isArray(chapters)) return [];
+
+    const out = [];
+    for (const ch of chapters) {
+      const r = ch?.chapterRenderer;
+      const startMs = r?.timeRangeStartMillis;
+      if (typeof startMs !== 'number') continue;
+
+      const title =
+        textFromAny(r?.title) ||
+        textFromAny(r?.titleText) ||
+        textFromAny(r?.headline) ||
+        '';
+
+      out.push({ startSec: startMs / 1000, title: (title || '').trim() });
+    }
+
+    out.sort((a, b) => a.startSec - b.startSec);
+    return out;
+  }
+
+  function timeTextToSeconds(t) {
+    const parts = String(t).trim().split(':').map(x => parseInt(x, 10));
+    if (parts.some(n => Number.isNaN(n))) return null;
+    if (parts.length === 2) return parts[0] * 60 + parts[1];
+    if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    return null;
+  }
+
+  function chaptersFromDOMMacroMarkers() {
+    const items = document.querySelectorAll(
+      'ytd-macro-markers-list-renderer ytd-macro-markers-list-item-renderer'
+    );
+    const out = [];
+    for (const item of items) {
+      const timeEl = item.querySelector('#time');
+      const titleEl =
+        item.querySelector('#title') ||
+        item.querySelector('yt-formatted-string#title') ||
+        item.querySelector('[id="title"]');
+
+      const s = timeEl ? timeTextToSeconds(timeEl.textContent) : null;
+      const title = (titleEl?.innerText || titleEl?.textContent || '').trim();
+
+      if (typeof s === 'number') out.push({ startSec: s, title });
+    }
+    out.sort((a, b) => a.startSec - b.startSec);
+    return out;
+  }
+
+  function chaptersFromDescription(pr) {
+    const desc = pr?.videoDetails?.shortDescription;
+    if (typeof desc !== 'string' || desc.length < 5) return [];
+
+    const lines = desc.split('\n');
+    const out = [];
+
+    const re = /^\s*((\d{1,2}:)?\d{1,2}:\d{2})\s+(.+?)\s*$/;
+    for (const line of lines) {
+      const m = line.match(re);
+      if (!m) continue;
+      const sec = timeTextToSeconds(m[1]);
+      if (typeof sec !== 'number') continue;
+      out.push({ startSec: sec, title: (m[3] || '').trim() });
+    }
+
+    out.sort((a, b) => a.startSec - b.startSec);
+    const uniq = [];
+    const seen = new Set();
+    for (const c of out) {
+      const k = Math.round(c.startSec * 10);
+      if (seen.has(k)) continue;
+      seen.add(k);
+      uniq.push(c);
+    }
+    return uniq;
+  }
+
+  // Cache per videoId
+  function cacheKeyForVideo(videoId) {
+    return videoId ? `tm_chapters_cache_${videoId}` : '';
+  }
+
+  function loadCachedChapters(videoId) {
+    const k = cacheKeyForVideo(videoId);
+    if (!k) return [];
+    try {
+      const raw = localStorage.getItem(k);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter(x => x && typeof x.startSec === 'number')
+        .map(x => ({ startSec: x.startSec, title: String(x.title || '').trim() }))
+        .sort((a, b) => a.startSec - b.startSec);
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function saveCachedChapters(videoId, chapters) {
+    const k = cacheKeyForVideo(videoId);
+    if (!k) return;
+    try {
+      const useful = chapters.filter(c => (c.title || '').trim().length > 0);
+      if (!useful.length) return;
+      localStorage.setItem(k, JSON.stringify(useful.slice(0, 200)));
+    } catch (_) {}
+  }
+
+  function getChaptersRobust() {
+    const videoId = getVideoId();
+    if (videoId && videoId !== cachedVideoId) {
+      cachedVideoId = videoId;
+      cachedChapters = [];
+      lastChapterIdx = -1;
+    }
+
+    const pr = getPlayerResponse();
+
+    const a = chaptersFromPlayerResponse();
+    const b = chaptersFromDescription(pr);
+    const c = chaptersFromDOMMacroMarkers();
+    const d = loadCachedChapters(videoId);
+
+    const byKey = new Map();
+
+    function putAll(arr) {
+      for (const x of arr) {
+        if (!x || typeof x.startSec !== 'number') continue;
+        const key = Math.round(x.startSec * 10);
+        const title = (x.title || '').trim();
+        const existing = byKey.get(key);
+        if (!existing) {
+          byKey.set(key, { startSec: x.startSec, title });
+        } else {
+          if (!existing.title && title) existing.title = title;
+        }
+      }
+    }
+
+    putAll(d);
+    putAll(c);
+    putAll(b);
+    putAll(a);
+
+    const merged = [...byKey.values()].sort((x, y) => x.startSec - y.startSec);
+
+    if (videoId) saveCachedChapters(videoId, merged);
+
+    const hasAnyTitle = merged.some(ch => (ch.title || '').trim().length > 0);
+    if (!hasAnyTitle && merged.length) {
+      merged.forEach((ch, i) => ch.title = `Chapter ${i + 1}`);
+    }
+
+    return merged;
+  }
+
+  // Return chapter index at time (so we can calculate end timestamp)
+  function getChapterIndexAtTime(chapters, tSec) {
+    if (!chapters.length) return -1;
+
+    let lo = 0, hi = chapters.length - 1, ans = -1;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      if (chapters[mid].startSec <= tSec) { ans = mid; lo = mid + 1; }
+      else hi = mid - 1;
+    }
+    return ans >= 0 ? ans : 0;
+  }
+
+  // -----------------------------
+  // Overlay rendering
+  // -----------------------------
+  function removeOverlay(host) {
+    const old = host.querySelector(`#${OVERLAY_ID}`);
+    if (old) old.remove();
+  }
+
+  function renderOverlay(host, chapters, duration) {
+    ensureStyleOnce();
+
+    const cs = getComputedStyle(host);
+    if (cs.position === 'static') setImp(host, 'position', 'relative');
+
+    removeOverlay(host);
+
+    const overlay = document.createElement('div');
+    overlay.id = OVERLAY_ID;
+    setImp(overlay, 'position', 'absolute');
+    setImp(overlay, 'left', '0');
+    setImp(overlay, 'right', '0');
+    setImp(overlay, 'top', '-2px');
+    setImp(overlay, 'bottom', '-2px');
+    setImp(overlay, 'z-index', String(CFG.OVERLAY_Z));
+    setImp(overlay, 'pointer-events', 'none');
+    setImp(overlay, 'display', 'block');
+    setImp(overlay, 'opacity', '1');
+    setImp(overlay, 'visibility', 'visible');
+
+    const frag = document.createDocumentFragment();
+    for (const ch of chapters) {
+      if (ch.startSec <= 0.05) continue;
+      const pct = Math.max(0, Math.min(100, (ch.startSec / duration) * 100));
+
+      const mark = document.createElement('div');
+      setImp(mark, 'position', 'absolute');
+      setImp(mark, 'left', `${pct}%`);
+      setImp(mark, 'top', '0');
+      setImp(mark, 'bottom', '0');
+      setImp(mark, 'width', `${CFG.MARK_WIDTH_PX}px`);
+      setImp(mark, 'transform', 'translateX(-50%)');
+      setImp(mark, 'background', CFG.MARK_COLOR);
+      setImp(mark, 'box-shadow', CFG.MARK_SHADOW);
+      setImp(mark, 'opacity', '1');
+      frag.appendChild(mark);
+    }
+
+    overlay.appendChild(frag);
+    host.appendChild(overlay);
+  }
+
+  function rebuildOverlay(reason = 'manual') {
+    if (rendering) return;
+    rendering = true;
+    try {
+      const video = getVideo();
+      const host = getProgressHost();
+      if (!video || !host) return;
+
+      const duration = video.duration;
+      if (!isFinite(duration) || duration < 30) return;
+
+      const chapters = getChaptersRobust();
+      if (!chapters.length) {
+        log('No chapters found yet.', reason);
+        return;
+      }
+
+      cachedChapters = chapters;
+      renderOverlay(host, chapters, duration);
+      attachHoverListeners(host);
+
+      log('Overlay rebuilt:', chapters.length, 'reason:', reason);
+    } catch (e) {
+      console.error('[TM Chapters] rebuild failed:', e);
+    } finally {
+      rendering = false;
+    }
+  }
+
+  // -----------------------------
+  // Hover tooltip with real titles + time range + hovered cursor timestamp
+  // Format: Chapter Title — 12:34–23:45 (cursor 13:02)
+  // -----------------------------
+  function onHostMouseMove(e) {
+    lastHoverEvent = e;
+    if (rafHover) return;
+
+    rafHover = requestAnimationFrame(() => {
+      rafHover = 0;
+      const ev = lastHoverEvent;
+      lastHoverEvent = null;
+      if (!ev) return;
+
+      const host = currentHost;
+      const video = getVideo();
+      if (!host || !video || !cachedChapters.length) return;
+
+      const rect = host.getBoundingClientRect();
+      const ratio = (ev.clientX - rect.left) / rect.width;
+      const clamped = Math.max(0, Math.min(1, ratio));
+      const tSec = clamped * (isFinite(video.duration) ? video.duration : 0);
+
+      const idx = getChapterIndexAtTime(cachedChapters, tSec);
+      if (idx < 0) return;
+
+      const ch = cachedChapters[idx];
+      if (!ch) return;
+
+      const title = (ch.title || '').trim();
+      if (!title) return;
+
+      const startStr = formatHMS(ch.startSec);
+
+      let endStr = '';
+      if (idx + 1 < cachedChapters.length) {
+        endStr = formatHMS(cachedChapters[idx + 1].startSec);
+      } else if (isFinite(video.duration)) {
+        endStr = formatHMS(video.duration);
+      }
+
+      const cursorStr = formatHMS(tSec);
+      const rangeStr = endStr ? `${startStr}–${endStr}` : startStr;
+
+      showTooltip(`${title} — ${rangeStr} (cursor ${cursorStr})`, ev.clientX, rect.top);
+    });
+  }
+
+  function onHostMouseOut() {
+    hideTooltip();
+  }
+
+  function attachHoverListeners(host) {
+    if (!host) return;
+    if (currentHost === host) return;
+
+    if (currentHost) {
+      currentHost.removeEventListener('mousemove', onHostMouseMove, true);
+      currentHost.removeEventListener('mouseleave', onHostMouseOut, true);
+      currentHost.removeEventListener('mouseout', onHostMouseOut, true);
+    }
+
+    currentHost = host;
+    host.addEventListener('mousemove', onHostMouseMove, true);
+    host.addEventListener('mouseleave', onHostMouseOut, true);
+    host.addEventListener('mouseout', onHostMouseOut, true);
+  }
+
+  // -----------------------------
+  // Auto-pauser (non-destructive) + chapter-change watcher hookup
+  // -----------------------------
+  function attachAutoPauserOnce() {
+    const v = getVideo();
+    if (!v || v.dataset.tmAutoPause === '1') return;
+
+    const maybePauseIfNotManual = () => {
+      if (document.hidden) {
+        v.pause();
+        return;
+      }
+      const dt = Date.now() - lastInteraction;
+      if (dt > CFG.INTERACTION_WINDOW_MS) v.pause();
+    };
+
+    v.addEventListener('play', () => {
+      maybePauseIfNotManual();
+      scheduleRebuildsAfterPlay();
+    }, { passive: true });
+
+    // Show current chapter title when playback actually starts (manual play)
+    v.addEventListener('playing', () => {
+      scheduleRebuildsAfterPlay();
+      // Show chapter title on play/resume
+      if (ensureChaptersInMemory()) {
+        const idx = getChapterIndexAtTime(cachedChapters, v.currentTime);
+        if (idx >= 0) {
+          lastChapterIdx = idx;
+          showChapterOSD((cachedChapters[idx]?.title || `Chapter ${idx + 1}`).trim());
+        }
+      }
+    }, { passive: true });
+
+    // Detect chapter transitions during playback
+    v.addEventListener('timeupdate', () => {
+      // Only do the extra work while playing (timeupdate also fires on some seeks)
+      if (!v.paused) maybeShowChapterOnTimeupdate(v);
+    }, { passive: true });
+
+    // If user seeks (mouse drag etc.), update displayed chapter too
+    v.addEventListener('seeked', () => {
+      if (ensureChaptersInMemory()) {
+        const idx = getChapterIndexAtTime(cachedChapters, v.currentTime);
+        if (idx >= 0) {
+          lastChapterIdx = idx;
+          showChapterOSD((cachedChapters[idx]?.title || `Chapter ${idx + 1}`).trim());
+        }
+      }
+      scheduleRebuild('seeked', 200);
+    }, { passive: true });
+
+    v.addEventListener('loadedmetadata', () => scheduleRebuild('loadedmetadata', 0), { passive: true });
+    v.addEventListener('durationchange', () => scheduleRebuild('durationchange', 0), { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) v.pause();
+    }, { passive: true });
+
+    if (!v.paused && !document.hidden) {
+      const dt = Date.now() - lastInteraction;
+      if (dt > CFG.INTERACTION_WINDOW_MS) v.pause();
+    }
+
+    v.dataset.tmAutoPause = '1';
+  }
+
+  // -----------------------------
+  // Observe only player area (no page hang)
+  // -----------------------------
+  let playerObserver = null;
+
+  function observePlayerArea() {
+    const player = document.getElementById('movie_player') || document.querySelector('.html5-video-player');
+    if (!player) return;
+
+    if (playerObserver) playerObserver.disconnect();
+
+    playerObserver = new MutationObserver((mutations) => {
+      // Ignore our overlay node to prevent feedback loops
+      for (const m of mutations) {
+        for (const n of m.addedNodes) {
+          if (n && n.nodeType === 1 && n.id === OVERLAY_ID) return;
+        }
+      }
+      attachAutoPauserOnce();
+      scheduleRebuild('player-mutation', CFG.DEBOUNCE_MS);
+
+      // If the player DOM got replaced, re-ensure OSD node can be reattached.
+      ensureOSD();
+    });
+
+    playerObserver.observe(player, { childList: true, subtree: true });
+  }
+
+  // -----------------------------
+  // SPA navigation + heartbeat
+  // -----------------------------
+  function onNewWatchPage() {
+    setTimeout(() => {
+      cachedVideoId = getVideoId();
+      cachedChapters = loadCachedChapters(cachedVideoId);
+      lastChapterIdx = -1;
+
+      attachAutoPauserOnce();
+      observePlayerArea();
+      ensureOSD();
+
+      scheduleRebuild('init', 0);
+      scheduleRebuild('init', 800);
+      scheduleRebuild('init', 2000);
+      scheduleRebuild('init', 10000);
+    }, 250);
+  }
+
+  window.addEventListener('yt-navigate-finish', onNewWatchPage, true);
+  window.addEventListener('yt-page-data-updated', onNewWatchPage, true);
+
+  setInterval(() => {
+    attachAutoPauserOnce();
+    scheduleRebuild('heartbeat', 0);
+    ensureOSD();
+  }, CFG.HEARTBEAT_MS);
+
+  // Start
+  onNewWatchPage();
+})();

@@ -1,0 +1,2 @@
+#options (RunAsAdmin,Confirm)
+powershell.exe -ExecutionPolicy Bypass -NoExit -File "C:\Users\dell\Downloads\thumbstick\CUT\SEND TO USB (COPY PDF FOLDER)\Temp FlashDrive Store\SendTo\Latest Software Delete (Temp)\Delete All Logs.ps1"

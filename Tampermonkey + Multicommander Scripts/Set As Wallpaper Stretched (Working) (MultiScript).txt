@@ -1,0 +1,3 @@
+@var $imgPath = GetSourceFocusPath();
+@var $arguments = "-ExecutionPolicy Bypass -File \"C:\\Users\\dell\\Downloads\\thumbstick\\CUT\\SEND TO USB (COPY PDF FOLDER)\\Temp FlashDrive Store\\SendTo\\Latest Software Delete (Temp)\\SetWallpaperMCStretch.ps1\" -ImagePath \"" + $imgPath + "\"";
+MC.Run CMD="powershell.exe" ARG="{$arguments}";

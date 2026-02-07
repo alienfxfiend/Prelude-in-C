@@ -1,0 +1,41 @@
+// ==UserScript==
+// @name         TikTok Video Looper And Styler
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Automatically loop videos on TikTok when they end and adjust brightness and contrast
+// @author       YourName
+// @match        http://*/*
+// @match        https://*/*
+// @match        https://www.tiktok.com/*
+// @match        https://spankbang.com/*
+// @match        https://www.tnaflix.com/*
+// @match        https://www.xvideos.com/*
+// @exclude      https://www.youtube.com/*
+// @exclude      https://shorts.youtube.com/*
+// @grant        none
+// @run-at       document-end
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Function to loop the video and apply CSS
+    function loopAndStyleVideo() {
+        const video = document.querySelector('video');
+        if (video) {
+            // Apply CSS styles
+            video.style.filter = 'brightness(1.27) contrast(1.15)';
+            // When the video ends, play it again
+            video.onended = function() {
+                video.play();
+            };
+        }
+    }
+
+    // Initialize the looper and style when the page has loaded
+    window.addEventListener('load', function() {
+        // Run the loop and style function every second to ensure it catches new dynamically loaded videos
+        setInterval(loopAndStyleVideo, 1000);
+    });
+
+})();

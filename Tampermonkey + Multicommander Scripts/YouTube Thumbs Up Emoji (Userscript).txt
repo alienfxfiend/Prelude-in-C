@@ -1,0 +1,70 @@
+// ==UserScript==
+// @name         YouTube Thumbs Up Emoji
+// @namespace    your-namespace
+// @version      1.0
+// @description  Display a big Thumbs Up emoji when pressing the 'V' key next to the text "Like" and make it disappear after 5 seconds.
+// @match        https://www.youtube.com/*
+// @grant        none
+// ==/UserScript==
+
+// Create the Thumbs Up emoji element // Replace with the URL of the website where you want to apply the script //replace .innerHTML /w .textContent
+const thumbsUpEmoji = document.createElement('div');
+thumbsUpEmoji.textContent = 'Like 👍'; //'Like 👍'
+thumbsUpEmoji.style.position = 'fixed';
+thumbsUpEmoji.style.top = '65px'; //65px
+thumbsUpEmoji.style.left = 'calc(50% - 95px)'; // Modify the left position to center the emoji 50%-65px
+thumbsUpEmoji.style.fontSize = '50px';
+thumbsUpEmoji.style.display = 'none';
+thumbsUpEmoji.style.padding = '10px';
+thumbsUpEmoji.style.color = 'rgb(255, 255, 255)';
+thumbsUpEmoji.style.backgroundColor = 'rgba(10, 10, 10, 0.8)'; // Semi-transparent gray box 0.8 'rgba(10, 10, 10, 1)';
+thumbsUpEmoji.style.zIndex = '9999'; // Set a higher z-index to make the emoji appear on top
+
+// Create the Thumbs Up emoji element // Replace with the URL of the website where you want to apply the script
+const YuriEmoji = document.createElement('div');
+YuriEmoji.textContent = 'Yuri is Life 👍'; //'Like 👍'
+YuriEmoji.style.position = 'fixed';
+YuriEmoji.style.top = '65px'; //65px
+YuriEmoji.style.left = 'calc(50% - 165px)'; // Modify the left position to center the emoji 50%-65px
+YuriEmoji.style.fontSize = '50px';
+YuriEmoji.style.display = 'none';
+YuriEmoji.style.padding = '10px';
+YuriEmoji.style.color = 'rgb(49, 0, 98)';
+YuriEmoji.style.backgroundColor = 'rgba(10, 10, 10, 0.8)'; // Semi-transparent gray box 0.8 'rgba(10, 10, 10, 1)';
+YuriEmoji.style.zIndex = '9999'; // Set a higher z-index to make the emoji appear on top
+
+// Append the Thumbs Up emoji element to the body
+document.body.appendChild(thumbsUpEmoji);
+document.body.appendChild(YuriEmoji);
+
+// Function to handle the keydown event
+function handleKeyDown(event) {
+    if (event.key === 'u' || event.key === 'U') {
+                // Toggle the display of the Thumbs Up emoji
+        thumbsUpEmoji.style.display = thumbsUpEmoji.style.display === 'none' ? 'block' : 'none';
+
+    } else if (event.key === 'y' || event.key === 'Y') {
+                // Toggle the display of the Thumbs Up emoji
+        YuriEmoji.style.display = YuriEmoji.style.display === 'none' ? 'block' : 'none';
+
+    } else if (event.key === ']') {
+    // Display the Thumbs Up emoji
+        thumbsUpEmoji.style.display = 'block';
+
+        // Hide the Thumbs Up emoji after 5 seconds
+        setTimeout(() => {
+            thumbsUpEmoji.style.display = 'none';
+        }, 7500);
+    } else if (event.key === '[') {
+    // Display the Thumbs Up emoji
+        YuriEmoji.style.display = 'block';
+
+        // Hide the Thumbs Up emoji after 5 seconds
+        setTimeout(() => {
+            YuriEmoji.style.display = 'none';
+        }, 7500);
+    }
+}
+
+// Add event listener for the keydown event
+document.addEventListener('keydown', handleKeyDown);

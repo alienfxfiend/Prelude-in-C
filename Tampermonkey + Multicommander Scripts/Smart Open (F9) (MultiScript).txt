@@ -1,0 +1,442 @@
+@var $path = GetSourceFocusPath();
+@var $ext = PathGetFileExtPart( $path, 2 );
+// normalize to lowercase
+$ext = StrToLower($ext);
+//@var $ext  = StrToLower(PathGetFileExtPart($path, 2));
+@var $matched = 0;
+
+if ( $ext == 'zip' )
+{
+    MC.RunUserCmd ID="f69ad697d4d74c43a7a70b368a1082b9" //restore
+    //MC.RunUserCmd ID="29d3a05d03904b7db2cafd09afc96567" /maximize
+    //@var $fbneo = PathGetNamePart( GetSourceFocusPath(), 1 );
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\FB Neo x64 (DO NOT DELETE)\\fbneo64.exe"' ARG='"{$fbneo}" -w';
+    $matched = 1;
+}
+
+
+//txt,ini,log,ahk,mtxt,vbs,conf,cpp,h,rc,asm,nfo,info,ps1,md,xml,jsee,cfg
+if ( $ext == 'txt' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'ini' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'log' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'ahk' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'mtxt' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'vbs' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'conf' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'cpp' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'h' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'rc' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'asm' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'nfo' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'info' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'ps1' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+//if ( $ext == 'md' )
+//{
+//    MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+//    $matched = 1;
+//}
+if ( $ext == 'xml' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'jsee' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'cfg' )
+{
+    MC.RunUserCmd ID="b85b4bf468ab418e87b4e09e95dca4a0"
+    //MC.Run CMD='"C:\\Users\\dell\\Downloads\\thumbstick\\notepad2-4-2-25-en-win\\Notepad2.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+
+
+// images
+if ( $ext == 'jpg' )
+{
+    MC.RunUserCmd ID="c3424b15b3dd4a75a83ce0d9ba857bbb"
+    //MC.Run CMD='"D:\\Download\\FreeVimager\\FreeVimager.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'png' )
+{
+    MC.RunUserCmd ID="c3424b15b3dd4a75a83ce0d9ba857bbb"
+    //MC.Run CMD='"D:\\Download\\FreeVimager\\FreeVimager.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'jpeg' )
+{
+    MC.RunUserCmd ID="c3424b15b3dd4a75a83ce0d9ba857bbb"
+    //MC.Run CMD='"D:\\Download\\FreeVimager\\FreeVimager.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'gif' )
+{
+    MC.RunUserCmd ID="c3424b15b3dd4a75a83ce0d9ba857bbb"
+    //MC.Run CMD='"D:\\Download\\FreeVimager\\FreeVimager.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'webp' )
+{
+    MC.RunUserCmd ID="c3424b15b3dd4a75a83ce0d9ba857bbb"
+    //MC.Run CMD='"D:\\Download\\FreeVimager\\FreeVimager.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'jpe' )
+{
+    MC.RunUserCmd ID="c3424b15b3dd4a75a83ce0d9ba857bbb"
+    //MC.Run CMD='"D:\\Download\\FreeVimager\\FreeVimager.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'jfif' )
+{
+    MC.RunUserCmd ID="c3424b15b3dd4a75a83ce0d9ba857bbb"
+    //MC.Run CMD='"D:\\Download\\FreeVimager\\FreeVimager.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'psd' )
+{
+    MC.RunUserCmd ID="c3424b15b3dd4a75a83ce0d9ba857bbb"
+    //MC.Run CMD='"D:\\Download\\FreeVimager\\FreeVimager.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'bmp' )
+{
+    MC.RunUserCmd ID="c3424b15b3dd4a75a83ce0d9ba857bbb"
+    //MC.Run CMD='"D:\\Download\\FreeVimager\\FreeVimager.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'TIFF' )
+{
+    MC.RunUserCmd ID="c3424b15b3dd4a75a83ce0d9ba857bbb"
+    //MC.Run CMD='"D:\\Download\\FreeVimager\\FreeVimager.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'svg' )
+{
+    MC.RunUserCmd ID="c3424b15b3dd4a75a83ce0d9ba857bbb"
+    //MC.Run CMD='"D:\\Download\\FreeVimager\\FreeVimager.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+
+
+// documents
+if ( $ext == 'pdf' )
+{
+    MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+//    MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='-invert-colors "{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'epub' )
+{
+    MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'djvu' )
+{
+    MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'mobi' )
+{
+    MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'FB2' )
+{
+    MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'CB7' )
+{
+    MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'CBR' )
+{
+    MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'CBT' )
+{
+    MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'CBZ' )
+{
+    MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'PRC' )
+{
+    MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'azw' )
+{
+    MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'chm' ) //Handled by hh.exe(default)
+{
+    MC.RunUserCmd ID="45cd3dfb7fc348ec99de80122481c55d"
+    //MC.RunUserCmd ID="3bd046dd55484d62aa82285076ea1c15"
+    //MC.Run CMD='"C:\\Users\\dell\\Documents\\SumatraALLOld\\SumatraPDF-3.2-64.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+
+
+// Kega Emulator
+if ( $ext == 'sms' )
+{
+    MC.RunUserCmd ID="468167006ee54bb995e28940823ec958"
+    //MC.Run CMD='"cmd.exe"' ARG='/c start "" "D:\Games\Genesis ROMs\Fusion364-2\KegaFusion.qalnk" "{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'gen' )
+{
+    MC.RunUserCmd ID="468167006ee54bb995e28940823ec958"
+    //MC.Run CMD='"cmd.exe"' ARG='/c start "" "D:\Games\Genesis ROMs\Fusion364-2\KegaFusion.qalnk" "{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'smd' )
+{
+    MC.RunUserCmd ID="468167006ee54bb995e28940823ec958"
+    //MC.Run CMD='"cmd.exe"' ARG='/c start "" "D:\Games\Genesis ROMs\Fusion364-2\KegaFusion.qalnk" "{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'bin' )
+{
+    MC.RunUserCmd ID="468167006ee54bb995e28940823ec958"
+    //MC.Run CMD='"cmd.exe"' ARG='/c start "" "D:\Games\Genesis ROMs\Fusion364-2\KegaFusion.qalnk" "{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'md' )
+{
+    MC.RunUserCmd ID="468167006ee54bb995e28940823ec958"
+    //MC.Run CMD='"cmd.exe"' ARG='/c start "" "D:\Games\Genesis ROMs\Fusion364-2\KegaFusion.qalnk" "{$path}"';
+    $matched = 1;
+}
+
+
+// SNES Emulator
+if ( $ext == 'sfc' )
+{
+    MC.RunUserCmd ID="6d1061dff5014030bcd2062fee6701cf"
+    //MC.Run CMD='"cmd.exe"' ARG='/c start "" "D:\Games\Genesis ROMs\SNES 9x Emulator\SNES 9x x64 Emulator.qalnk" "{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'smc' )
+{
+    MC.RunUserCmd ID="6d1061dff5014030bcd2062fee6701cf"
+    //MC.Run CMD='"cmd.exe"' ARG='/c start "" "D:\Games\Genesis ROMs\SNES 9x Emulator\SNES 9x x64 Emulator.qalnk" "{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'fig' )
+{
+    MC.RunUserCmd ID="6d1061dff5014030bcd2062fee6701cf"
+    //MC.Run CMD='"cmd.exe"' ARG='/c start "" "D:\Games\Genesis ROMs\SNES 9x Emulator\SNES 9x x64 Emulator.qalnk" "{$path}"';
+    $matched = 1;
+}
+
+
+// NES Emulator
+if ( $ext == 'nes' )
+{
+    MC.RunUserCmd ID="3d966becbbb640f983aab1f18a109f51"
+    //MC.Run CMD='"cmd.exe"' ARG='/c start "" "D:\Games\Genesis ROMs\Nestopia140bin\Nestopia NES Emulator.qalnk" "{$path}"';
+    $matched = 1;
+}
+
+
+// Audio Files WAV, MP3, MIDI/MID, AAC, FLAC, ALAC, AIFF, OGG, and WMA
+if ( $ext == 'wav' )
+{
+    MC.RunUserCmd ID="4e1f3a7ca0224c6ba0ff02f3f07cd7c4"
+    $matched = 1;
+}
+if ( $ext == 'mp3' )
+{
+    MC.RunUserCmd ID="4e1f3a7ca0224c6ba0ff02f3f07cd7c4"
+    $matched = 1;
+}
+if ( $ext == 'mid' )
+{
+    MC.RunUserCmd ID="4e1f3a7ca0224c6ba0ff02f3f07cd7c4"
+    $matched = 1;
+}
+if ( $ext == 'midi' )
+{
+    MC.RunUserCmd ID="4e1f3a7ca0224c6ba0ff02f3f07cd7c4"
+    $matched = 1;
+}
+if ( $ext == 'WMA' )
+{
+    MC.RunUserCmd ID="4e1f3a7ca0224c6ba0ff02f3f07cd7c4"
+    $matched = 1;
+}
+if ( $ext == 'FLAC' )
+{
+    MC.RunUserCmd ID="4e1f3a7ca0224c6ba0ff02f3f07cd7c4"
+    $matched = 1;
+}
+if ( $ext == 'OGG' )
+{
+    MC.RunUserCmd ID="4e1f3a7ca0224c6ba0ff02f3f07cd7c4"
+    $matched = 1;
+}
+if ( $ext == 'AAC' )
+{
+    MC.RunUserCmd ID="4e1f3a7ca0224c6ba0ff02f3f07cd7c4"
+    $matched = 1;
+}
+if ( $ext == 'ALAC' )
+{
+    MC.RunUserCmd ID="4e1f3a7ca0224c6ba0ff02f3f07cd7c4"
+    $matched = 1;
+}
+if ( $ext == 'AIFF' )
+{
+    MC.RunUserCmd ID="4e1f3a7ca0224c6ba0ff02f3f07cd7c4"
+    $matched = 1;
+}
+
+
+// cursors
+if ( $ext == 'cur' )
+{
+    MC.RunUserCmd ID="3c16c3020c384373a4dd96060cb856e3"
+    //MC.Run CMD='"D:\\Download\\RealWorld Cursor Editor\\RWCursorEditor.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'ani' )
+{
+    MC.RunUserCmd ID="3c16c3020c384373a4dd96060cb856e3"
+    //MC.Run CMD='"D:\\Download\\RealWorld Cursor Editor\\RWCursorEditor.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+
+
+// PowerPoint
+if ( $ext == 'pptx' )
+{
+    MC.Run CMD='"C:\\Program Files\\Microsoft Office\\root\\Office16\\POWERPNT.EXE"' ARG='/S "{$path}"';
+    $matched = 1;
+}
+if ( $ext == 'ppt' )
+{
+    MC.Run CMD='"C:\\Program Files\\Microsoft Office\\root\\Office16\\POWERPNT.EXE"' ARG='"{$path}"';
+    $matched = 1;
+}
+
+
+// Visual Studio solution
+if ( $ext == 'sln' )
+{
+    MC.Run CMD='"D:\\Download\\VS 19 CE\\Common7\\IDE\\devenv.exe"' ARG='"{$path}"';
+    $matched = 1;
+}
+
+
+// DOSBox for EXE files
+if ( $ext == 'exe' )
+{
+    //@var $srcpath = GetSourcePath();
+    //@var $srcname = GetSourceFocusName();
+
+    MC.RunUserCmd ID="e07317b5406b4c19b069ea4bd926f706"
+    //MC.Run CMD='"D:\\Games\\dbgl090\\DOSBox-0.74-3\\DOSBox.exe"' ARG='-c "mount c \"{$srcpath}\"" -c "c:" -c "{$srcname}" -fullscreen -exit';
+    $matched = 1;
+}
+
+
+// fallback if nothing matched
+if ( $matched == 0 )
+{
+    MessageBox("Error", "Undefined Behavior", 0);
+}

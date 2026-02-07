@@ -1,0 +1,1 @@
+Done: %pr_current_time 🟢 Total: %pr_duration 🟠 Left: -%pr_remaining_time 🔴 🐕Greasers🏏Bat👚BlueShirt🦸‍♂️Scott Summers⏳TurboShell

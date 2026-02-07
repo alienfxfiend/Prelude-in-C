@@ -1,0 +1,145 @@
+// ==UserScript==
+// @name         Hide Discord sidebars
+// @namespace    https://github.com/Dragosarus/Userscripts/
+// @version      2.6
+// @description  Give the chat more screen space (now remembers its state & no more gap)
+// @author       Dragosarus
+// @match        http://discord.com/*
+// @match        https://discord.com/*
+// @match        https://canary.discord.com/*
+// @grant        GM_registerMenuCommand
+// @grant        GM_unregisterMenuCommand
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_addStyle
+// @require      http://code.jquery.com/jquery-latest.js
+// @downloadURL  https://update.greasyfork.org/scripts/419227/Hide%20Discord%20sidebars.user.js
+// @updateURL    https://update.greasyfork.org/scripts/419227/Hide%20Discord%20sidebars.meta.js
+// ==/UserScript==
+
+// NOTE: Does not work with Greasemonkey; use Tampermonkey or Violentmonkey.
+
+(function () {
+    'use strict';
+
+    /* ---------- configuration (unchanged) ---------- */
+    const hide = {
+        serverSidebar:  true,
+        channelSidebar: true,
+        memberSidebar:  true
+    };
+
+    const memberIconPath =
+        "M14 8.00598C14 10.211 12.206 12.006 10 12.006C7.795 12.006 6 10.211 6 8.00598C6 5.80098 7.794 4.00598 10 4.00598C12.206 4.00598 14 5.80098 14 8.00598ZM2 19.006C2 15.473 5.29 13.006 10 13.006C14.711 13.006 18 15.473 18 19.006V20.006H2V19.006Z";
+
+    const serverSelector = "nav[class*='guilds']";
+    const channelSelector = "div[class*='sidebar']";
+    const memberSelector = "div[class*='membersWrap']";
+    const memberIconSelector = `div[class*='clickable']:has(svg > path[d='${memberIconPath}'])`;
+    const baseSelector = "div[class*='base']";
+
+    const hideMenu = "Hide sidebars";
+    const showMenu = "Show sidebars";
+
+    /* ----------  PERSISTENCE  ---------- */
+    const STORAGE_KEY = 'tm_discordSidebarsHidden';
+
+    let sidebarsHidden = GM_getValue(STORAGE_KEY, false);
+
+    /* ----------  GAP-FIX STYLE  ---------- */
+    const STYLE_ID = 'tm-sidebarGapFix';
+    function setGapFix(enabled) {
+        if (enabled) {
+            if (!document.getElementById(STYLE_ID)) {
+                GM_addStyle(`
+                    ${baseSelector} { left: 0 !important; }`, STYLE_ID);
+            }
+        } else {
+            const n = document.getElementById(STYLE_ID);
+            if (n) n.remove();
+        }
+    }
+
+    /* ---------- misc state ---------- */
+    let hideSidebarMenuId;
+    let baseOffset = "72px";
+    let memberSidebarHidden;
+
+    const selectors = {
+        serverSidebar:  serverSelector,
+        channelSidebar: channelSelector,
+        memberSidebar:  memberSelector
+    };
+
+    /* ========== init ========== */
+    const readyObserver = new MutationObserver((_, obs) => {
+        if ($(baseSelector).length) {
+            applySidebarState(sidebarsHidden);
+            updateHideSidebarMenu();
+            setGapFix(true); // NEW
+            obs.disconnect();
+        }
+    });
+    readyObserver.observe(document.documentElement, { childList: true, subtree: true });
+
+    /* ========== hot-key ========== */
+    document.addEventListener('keydown', e => {
+        if (e.altKey && e.key.toLowerCase() === 'a') {
+            e.preventDefault();
+            toggleSidebars();
+        }
+    });
+
+    /* --------------- core --------------- */
+    function toggleSidebars() {
+        sidebarsHidden = !sidebarsHidden;
+        GM_setValue(STORAGE_KEY, sidebarsHidden);
+        applySidebarState(sidebarsHidden);
+        updateHideSidebarMenu();
+    }
+
+    function applySidebarState(hideThem) {
+        memberSidebarHidden = $(memberIconSelector)
+                                  .filter("div[class*='selected']").length === 0;
+
+        for (const sidebar in selectors) {
+            if (sidebar === "memberSidebar" && memberSidebarHidden) continue;
+            if (hide[sidebar]) setSidebar(selectors[sidebar], !hideThem);
+        }
+
+        if (hide.serverSidebar) {
+            const base = $(baseSelector);
+            if (hideThem) {
+                baseOffset = base[0]?.style.left || baseOffset;
+                base.css("left", "0px");
+                setGapFix(true); // NEW
+            } else {
+                base.css("left", baseOffset);
+                setGapFix(false); // NEW
+            }
+        }
+    }
+
+    /* --------------- helpers --------------- */
+    function setSidebar(selector, showIt) {
+        if (showIt) showSidebar(selector);
+        else hideSidebar(selector);
+    }
+    function hideSidebar(selector) {
+        const n = $(selector)[0];
+        if (n) n.style.display = 'none';
+    }
+    function showSidebar(selector) {
+        const n = $(selector)[0];
+        if (n) n.style.removeProperty('display');
+    }
+
+    /* --------------- menu --------------- */
+    function updateHideSidebarMenu() {
+        GM_unregisterMenuCommand(hideSidebarMenuId);
+        const label = sidebarsHidden ? showMenu : hideMenu;
+        hideSidebarMenuId = GM_registerMenuCommand(label, toggleSidebars, null);
+    }
+})();
+
+//https://greasyfork.org/en/scripts/419227-hide-discord-sidebars https://gist.github.com/ScoreUnder/203face29ae5a718f641fdb86a7430ed

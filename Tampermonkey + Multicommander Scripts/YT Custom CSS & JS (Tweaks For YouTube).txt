@@ -1,0 +1,40 @@
+/* #guide {
+    display: none!important;
+}
+ 
+ytd-app[guide-persistent-and-visible] ytd-page-manager.ytd-app {
+    margin-left: 0!important;
+} */
+/* default (always visible) OR none (hide) OR wait (busy) or progress*/
+/* asterisk { */
+/* UserStyle code to change mouse cursor to App Busy */
+* {
+    cursor: default !important;
+}
+
+.ytp-time-display, .ytp-chrome-bottom, .ytp-button {
+color: rgb(255, 0, 0)!important; /* 255, 77, 0 (orangey reddish) 255, 0, 255 (magenta) 255,255,0 (yellow) 75, 0, 130 (indigo) 255, 105, 180 (hotpink) .ytp-time-display, .ytp-chrome-bottom trans=0.5 */
+background-color: rgba(0, 255, 255, 0)!important; /* cyan /w 0.5 transparency */
+font-family: "Skygraze"!important; /* Skygraze Continuum RussellSquare */
+font-size: 19px!important; /* 18px works */
+/* overflow: hidden!important; */
+ text-shadow: #4B0082 0 0 15px, #4B0082 0 0 15px;
+filter: glow(color=#00ff52,strength=3);
+}
+/*{
+  .ytp-pause-overlay,
+.ytp-show-cards-title
+  {
+    display: none;
+  }
+}*/
+  /* Remove black overlay */
+/*  ytd-thumbnail-overlay-resume-playback-renderer {
+    display: none !important;
+  }*/
+
+  /* Un-dim thumbnails */
+/*  ytd-thumbnail > a > yt-image-shell > img {
+    filter: none !important;
+  }
+}*/
