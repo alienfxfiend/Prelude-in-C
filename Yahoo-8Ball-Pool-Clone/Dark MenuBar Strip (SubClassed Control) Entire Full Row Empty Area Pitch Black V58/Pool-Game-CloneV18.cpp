@@ -3258,7 +3258,7 @@ static void DrawDarkMenuBar(HWND hwnd) {
     OffsetRect(&rcBar, -rcWin.left, -rcWin.top);
 
     // A. Fill entire menu strip row with black
-    HBRUSH hbrBlack = CreateSolidBrush(RGB(0, 0, 0));
+    HBRUSH hbrBlack = CreateSolidBrush(RGB(23, 29, 37)); /*black*/
     FillRect(hdc, &rcBar, hbrBlack);
     DeleteObject(hbrBlack);
 
@@ -3405,7 +3405,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             // Calculate the Menu Bar area relative to the window
             RECT rcBar = mbi.rcBar;
             OffsetRect(&rcBar, -rcWin.left, -rcWin.top);
-            
+
             // --- A. Force the entire Menu Strip background to Black ---
             HBRUSH hbrBlack = CreateSolidBrush(RGB(0, 0, 0));
             FillRect(hdc, &rcBar, hbrBlack);
@@ -3414,11 +3414,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             // --- B. Manually Draw the Menu Text (File, Game, Help) ---
             HMENU hMenu = GetMenu(hwnd);
             int itemCount = GetMenuItemCount(hMenu);
-            
-            HFONT hFont = (HFONT)SendMessage(hwnd, WM_GETFONT, 0, 0); 
+
+            HFONT hFont = (HFONT)SendMessage(hwnd, WM_GETFONT, 0, 0);
             if (!hFont) hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
             HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
-            
+
             SetBkMode(hdc, TRANSPARENT);
             SetTextColor(hdc, RGB(255, 255, 255)); // Visible White Text
 
@@ -3438,7 +3438,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             SelectObject(hdc, hOldFont);
             ReleaseDC(hwnd, hdc);
         }
-        
+
         // Return 0 for UAHDRAWMENU to tell Windows we've fully handled the background
         if (msg == WM_UAHDRAWMENU) return 0;
         break;
@@ -3447,7 +3447,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     // [+] Prevent the "Gray-Out" when a menu is clicked/active
     case WM_UAHNCPAINTMENUPOPUP: {
         // This stops Windows from reverting the bar to gray when the popup is active
-        return 0; 
+        return 0;
     }*/
     case WM_ERASEBKGND: {
         HDC hdc = (HDC)wParam;
@@ -3465,23 +3465,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         // Let Windows erase the rest normally
         return DefWindowProc(hwnd, WM_ERASEBKGND, wParam, lParam);
     }
-    /*case WM_UAHDRAWMENU: {
-        // Paint the entire horizontal menu bar strip black
-        MENUBARINFO mbi = { sizeof(mbi) };
-        if (GetMenuBarInfo(hwnd, OBJID_MENU, 0, &mbi)) {
-            HDC hdc = GetWindowDC(hwnd);
-            RECT rcBar = mbi.rcBar;
-            OffsetRect(&rcBar, -mbi.rcBar.left, -mbi.rcBar.top);
+                      /*case WM_UAHDRAWMENU: {
+                          // Paint the entire horizontal menu bar strip black
+                          MENUBARINFO mbi = { sizeof(mbi) };
+                          if (GetMenuBarInfo(hwnd, OBJID_MENU, 0, &mbi)) {
+                              HDC hdc = GetWindowDC(hwnd);
+                              RECT rcBar = mbi.rcBar;
+                              OffsetRect(&rcBar, -mbi.rcBar.left, -mbi.rcBar.top);
 
-            HBRUSH hbrBlack = CreateSolidBrush(RGB(0, 0, 0));
-            FillRect(hdc, &rcBar, hbrBlack);
-            DeleteObject(hbrBlack);
+                              HBRUSH hbrBlack = CreateSolidBrush(RGB(0, 0, 0));
+                              FillRect(hdc, &rcBar, hbrBlack);
+                              DeleteObject(hbrBlack);
 
-            ReleaseDC(hwnd, hdc);
-            return 0; // handled
-        }
-        break;
-    }*/
+                              ReleaseDC(hwnd, hdc);
+                              return 0; // handled
+                          }
+                          break;
+                      }*/
     case WM_MEASUREITEM: {
         LPMEASUREITEMSTRUCT mis = (LPMEASUREITEMSTRUCT)lParam;
         if (mis->CtlType == ODT_MENU) {
@@ -3516,7 +3516,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             GetMenuItemInfo((HMENU)dis->hwndItem, dis->itemID, FALSE, &miiSep);
 
             if (miiSep.fType & MFT_SEPARATOR) {
-                HBRUSH hbrBg = CreateSolidBrush(RGB(0, 0, 0));
+                HBRUSH hbrBg = CreateSolidBrush(RGB(23, 29, 37)); /*black*/
                 FillRect(dis->hDC, &dis->rcItem, hbrBg);
                 DeleteObject(hbrBg);
 
@@ -3532,7 +3532,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 return TRUE;
             }
 
-            COLORREF bg = (dis->itemState & ODS_SELECTED) ? RGB(40, 40, 40) : RGB(0, 0, 0);
+            COLORREF bg = (dis->itemState & ODS_SELECTED) ? RGB(40, 40, 40) : RGB(23, 29, 37); /*RGB#2 black*/
             HBRUSH hBrush = CreateSolidBrush(bg);
             FillRect(dis->hDC, &dis->rcItem, hBrush);
             DeleteObject(hBrush);
@@ -3576,7 +3576,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         break;
     }
-        // --- NEW: Handle Menu Commands ---
+                    // --- NEW: Handle Menu Commands ---
     case WM_COMMAND:
     {
         int wmId = LOWORD(wParam);
@@ -3617,15 +3617,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             UpdateWindowTitle();
             break;
 
-        /*case ID_GAME_CHEATMODE:
-            cheatModeEnabled = !cheatModeEnabled;
-            CheckMenuItem(hMenu, ID_GAME_CHEATMODE, cheatModeEnabled ? MF_CHECKED : MF_UNCHECKED);
-            if (cheatModeEnabled) MessageBeep(MB_ICONEXCLAMATION);
-            else MessageBeep(MB_OK);
-            InvalidateRect(hwnd, NULL, FALSE); // Redraw to show/hide "CHEAT MODE" text
-            break;*/
+            /*case ID_GAME_CHEATMODE:
+                cheatModeEnabled = !cheatModeEnabled;
+                CheckMenuItem(hMenu, ID_GAME_CHEATMODE, cheatModeEnabled ? MF_CHECKED : MF_UNCHECKED);
+                if (cheatModeEnabled) MessageBeep(MB_ICONEXCLAMATION);
+                else MessageBeep(MB_OK);
+                InvalidateRect(hwnd, NULL, FALSE); // Redraw to show/hide "CHEAT MODE" text
+                break;*/
 
-            // --- Toggle Cheat Mode (Kinda like your existing handler for cheat) ---
+                // --- Toggle Cheat Mode (Kinda like your existing handler for cheat) ---
         case ID_GAME_CHEATMODE:
         {
             // Toggle the cheat-mode flag
@@ -3682,7 +3682,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             SendMessage(hwnd, WM_KEYDOWN, 'P', 0);
             break;
 
-        // --- Return Sunk Ball command (guarded so it only runs when Cheat Mode is ON) ---
+            // --- Return Sunk Ball command (guarded so it only runs when Cheat Mode is ON) ---
         case ID_GAME_UNDO_SUNK_BALL:
         {
             // Server-side safety: only allow the action when cheatModeEnabled is true.
@@ -3714,7 +3714,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         break;*/
 
-            // --- Table Color Hot-Swap ---
+        // --- Table Color Hot-Swap ---
         case ID_TABLECOLOR_INDIGO:
         case ID_TABLECOLOR_TAN:
         case ID_TABLECOLOR_TEAL:
@@ -3809,32 +3809,32 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             mciSendCommand(midiDeviceID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)&mciPlay);
         }
         return 0;*/
-    /*case WM_CREATE:
-        return 0;*/
-        // [+] NEW: Force Dark Background for the Menu Bar strip
-    //INCINERATE=>THIS
-    /*case WM_UAHDRAWMENU:
-    {
-        UAHMENUPOPUPMETRICS* pMetrics = (UAHMENUPOPUPMETRICS*)lParam;
-        RECT rc;
-        MENUBARINFO mbi = { sizeof(mbi) };
-        GetMenuBarInfo(hwnd, OBJID_MENU, 0, &mbi);
+        /*case WM_CREATE:
+            return 0;*/
+            // [+] NEW: Force Dark Background for the Menu Bar strip
+        //INCINERATE=>THIS
+        /*case WM_UAHDRAWMENU:
+        {
+            UAHMENUPOPUPMETRICS* pMetrics = (UAHMENUPOPUPMETRICS*)lParam;
+            RECT rc;
+            MENUBARINFO mbi = { sizeof(mbi) };
+            GetMenuBarInfo(hwnd, OBJID_MENU, 0, &mbi);
 
-        HDC hdc = GetWindowDC(hwnd);
-        GetWindowRect(hwnd, &rc);
+            HDC hdc = GetWindowDC(hwnd);
+            GetWindowRect(hwnd, &rc);
 
-        // Offset the rectangle to the menu bar area
-        RECT rcBar = mbi.rcBar;
-        OffsetRect(&rcBar, -rc.left, -rc.top);
+            // Offset the rectangle to the menu bar area
+            RECT rcBar = mbi.rcBar;
+            OffsetRect(&rcBar, -rc.left, -rc.top);
 
-        // Professional Black Background (Match your game theme)
-        HBRUSH hbrBlack = CreateSolidBrush(RGB(0, 0, 0));
-        FillRect(hdc, &rcBar, hbrBlack);
-        DeleteObject(hbrBlack);
+            // Professional Black Background (Match your game theme)
+            HBRUSH hbrBlack = CreateSolidBrush(RGB(0, 0, 0));
+            FillRect(hdc, &rcBar, hbrBlack);
+            DeleteObject(hbrBlack);
 
-        ReleaseDC(hwnd, hdc);
-        return 0; // Tell Windows we handled the drawing
-    }*/
+            ReleaseDC(hwnd, hdc);
+            return 0; // Tell Windows we handled the drawing
+        }*/
     case WM_CREATE:
     {
         HMENU hMenu = GetMenu(hwnd);
@@ -3866,7 +3866,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         UINT height = HIWORD(lParam);
         OnResize(width, height);
         return 0;
-    }    
+    }
     case WM_KEYDOWN:
     {
         cueBall = GetCueBall();
