@@ -15,39 +15,31 @@ SetWorkingDir %A_ScriptDir%
 return
 
 ;----------------------------------------------------------
-;  BUTTON "GO!"
+;  BUTTON "GO!" – mirrors N++ macro step by step
 ;----------------------------------------------------------
 Short:
-        Gui, Submit, NoHide                    ; retrieve URLWant
-        ; Normalise white-space (turn CR/LF or TAB into a single SPACE)
-        All := RegExReplace(URLWant, "\s+", " ")
+        Gui, Submit, NoHide
 
-        out := ""                               ; final string that we’ll push back
-        Loop, Parse, All, %A_Space%             ; handle EVERY single token
-        {
-                u := A_LoopField
-                if (u = "")                       ; extra safety – ignore empty tokens
-                        continue
+        out := URLWant
 
-                ;-----------------------------  YOUTUBE
-                if RegExMatch(u, "i)^https?://(?:www|m)\.youtube\.com/")
-                {
-                        u := RegExReplace(u, "i)m\.youtube\.com", "www.youtube.com")          ; 1) m. → www.
-                        u := RegExReplace(u, "&pp=.*")                                        ; 2) drop &pp=… and everything after
-                        u := RegExReplace(u, "i)https?://www\.youtube\.com/watch\?v=", "https://youtu.be/")  ; 3) compact link
-                }
-                ;-----------------------------  DROPBOX
-                else if RegExMatch(u, "i)^https?://www\.dropbox\.com/")
-                {
-                        ; Add ?raw=1  (or &raw=1 if there is already a query-string)
-                        if !RegExMatch(u, "i)([&?]raw=1)$")
-                                u .= (InStr(u, "?") ? "&" : "?") "raw=1"
-                }
+        ; Step 1: Strip &pp= and everything non-whitespace after it (regex)
+        out := RegExReplace(out, "i)&pp=\S+", "")
 
-                out .= u . A_Space                   ; keep the spacing
-        }
-        StringTrimRight, out, out, 1           ; trailing space
-        GuiControl,, URLWant, %out%            ; show converted URLs
+        ; Step 2: Convert m.youtube.com/ → www.youtube.com/
+        ;         (handles /shorts/, /live/, /playlist, etc.)
+        out := RegExReplace(out, "i)m\.youtube\.com/", "www.youtube.com/")
+
+        ; Step 3: Convert www.youtube.com/watch?v= → youtu.be/
+        ;         (only /watch?v= URLs become short links)
+        out := RegExReplace(out, "i)www\.youtube\.com/watch\?v=", "youtu.be/")
+
+        ; Step 4: Convert www.dropbox → dl.dropboxusercontent
+        out := RegExReplace(out, "i)www\.dropbox", "dl.dropboxusercontent")
+
+        ; Step 5: Remove ?dl=0
+        out := RegExReplace(out, "i)\?dl=0", "")
+
+        GuiControl,, URLWant, %out%
 return
 
 ;----------------------------------------------------------
