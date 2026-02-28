@@ -482,17 +482,17 @@ void CreateAppMenu(HWND hwnd) {
     AppendMenu(hView, MF_SEPARATOR, 0, NULL);
     AppendMenu(hView, MF_STRING, IDM_OP_INC, L"Increase Grid Opacity\t]");
     AppendMenu(hView, MF_STRING, IDM_OP_DEC, L"Decrease Grid Opacity\t[");
-    AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hView, L"&View");
-
-    // Add these lines here:
-    AppendMenu(hMenuBar, MF_STRING, IDM_EDIT_UNDO, L"Undo");
-    AppendMenu(hMenuBar, MF_STRING, IDM_EDIT_REDO, L"Redo");
+    AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hView, L"&View");    
 
     // 4. Help Menu
     HMENU hHelp = CreatePopupMenu();
     AppendMenu(hHelp, MF_STRING, IDM_HELP_KEYS, L"&Keyboard Controls...");
     AppendMenu(hHelp, MF_STRING, IDM_HELP_ABOUT, L"&About...\tF1");
     AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelp, L"&Help");
+
+    // Add these lines here:
+    AppendMenu(hMenuBar, MF_STRING, IDM_EDIT_UNDO, L"Undo");
+    AppendMenu(hMenuBar, MF_STRING, IDM_EDIT_REDO, L"Redo");
 
     SetMenu(hwnd, hMenuBar);
     UpdateMenuState(hwnd); // Set initial checks
@@ -574,6 +574,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             MessageBox(hwnd, L"Controls:\n\nP/E : Brush / Eraser\nQ : Color Picker\n+/- : Brush Size\nG : Toggle Grid\nA : Toggle Grid Alpha\nPgUp/PgDn : Grid Zoom\n[ / ] : Grid Opacity\nSpace + Drag : Pan Canvas\nC : Clear Canvas\nHome : Reset View", L"Keyboard Controls", MB_OK);
             break;
 
+        case IDM_HELP_ABOUT: SendMessage(hwnd, WM_KEYDOWN, VK_F1, 0); break;
+
             // Add these cases:
         case IDM_EDIT_UNDO:
             if (!isReadOnlyMode && !strokeHistory.empty()) {
@@ -599,8 +601,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 InvalidateRect(hwnd, NULL, FALSE);
             }
             break;
-
-        case IDM_HELP_ABOUT: SendMessage(hwnd, WM_KEYDOWN, VK_F1, 0); break;
         }
         return 0;
     }

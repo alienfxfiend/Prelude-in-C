@@ -35,11 +35,11 @@
 #define IDM_GRID_ZOUT     3004
 #define IDM_OP_INC        3005
 #define IDM_OP_DEC        3006
+#define IDM_HELP_KEYS     4001
+#define IDM_HELP_ABOUT    4002
 // Add these two lines:
 #define IDM_EDIT_UNDO     5001
 #define IDM_EDIT_REDO     5002
-#define IDM_HELP_KEYS     4001
-#define IDM_HELP_ABOUT    4002
 
  //----------------------------------------------------------------
  // Data Structures and Globals
