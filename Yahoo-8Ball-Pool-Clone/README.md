@@ -3,12 +3,12 @@
 * ~~Realistic CueStick (Light Beige /w White Tip & Black Art On Rear.)~~
 * ~~Pockets Semicircle Base (Halfway) /w V-Cut Cavity (Possibly an Inner Rim Layer to Table (chamfered-shape.)) | (empty pockets holes /w Rim around Table perhaps ?) Pocket Rim Border Brush Inner Bevel 3D Look~~
 * ~~Add a File Menu Perhaps ?~~ <!-- Cheat Mode, Mute, New Game -->
-* ✅ ~~Hot Swappable Choice of Pool Table Colors in Startup Dialog Box (At Bottom (Red, Indigo, Tan, Green).) Green Teal Tan Red Purple (as Radio Buttons or Dropdown ListBox !) including Custom Table Color Picking~~
+* ✅ ~~Hot Swappable Choice of Pool Table Colors in Startup Dialog Box (At Bottom (Red, Indigo, Tan, Green).) Green Teal Tan Red Purple (as Radio Buttons or Dropdown ListBox !) including Custom Table Color Picking.~~
 * ~~default Table dither effect. & add Grainy Felt Texture For Table.~~
 * ~~Balls In Motion Effect When Struck & Rolling.~~
-* ~~Kibitzer (Cheat) Mode: Shows/ Traces All Predicted Trajectory Paths Taken When Hit By Current Shot Strength & Aim. Added Hint Move (Pink Glowing Ball) + Demo Mode (CPU spectate.) Also added MenuBar navigation~~
+* ~~Kibitzer (Cheat) Mode: Shows/ Traces All Predicted Trajectory Paths Taken When Hit By Current Shot Strength & Aim. Added Hint Move (Pink Glowing Ball) + Demo Mode (CPU spectate.) Also added MenuBar navigation.~~
 * Better DrawAimingAids() To Dynamically Better Reflect Contact-Ball <!-- Target Ball ? --> Tip/ Edge sharp-Angled cut-Shots.
-* ~~Some Visual Feedback When Targetting Wrong Player's Balls. Added Splash Screen (7-sec (click to bypass))~~
+* ~~Some Visual Feedback When Targetting Wrong Player's Balls. Added Splash Screen (7-sec (click to bypass).)~~
 * ~~AI Should Handle Bank Shots And English Spin Better /w Better Shot Handling Logic/ Planning/ Decision Making. Enhance AI Shot-Strength for more intense heavy-impact shots!~~
 * ~~In Enabling Fouls To Work In Tandem /w 'Pocket Indicator Arrow', The Foul Text Was Overriden (It Currently Does Not Display) —Needs Revamped code Fix.~~
 * ~~Add 'Edit Player Names' feature to Startup Dialog. + Add Hi-Score Statistics Scoring system.~~
