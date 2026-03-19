@@ -1706,8 +1706,8 @@ void HandleCheatDropPocket(Ball* b, int p) {
     }
     else if (currentGameType == GameType::STRAIGHT_POOL) {
         CheckGameOverConditions(false, false); // Check for win
-        // Glitch #2 Fix: Call user's re-rack function if 1 ball left
-        if (currentGameState != GAME_OVER && ballsOnTableCount == 1) {
+        // Glitch #2 Fix: Call user's re-rack function if 1 ball or 0 balls left
+        if (currentGameState != GAME_OVER && ballsOnTableCount <= 1) {
             ReRackStraightPool(); // Calls your existing function
         }
         else if (currentGameState != GAME_OVER) {
@@ -1777,33 +1777,28 @@ void ReRackStraightPool() {
         }
     }
 
-    // Safety checks - should not happen if called correctly when 1 ball is left
-    if (!lastBall || !cueBall) {
-        // Error condition or unexpected state, maybe just reset game?
-        // For now, just return to avoid crashing.
-        currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
-        if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
-        return;
-    }
+    if (!cueBall) return; // Critical safety check
 
     bool lastBallMoved = false;
     bool cueBallMoved = false;
 
     // --- Edge Case 1: Check if lastBall interferes with the rack area (spots 1-14) ---
-    for (int i = 1; i <= 14; ++i) { // Check spots where balls will be placed
-        if (GetDistanceSq(lastBall->x, lastBall->y, rackPositions[i].x, rackPositions[i].y) < collisionThresholdSq) {
-            // Obstruction found! Move lastBall to the headSpot.
-            lastBall->x = headSpot.x;
-            lastBall->y = headSpot.y;
-            lastBall->vx = 0;
-            lastBall->vy = 0;
-            lastBallMoved = true;
-            break; // No need to check further spots for lastBall
+    // If lastBall is nullptr (all 15 balls pocketed), we skip this.
+    if (lastBall) {
+        for (int i = 1; i <= 14; ++i) { // Check spots where balls will be placed
+            if (GetDistanceSq(lastBall->x, lastBall->y, rackPositions[i].x, rackPositions[i].y) < collisionThresholdSq) {
+                // Obstruction found! Move lastBall to the headSpot.
+                lastBall->x = headSpot.x;
+                lastBall->y = headSpot.y;
+                lastBall->vx = 0;
+                lastBall->vy = 0;
+                lastBallMoved = true;
+                break; // No need to check further spots for lastBall
+            }
         }
     }
 
     // --- Edge Case 2: Check if cueBall interferes with ANY rack spot (0-14) ---
-    // This check includes the headSpot where lastBall might have just been moved.
     bool cueObstructs = false;
     for (int i = 0; i <= 14; ++i) { // Check ALL spots including the head spot
         if (GetDistanceSq(cueBall->x, cueBall->y, rackPositions[i].x, rackPositions[i].y) < collisionThresholdSq) {
@@ -1814,8 +1809,6 @@ void ReRackStraightPool() {
 
     if (cueObstructs) {
         // Cue ball obstructs. Move it behind the headstring (kitchen) and give ball-in-hand.
-
-        // Find a valid spot in the kitchen (reuse Respawn logic concept but simpler)
         float targetX = TABLE_LEFT + (HEADSTRING_X - TABLE_LEFT) * 0.5f;
         float targetY = TABLE_TOP + TABLE_HEIGHT / 2.0f;
         int attempts = 0;
@@ -1823,9 +1816,10 @@ void ReRackStraightPool() {
 
         // Check against lastBall's potential new position as well
         while (attempts < 50) {
-            // Check overlap with lastBall only
-            if (GetDistanceSq(targetX, targetY, lastBall->x, lastBall->y) >= collisionThresholdSq &&
-                targetX < HEADSTRING_X - BALL_RADIUS) // Ensure it's behind headstring
+            // Check overlap with lastBall only (if it exists)
+            bool overlapsLastBall = lastBall ? (GetDistanceSq(targetX, targetY, lastBall->x, lastBall->y) < collisionThresholdSq) : false;
+
+            if (!overlapsLastBall && targetX < HEADSTRING_X - BALL_RADIUS) // Ensure it's behind headstring
             {
                 positionFound = true;
                 break;
@@ -1844,7 +1838,6 @@ void ReRackStraightPool() {
             targetY = RACK_POS_Y;
         }
 
-
         cueBall->x = targetX;
         cueBall->y = targetY;
         cueBall->vx = 0;
@@ -1862,15 +1855,16 @@ void ReRackStraightPool() {
         }
     }
 
-    // --- Place the 14 pocketed balls back in the rack ---
+    // --- Place the 14 (or 15) pocketed balls back in the rack ---
     // Place them in spots 1 to 14, leaving the headSpot (index 0) open,
-    // unless lastBall was moved there.
+    // unless lastBall was moved there. If lastBall == nullptr, place all 15.
     int placedCount = 0;
+    int maxToPlace = (lastBall == nullptr) ? 15 : 14;
+
     for (Ball& b : balls) {
-        // Place if pocketed AND it's not the lastBall (even if lastBall was moved)
-        if (b.id != 0 && b.isPocketed && (&b != lastBall) && placedCount < 14) {
-            // Find next available rack spot (skip index 0 - the head spot)
-            int targetRackIndex = placedCount + 1; // Start placing from index 1
+        if (b.id != 0 && b.isPocketed && (&b != lastBall) && placedCount < maxToPlace) {
+            // If 15 balls, start placing from index 0 (headSpot). If 14 balls, start from index 1.
+            int targetRackIndex = (lastBall == nullptr) ? placedCount : placedCount + 1;
 
             b.x = rackPositions[targetRackIndex].x;
             b.y = rackPositions[targetRackIndex].y;
@@ -1880,7 +1874,7 @@ void ReRackStraightPool() {
             placedCount++;
         }
     }
-    ballsOnTableCount = 15; // Reset count to 15 (14 placed + lastBall)
+    ballsOnTableCount = 15; // Reset count to 15
 
     // [+] NEW: Clear history because balls are back on table.
     // You cannot "undo" a ball that has been officially re-racked.
@@ -6934,6 +6928,8 @@ void ProcessShotResults() {
     }
 
     // --- Step 4: State Transitions ---
+    bool straightPoolNeedsRerack = (currentGameType == GameType::STRAIGHT_POOL && ballsOnTableCount <= 1);
+
     if (foulCommitted) {
         if (turnFoul && foulDisplayCounter <= 0) foulDisplayCounter = 120; // Show "FOUL!" text
 
@@ -6960,7 +6956,16 @@ void ProcessShotResults() {
         }
 
         SwitchTurns();
-        RespawnCueBall(false); // Ball-in-hand anywhere
+
+        // [+] FIX: Ensure Straight Pool re-racks even if a foul occurs on the 14th/15th ball
+        if (straightPoolNeedsRerack) {
+            ReRackStraightPool();
+            // ReRackStraightPool might resume regular play. Force it back to Ball-In-Hand due to the foul!
+            RespawnCueBall(false);
+        }
+        else {
+            RespawnCueBall(false); // Ball-in-hand anywhere
+        }
     }
     else if (currentGameType == GameType::EIGHT_BALL_MODE && player1Info.assignedType == BallType::NONE && numberedBallsPocketedThisTurn > 0) {
         // 8-Ball: Assign types on break or first legal pocket
@@ -6979,8 +6984,8 @@ void ProcessShotResults() {
         CheckAndTransitionToPocketChoice(currentPlayer); // Check if now on 8-ball
 
     }
-    else if (currentGameType == STRAIGHT_POOL && ballsOnTableCount == 1) {
-        // Straight Pool: Trigger re-rack
+    else if (straightPoolNeedsRerack) {
+        // Straight Pool: Trigger normal re-rack
         ReRackStraightPool();
     }
     else if (playerContinuesTurn) {
