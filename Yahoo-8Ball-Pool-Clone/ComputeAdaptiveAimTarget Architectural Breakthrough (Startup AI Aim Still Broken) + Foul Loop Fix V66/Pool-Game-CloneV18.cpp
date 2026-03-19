@@ -3371,6 +3371,35 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
             GlobalFree(hBuffer);
         }
 
+        // [+] NEW: Locate and Load the captboat.gif resource data
+        HRSRC hResGif = FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_CAPTBOAT_IMG), L"GIF");
+        if (hResGif) {
+            DWORD gifSize = SizeofResource(GetModuleHandle(NULL), hResGif);
+            const void* pGifData = LockResource(LoadResource(GetModuleHandle(NULL), hResGif));
+            if (pGifData) {
+                HGLOBAL hGifBuffer = GlobalAlloc(GMEM_MOVEABLE, gifSize);
+                if (hGifBuffer) {
+                    void* pBuffer = GlobalLock(hGifBuffer);
+                    if (pBuffer) {
+                        CopyMemory(pBuffer, pGifData, gifSize);
+                        IStream* pStream = NULL;
+                        if (CreateStreamOnHGlobal(hGifBuffer, FALSE, &pStream) == S_OK) {
+                            Gdiplus::Bitmap* pBitmap = Gdiplus::Bitmap::FromStream(pStream);
+                            if (pBitmap && pBitmap->GetLastStatus() == Gdiplus::Ok) {
+                                HBITMAP hbmReturn = NULL;
+                                pBitmap->GetHBITMAP(Gdiplus::Color(0, 0, 0), &hbmReturn);
+                                SendDlgItemMessage(hDlg, IDC_CAPTBOAT_PIC, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hbmReturn);
+                                delete pBitmap;
+                            }
+                            pStream->Release();
+                        }
+                        GlobalUnlock(hGifBuffer);
+                    }
+                    GlobalFree(hGifBuffer);
+                }
+            }
+        }
+
         // Center the dialog on screen
         RECT rcDlg;
         GetWindowRect(hDlg, &rcDlg);

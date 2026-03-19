@@ -16,6 +16,8 @@
 #define IDD_EDITNAMESDLG                107
 #define IDR_MAIN_MENU                   109
 #define IDB_HACKER_IMG                  114
+#define IDB_CAPTBOAT_IMG                129
+#define IDC_CAPTBOAT_PIC                1032
 #define IDD_ABOUTBOX                    115
 #define IDC_ABOUT_TEXT                  116
 #define IDB_SPLASH_IMG                  118
