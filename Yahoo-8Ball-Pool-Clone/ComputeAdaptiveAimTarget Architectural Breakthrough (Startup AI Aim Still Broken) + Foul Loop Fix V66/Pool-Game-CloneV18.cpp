@@ -3994,6 +3994,15 @@ case WM_ACTIVATE: {
         // Let Windows erase the rest normally
         return DefWindowProc(hwnd, WM_ERASEBKGND, wParam, lParam);
     }
+
+    case WM_INITMENUPOPUP: {
+        // This fires right before a drop-down menu opens, allowing real-time state updates!
+        HMENU hMenuPopup = (HMENU)wParam;
+        bool canUndo = cheatModeEnabled && !g_pocketHistory.empty();
+        EnableMenuItem(hMenuPopup, ID_GAME_UNDO_SUNK_BALL, MF_BYCOMMAND | (canUndo ? MF_ENABLED : MF_GRAYED));
+        return 0;
+    }
+
                       /*case WM_UAHDRAWMENU: {
                           // Paint the entire horizontal menu bar strip black
                           MENUBARINFO mbi = { sizeof(mbi) };
@@ -4189,10 +4198,11 @@ case WM_ACTIVATE: {
                 CheckMenuItem(hMenu, ID_GAME_CHEATMODE,
                     cheatModeEnabled ? MF_CHECKED : MF_UNCHECKED);
 
-                // Enable or gray the "Return Sunk Ball" menu item based ONLY on cheatModeEnabled
+                // Enable or gray the "Return Sunk Ball" menu item based on cheat mode AND sunk balls
+                bool canUndo = cheatModeEnabled && !g_pocketHistory.empty();
                 EnableMenuItem(hMenu,
                     ID_GAME_UNDO_SUNK_BALL,
-                    MF_BYCOMMAND | (cheatModeEnabled ? MF_ENABLED : MF_GRAYED));
+                    MF_BYCOMMAND | (canUndo ? MF_ENABLED : MF_GRAYED));
 
                 // Refresh the menu visuals immediately
                 DrawMenuBar(hwnd);
@@ -4439,10 +4449,11 @@ case WM_ACTIVATE: {
             mi.hbrBack = CreateSolidBrush(RGB(23, 29, 37));
             SetMenuInfo(hMenu, &mi);
 
+            bool canUndo = cheatModeEnabled && !g_pocketHistory.empty();
             EnableMenuItem(
                 hMenu,
                 ID_GAME_UNDO_SUNK_BALL,
-                MF_BYCOMMAND | MF_GRAYED
+                MF_BYCOMMAND | (canUndo ? MF_ENABLED : MF_GRAYED)
             );
 
             CheckMenuItem(
