@@ -121,6 +121,18 @@ themes["latest-Color6"] := { "TextColor": "#90FE53", "BackgroundColor": "#76752F
 themes["latest-Color7-BrownOnOrange"] := { "TextColor": "#F86A23", "BackgroundColor": "#382927" } ;TextColor = #B6380E BackgroundColor = #382927
 themes["latest-Color8-PurpleExpOnOrange"] := { "TextColor": "#B6380E", "BackgroundColor": "#400040" }
 themes["latest-Color8-ChocDefault"] := { "TextColor": "#B6380E", "BackgroundColor": "#382927" }
+themes["latest-Color9-Grassfields"] := { "TextColor": "#0FE1F7", "BackgroundColor": "#206923" }
+themes["latest-Color10-Goldish"] := { "TextColor": "#E8F64F", "BackgroundColor": "#7E7D87" }
+themes["latest-Color11-Goldish-Purple"] := { "TextColor": "#302956", "BackgroundColor": "#7E7D87" }
+themes["latest-Color12-Pink-Lust"] := { "TextColor": "#400040", "BackgroundColor": "#FF0080" }
+themes["latest-Color13-orange"] := { "TextColor": "#346585", "BackgroundColor": "#F8985A" }
+themes["latest-Color14-green"] := { "TextColor": "#C5D95B", "BackgroundColor": "#2BA06F" }
+themes["latest-Color15-darkgold"] := { "TextColor": "#AF4E70", "BackgroundColor": "#F8BDA8" }
+themes["latest-Color16-tearose"] := { "TextColor": "#B9D599", "BackgroundColor": "#67342B" }
+themes["latest-Color17-GrayEasyOnEyes"] := { "TextColor": "#808080", "BackgroundColor": "#000000" }
+themes["latest-Color18-GrayOnPink"] := { "TextColor": "#800040", "BackgroundColor": "#191919" }
+themes["latest-Color19-TealOnGreen"] := { "TextColor": "#2F8DEC", "BackgroundColor": "#c4f048" }
+themes["latest-Color20-GoldOnSteelGray"] := { "TextColor": "#ac6a56", "BackgroundColor": "#181826" }
 themes["Default"] := { "TextColor": "#000000", "BackgroundColor": "#2670BE" }
 ; ... (all your other themes exactly as you had them) ...
 
