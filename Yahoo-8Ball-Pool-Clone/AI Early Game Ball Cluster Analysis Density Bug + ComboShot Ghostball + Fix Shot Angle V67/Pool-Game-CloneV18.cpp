@@ -2462,6 +2462,8 @@ void SaveSettings() {
         outFile << g_isPracticeMode << std::endl; // Save Practice Mode state
         outFile << g_isDemoMode << std::endl;
         outFile << g_customTableColor.r << " " << g_customTableColor.g << " " << g_customTableColor.b << std::endl;
+        outFile << g_debugMode << std::endl;   // Kibitzer Mode
+        outFile << g_tracePaths << std::endl;   // Trace Paths
         outFile.close();
     }
 }
@@ -2506,6 +2508,14 @@ void LoadSettings() {
             g_customTableColor = D2D1::ColorF(0.0f, 0.4f, 0.4392f); // Fallback to Teal
             inFile.clear();
         }
+
+        // [+] NEW: Kibitzer Mode persistence
+        inFile >> g_debugMode;
+        if (inFile.fail()) { g_debugMode = false; inFile.clear(); }
+
+        // [+] NEW: Trace Paths persistence
+        inFile >> g_tracePaths;
+        if (inFile.fail()) { g_tracePaths = false; inFile.clear(); }
 
         inFile.close();
 
@@ -3220,6 +3230,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
         CheckMenuItem(hCurrentMenu, ID_GAME_MUTESOUNDFX, g_soundEffectsMuted ? MF_CHECKED : MF_UNCHECKED);
         CheckMenuItem(hCurrentMenu, ID_GAME_MUTEMUSIC, isMusicPlaying.load() ? MF_UNCHECKED : MF_CHECKED);
         CheckMenuItem(hCurrentMenu, ID_GAME_CHEATMODE, cheatModeEnabled ? MF_CHECKED : MF_UNCHECKED);
+
+        // [+] NEW: Restore persisted toggle states to menu
+        CheckMenuItem(hCurrentMenu, ID_GAME_DEBUGMODE, g_debugMode ? MF_CHECKED : MF_UNCHECKED);
+        CheckMenuItem(hCurrentMenu, ID_GAME_TRACEPATHS, g_tracePaths ? MF_CHECKED : MF_UNCHECKED);
 
         int colorID = ID_TABLECOLOR_INDIGO;
         if (selectedTableColor == TAN) colorID = ID_TABLECOLOR_TAN;
