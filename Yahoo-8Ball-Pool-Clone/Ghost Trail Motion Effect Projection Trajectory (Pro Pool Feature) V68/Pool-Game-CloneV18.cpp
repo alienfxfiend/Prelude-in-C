@@ -12925,7 +12925,8 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
     D2D1_POINT_2F ballCollisionPoint = { 0, 0 };
     D2D1_POINT_2F ghostBallPosForHit = { 0, 0 };
 
-    hitBall = FindFirstHitBall(rayStart, cueAngle, firstHitDistSq);
+    hitBall = FindFirstHitBall(rayStart, angleToDraw, firstHitDistSq);
+    //hitBall = FindFirstHitBall(rayStart, cueAngle, firstHitDistSq);
     if (hitBall) {
         float collisionDist = sqrtf(firstHitDistSq);
         ballCollisionPoint = D2D1::Point2F(rayStart.x + cosA * collisionDist, rayStart.y + sinA * collisionDist);
@@ -13110,7 +13111,6 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
 
     // Draw primary cue ball path
     pRT->DrawLine(rayStart, finalLineEnd, pBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
-
     if (!aimingAtRail && hitBall) {
         D2D1_ELLIPSE ghostCue = D2D1::Ellipse(ballCollisionPoint, BALL_RADIUS, BALL_RADIUS);
         pRT->DrawEllipse(ghostCue, pGhostBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
@@ -13119,9 +13119,14 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
         D2D1_POINT_2F ghostCenter = ballCollisionPoint;
 
         float distToCenterSq = GetDistanceSq(ghostCenter.x, ghostCenter.y, targetCenter.x, targetCenter.y);
-        const float MAX_CONTACT_DIST_SQ = (BALL_RADIUS * 2.0f) * (BALL_RADIUS * 2.0f);
+        //const float MAX_CONTACT_DIST_SQ = (BALL_RADIUS * 2.0f) * (BALL_RADIUS * 2.0f);
+        const float MAX_CONTACT_DIST_SQ = (BALL_RADIUS * 2.0f) * (BALL_RADIUS * 2.0f) + 1.0f; // Epsilon fix for float precision
 
         if (distToCenterSq <= MAX_CONTACT_DIST_SQ) {
+        
+
+        // <<< Chevron trails goes here
+
             float purpleAngle = atan2f(targetCenter.y - ghostCenter.y, targetCenter.x - ghostCenter.x);
             D2D1_POINT_2F purpleStart = targetCenter;
             D2D1_POINT_2F purpleEnd = {
@@ -13148,70 +13153,13 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
             };
 
             pRT->DrawLine(purpleStart, purpleEnd, pPurpleBrush, 2.0f);
-
-
-            // ========================================================================
-            // [+] NEW: Third Aiming-Aid (Animated Translucent Forward Motion Arrows)
-            // ========================================================================
-            // 1. Direction is derived directly from the already calculated purpleAngle
-            float dirX = cosf(purpleAngle);
-            float dirY = sinf(purpleAngle);
-
-            // Configuration constraints for the arrows
-            const float arrowSpacing = 28.0f;
-            const float arrowLength = 14.0f;
-            const float arrowWidth = 16.0f;
-            const float maxTrailDistance = 250.0f;  // Keeps the trail a clean, readable length
-            const float animationSpeed = 0.06f;
-
-            // 2. Smooth animated offset using system uptime
-            float offset = std::fmod(GetTickCount64() * animationSpeed, arrowSpacing);
-
-            // 3. Emanate from the opposite outside edge of the target ball
-            float startX = targetCenter.x + (dirX * BALL_RADIUS);
-            float startY = targetCenter.y + (dirY * BALL_RADIUS);
-
-            ID2D1SolidColorBrush* pArrowBrush = nullptr;
-            if (SUCCEEDED(pRT->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.45f), &pArrowBrush))) {
-                ID2D1PathGeometry* pTrailGeo = nullptr;
-                if (SUCCEEDED(pFactory->CreatePathGeometry(&pTrailGeo))) {
-                    ID2D1GeometrySink* pSink = nullptr;
-                    if (SUCCEEDED(pTrailGeo->Open(&pSink))) {
-
-                        // 4. March along the trajectory and build the geometry
-                        for (float dist = offset; dist < maxTrailDistance; dist += arrowSpacing) {
-                            D2D1_POINT_2F tip = D2D1::Point2F(startX + dirX * dist, startY + dirY * dist);
-
-                            float backX = tip.x - (dirX * arrowLength);
-                            float backY = tip.y - (dirY * arrowLength);
-                            float perpX = -dirY;
-                            float perpY = dirX;
-
-                            D2D1_POINT_2F backLeft = D2D1::Point2F(backX + perpX * (arrowWidth / 2.0f), backY + perpY * (arrowWidth / 2.0f));
-                            D2D1_POINT_2F backRight = D2D1::Point2F(backX - perpX * (arrowWidth / 2.0f), backY - perpY * (arrowWidth / 2.0f));
-
-                            pSink->BeginFigure(tip, D2D1_FIGURE_BEGIN_FILLED);
-                            pSink->AddLine(backLeft);
-                            pSink->AddLine(backRight);
-                            pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
-                        }
-                        pSink->Close();
-
-                        // 5. Render all arrows in a single highly-optimized pass
-                        pRT->FillGeometry(pTrailGeo, pArrowBrush);
-                        SafeRelease(&pSink);
-                    }
-                    SafeRelease(&pTrailGeo);
-                }
-                SafeRelease(&pArrowBrush);
-            }
-            // ========================================================================
-
-
             if (cyanAngle > -999) {
-                pRT->DrawLine(cyanStart, cyanEnd, pCyanBrush, 2.0f);
+                pRT->DrawLine(cyanStart, cyanEnd, pCyanBrush, 2.0f);                
             }
+
         }
+        // <<< Purple & Cyan logic ends here
+
     }
     else if (aimingAtRail && hitRailIndex != -1) {
         float reflectAngle = angleToDraw;
@@ -13231,6 +13179,158 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
         };
         pRT->DrawLine(finalLineEnd, reflectionEnd, pReflectBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
     }
+
+    // =========================================================================
+// 3RD AIMING-AID: Chevron Trail — FULLY STANDALONE
+// Has ZERO connection to Purple/Cyan. Owns every variable it uses.
+// Its own FindFirstHitBall call + own ghost-ball geometry + own physics.
+// Fires whenever a ball is on the angleToDraw ray, regardless of whether
+// the Purple/Cyan lines are shown or suppressed.
+// =========================================================================
+    if (pFactory)
+    {
+        // --- Own independent ray-cast using angleToDraw ----------------------
+        float chv_cosA = cosf(angleToDraw);
+        float chv_sinA = sinf(angleToDraw);
+        float chv_hitDistSq = -1.0f;
+        Ball* chv_ball = FindFirstHitBall(
+            D2D1::Point2F(cueBall->x, cueBall->y),
+            angleToDraw,
+            chv_hitDistSq);
+
+        if (chv_ball && chv_hitDistSq >= 0.0f)
+        {
+            // TRUE ghost ball — solve |cue + t*dir - target| = 2r exactly.
+// FindFirstHitBall uses only 1r, so chv_hitDistSq would place the
+// ghost inside the target ball, producing the same nx/ny as the
+// purple line. Re-solving with 2r breaks that identity for cut shots.
+            float chv_relX = chv_ball->x - cueBall->x;
+            float chv_relY = chv_ball->y - cueBall->y;
+            float chv_projFwd = chv_relX * chv_cosA + chv_relY * chv_sinA;
+            float chv_dSq = chv_relX * chv_relX + chv_relY * chv_relY;
+            float chv_2r = 2.0f * BALL_RADIUS;
+            float chv_disc = chv_projFwd * chv_projFwd - chv_dSq + chv_2r * chv_2r;
+            if (chv_disc < 0.0f) chv_disc = 0.0f;
+            float chv_t = chv_projFwd - sqrtf(chv_disc); // dist to true ghost
+            float chv_ghostX = cueBall->x + chv_cosA * chv_t;
+            float chv_ghostY = cueBall->y + chv_sinA * chv_t;
+
+            // Line-of-centres: from true ghost to target centre
+            float chv_dx = chv_ball->x - chv_ghostX;
+            float chv_dy = chv_ball->y - chv_ghostY;
+            float chv_len = sqrtf(chv_dx * chv_dx + chv_dy * chv_dy);
+            if (chv_len < 0.0001f) chv_len = 1.0f;
+            float chv_nx = chv_dx / chv_len;
+            float chv_ny = chv_dy / chv_len;
+
+            // --- Cue-ball velocity at impact (spin factored in) ---------------
+            float chv_pwr = (powerToDraw > 0.1f) ? powerToDraw : 10.0f;
+            float chv_sX = isAiVisualizingShot ? aiPlannedShotDetails.spinX : cueSpinX;
+            float chv_sY = isAiVisualizingShot ? aiPlannedShotDetails.spinY : cueSpinY;
+            float chv_cVx = chv_cosA * chv_pwr
+                + chv_cosA * chv_sY * 0.5f
+                + chv_sinA * chv_sX * 0.5f;
+            float chv_cVy = chv_sinA * chv_pwr
+                + chv_sinA * chv_sY * 0.5f
+                - chv_cosA * chv_sX * 0.5f;
+
+            // --- Object-ball post-impact velocity (elastic + English throw) ---
+            float chv_vDotN = chv_cVx * chv_nx + chv_cVy * chv_ny;
+            float chv_tVx = chv_nx; // fallback: straight line-of-centres
+            float chv_tVy = chv_ny;
+            if (chv_vDotN > 0.0f) {
+                chv_tVx = chv_vDotN * chv_nx;
+                chv_tVy = chv_vDotN * chv_ny;
+                // English throw — identical constant to CheckCollisions
+                const float kSpin = 0.08f;
+                chv_tVx -= (chv_sY * chv_ny - chv_sX * chv_nx) * kSpin;
+                chv_tVy -= (chv_sY * chv_nx + chv_sX * chv_ny) * kSpin;
+            }
+
+            float chv_tLen = sqrtf(chv_tVx * chv_tVx + chv_tVy * chv_tVy);
+            if (chv_tLen < 0.0001f) chv_tLen = 1.0f;
+            float chv_dirX = chv_tVx / chv_tLen;
+            float chv_dirY = chv_tVy / chv_tLen;
+
+            // --- Raycast: clip to nearest rail then nearest pocket mouth ------
+            D2D1_POINT_2F chv_start = { chv_ball->x, chv_ball->y };
+            float chv_maxD = 2000.0f;
+            D2D1_POINT_2F chv_far = { chv_start.x + chv_dirX * chv_maxD,
+                                        chv_start.y + chv_dirY * chv_maxD };
+            D2D1_POINT_2F chv_railPt;
+            if (FindFirstRailIntersection(chv_start, chv_far, chv_railPt))
+                chv_maxD = GetDistance(chv_start.x, chv_start.y,
+                    chv_railPt.x, chv_railPt.y);
+
+            for (int p = 0; p < 6; ++p) {
+                float bx = pocketPositions[p].x - chv_start.x;
+                float by = pocketPositions[p].y - chv_start.y;
+                float proj = bx * chv_dirX + by * chv_dirY;
+                if (proj > 0.0f && proj < chv_maxD) {
+                    float cx = chv_start.x + proj * chv_dirX;
+                    float cy = chv_start.y + proj * chv_dirY;
+                    float r = GetPocketVisualRadius(p);
+                    if (GetDistanceSq(pocketPositions[p].x, pocketPositions[p].y,
+                        cx, cy) < r * r)
+                        chv_maxD = std::max(0.0f, std::min(chv_maxD, proj));
+                }
+            }
+            chv_maxD = std::max(chv_maxD, 60.0f);
+
+            // --- Animated chevron draw ----------------------------------------
+            static DWORD  chv_t0 = GetTickCount();
+            const  float  chv_spacing = 32.0f;
+            const  float  chv_sweep = 12.0f;
+            const  float  chv_halfW = BALL_RADIUS * 1.25f;
+            const  float  chv_gap = BALL_RADIUS * 1.5f;
+            float chv_elapsed = (GetTickCount() - chv_t0) / 1000.0f;
+            float chv_offset = std::fmod(chv_elapsed * 40.0f, chv_spacing);
+
+            ID2D1SolidColorBrush* chv_brush = nullptr;
+            if (SUCCEEDED(pRT->CreateSolidColorBrush(
+                D2D1::ColorF(1.0f, 0.95f, 0.35f, 0.9f), &chv_brush)))
+            {
+                ID2D1PathGeometry* chv_geo = nullptr;
+                if (SUCCEEDED(pFactory->CreatePathGeometry(&chv_geo)))
+                {
+                    ID2D1GeometrySink* chv_sink = nullptr;
+                    if (SUCCEEDED(chv_geo->Open(&chv_sink)))
+                    {
+                        for (float d = chv_gap + chv_offset;
+                            d < chv_maxD - chv_sweep;
+                            d += chv_spacing)
+                        {
+                            D2D1_POINT_2F tip = {
+                                chv_start.x + chv_dirX * d,
+                                chv_start.y + chv_dirY * d };
+                            float bkX = tip.x - chv_dirX * chv_sweep;
+                            float bkY = tip.y - chv_dirY * chv_sweep;
+                            // Perpendicular: rotate dir 90 degrees
+                            float pX = -chv_dirY, pY = chv_dirX;
+                            D2D1_POINT_2F lw = { bkX + pX * chv_halfW,
+                                                 bkY + pY * chv_halfW };
+                            D2D1_POINT_2F rw = { bkX - pX * chv_halfW,
+                                                 bkY - pY * chv_halfW };
+                            chv_sink->BeginFigure(lw, D2D1_FIGURE_BEGIN_HOLLOW);
+                            chv_sink->AddLine(tip);
+                            chv_sink->AddLine(rw);
+                            chv_sink->EndFigure(D2D1_FIGURE_END_OPEN);
+                        }
+                        chv_sink->Close();
+                        pRT->DrawGeometry(chv_geo, chv_brush, 4.0f);
+                        chv_sink->Release();
+                    }
+                    chv_geo->Release();
+                }
+                chv_brush->Release();
+            }
+        } // end if (chv_ball)
+    }
+    // =========================================================================
+    // END 3RD AIMING-AID
+    // =========================================================================
+
+
 
     SafeRelease(&pBrush);
     SafeRelease(&pGhostBrush);
