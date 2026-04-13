@@ -432,7 +432,8 @@ void StopMidi();
 // NEW: Global for selected table color and definitions
 TableColor selectedTableColor = INDIGO; // Default color
 D2D1_COLOR_F g_customTableColor = D2D1::ColorF(0.05f, 0.09f, 0.28f); // Memory for Custom
-const WCHAR* tableColorNames[] = { L"Indigo", L"Tan", L"Teal", L"Green", L"Red", L"Violet", L"Gray", L"Custom..." };
+const WCHAR* tableColorNames[] = { L"Nebula Night", L"Desert Royale", L"Lagoon Neon", L"Classic Green", L"Blood Red", L"Neon Tokyo", L"Urban Slate", L"Custom..." };
+//const WCHAR* tableColorNames[] = { L"Indigo", L"Tan", L"Teal", L"Green", L"Red", L"Violet", L"Gray", L"Custom..." };
 const D2D1_COLOR_F tableColorValues[8] = {
 D2D1::ColorF(0.05f, 0.09f, 0.28f),       // Indigo
 D2D1::ColorF(0.3529f, 0.3137f, 0.2196f), // Tan
@@ -3631,7 +3632,19 @@ void CreateAppMenu(HWND hwnd) {
     AppendMenu(hGame, MF_SEPARATOR, 0, NULL);
 
     // Table Color Sub-Menu
+    // Table Color Sub-Menu
     HMENU hTableColor = CreatePopupMenu();
+    AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_INDIGO, L"&Nebula Night");
+    AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_TAN, L"&Desert Royale");
+    AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_TEAL, L"&Lagoon Neon");
+    AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_GREEN, L"&Classic Green");
+    AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_RED, L"&Blood Red");
+    AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_VIOLET, L"Neon &Tokyo");
+    AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_GRAY, L"&Urban Slate");
+    AppendMenu(hTableColor, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_CUSTOM, L"Custo&m...");
+    AppendMenu(hGame, MF_POPUP, (UINT_PTR)hTableColor, L"&Table Color");
+    /*HMENU hTableColor = CreatePopupMenu();
     AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_INDIGO, L"&Indigo");
     AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_TAN, L"&Tan");
     AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_TEAL, L"&Teal");
@@ -3641,7 +3654,7 @@ void CreateAppMenu(HWND hwnd) {
     AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_GRAY, L"G&ray");
     AppendMenu(hTableColor, MF_SEPARATOR, 0, NULL);
     AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_CUSTOM, L"&Custom...");
-    AppendMenu(hGame, MF_POPUP, (UINT_PTR)hTableColor, L"&Table Color");
+    AppendMenu(hGame, MF_POPUP, (UINT_PTR)hTableColor, L"&Table Color");*/
 
     AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hGame, L"&Game");
 
