@@ -13245,74 +13245,8 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
 
     // Draw primary cue ball path
     pRT->DrawLine(rayStart, finalLineEnd, pBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
-    if (!aimingAtRail && hitBall) {
-        D2D1_ELLIPSE ghostCue = D2D1::Ellipse(ballCollisionPoint, BALL_RADIUS, BALL_RADIUS);
-        pRT->DrawEllipse(ghostCue, pGhostBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
 
-        D2D1_POINT_2F targetCenter = { hitBall->x, hitBall->y };
-        D2D1_POINT_2F ghostCenter = ballCollisionPoint;
-
-        float distToCenterSq = GetDistanceSq(ghostCenter.x, ghostCenter.y, targetCenter.x, targetCenter.y);
-        //const float MAX_CONTACT_DIST_SQ = (BALL_RADIUS * 2.0f) * (BALL_RADIUS * 2.0f);
-        const float MAX_CONTACT_DIST_SQ = (BALL_RADIUS * 2.0f) * (BALL_RADIUS * 2.0f) + 1.0f; // Epsilon fix for float precision
-
-        if (distToCenterSq <= MAX_CONTACT_DIST_SQ) {
-        
-
-        // <<< Chevron trails goes here
-
-            float purpleAngle = atan2f(targetCenter.y - ghostCenter.y, targetCenter.x - ghostCenter.x);
-            D2D1_POINT_2F purpleStart = targetCenter;
-            D2D1_POINT_2F purpleEnd = {
-                purpleStart.x + cosf(purpleAngle) * rayLength,
-                purpleStart.y + sinf(purpleAngle) * rayLength
-            };
-
-            float cyanAngle;
-            float straightShotEpsilonSq = 0.1f;
-            if (distToCenterSq < straightShotEpsilonSq) {
-                cyanAngle = -1000;
-            }
-            else {
-                D2D1_POINT_2F vInitial = { ghostCenter.x - rayStart.x, ghostCenter.y - rayStart.y };
-                D2D1_POINT_2F vToTarget = { targetCenter.x - rayStart.x, targetCenter.y - rayStart.y };
-                float cross_product_z = vInitial.x * vToTarget.y - vInitial.y * vToTarget.x;
-                cyanAngle = (cross_product_z > 0) ? (purpleAngle - PI / 2.0f) : (purpleAngle + PI / 2.0f);
-            }
-
-            D2D1_POINT_2F cyanStart = ghostCenter;
-            D2D1_POINT_2F cyanEnd = {
-                cyanStart.x + cosf(cyanAngle) * rayLength,
-                cyanStart.y + sinf(cyanAngle) * rayLength
-            };
-
-            pRT->DrawLine(purpleStart, purpleEnd, pPurpleBrush, 2.0f);
-            if (cyanAngle > -999) {
-                pRT->DrawLine(cyanStart, cyanEnd, pCyanBrush, 2.0f);                
-            }
-
-        }
-        // <<< Purple & Cyan logic ends here
-
-    }
-    else if (aimingAtRail && hitRailIndex != -1) {
-        float reflectAngle = trueAimAngle; // --- FIX: Use trueAimAngle ---
-        if (hitRailIndex == 0 || hitRailIndex == 1) {
-            reflectAngle = PI - trueAimAngle;
-        }
-        else {
-            reflectAngle = -trueAimAngle;
-        }
-        while (reflectAngle > PI) reflectAngle -= 2 * PI;
-        while (reflectAngle <= -PI) reflectAngle += 2 * PI;
-
-        float reflectionLength = 150.0f;
-        D2D1_POINT_2F reflectionEnd = {
-            finalLineEnd.x + cosf(reflectAngle) * reflectionLength,
-            finalLineEnd.y + sinf(reflectAngle) * reflectionLength
-        };
-        pRT->DrawLine(finalLineEnd, reflectionEnd, pReflectBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
-    }
+    // <<< 3rd aiming aids here
 
     // =========================================================================
     // 3RD AIMING-AID: Chevron Trail — FULLY STANDALONE
@@ -13474,7 +13408,7 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
     chv_halfW : Since the lines are now much thicker, you might find that the chevrons look "clunky." You can increase chv_halfW(currently BALL_RADIUS * 1.25f) to make the chevrons wider to match their new thickness.
 
     chv_sweep : This controls how "deep" the V - shape is.If you want a sharper or flatter arrow, adjust this value.*/
-    
+
     /*
     ++=====================++
     ++=====================++ Orig Gemini AI /app
@@ -13535,7 +13469,76 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
     // END 3RD AIMING-AID
     // =========================================================================
 
+    if (!aimingAtRail && hitBall) {
+        D2D1_ELLIPSE ghostCue = D2D1::Ellipse(ballCollisionPoint, BALL_RADIUS, BALL_RADIUS);
+        pRT->DrawEllipse(ghostCue, pGhostBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
 
+        D2D1_POINT_2F targetCenter = { hitBall->x, hitBall->y };
+        D2D1_POINT_2F ghostCenter = ballCollisionPoint;
+
+        float distToCenterSq = GetDistanceSq(ghostCenter.x, ghostCenter.y, targetCenter.x, targetCenter.y);
+        //const float MAX_CONTACT_DIST_SQ = (BALL_RADIUS * 2.0f) * (BALL_RADIUS * 2.0f);
+        const float MAX_CONTACT_DIST_SQ = (BALL_RADIUS * 2.0f) * (BALL_RADIUS * 2.0f) + 1.0f; // Epsilon fix for float precision
+
+        if (distToCenterSq <= MAX_CONTACT_DIST_SQ) {
+        
+
+        // <<< Chevron trails goes here
+
+            float purpleAngle = atan2f(targetCenter.y - ghostCenter.y, targetCenter.x - ghostCenter.x);
+            D2D1_POINT_2F purpleStart = targetCenter;
+            D2D1_POINT_2F purpleEnd = {
+                purpleStart.x + cosf(purpleAngle) * rayLength,
+                purpleStart.y + sinf(purpleAngle) * rayLength
+            };
+
+            float cyanAngle;
+            float straightShotEpsilonSq = 0.1f;
+            if (distToCenterSq < straightShotEpsilonSq) {
+                cyanAngle = -1000;
+            }
+            else {
+                D2D1_POINT_2F vInitial = { ghostCenter.x - rayStart.x, ghostCenter.y - rayStart.y };
+                D2D1_POINT_2F vToTarget = { targetCenter.x - rayStart.x, targetCenter.y - rayStart.y };
+                float cross_product_z = vInitial.x * vToTarget.y - vInitial.y * vToTarget.x;
+                cyanAngle = (cross_product_z > 0) ? (purpleAngle - PI / 2.0f) : (purpleAngle + PI / 2.0f);
+            }
+
+            D2D1_POINT_2F cyanStart = ghostCenter;
+            D2D1_POINT_2F cyanEnd = {
+                cyanStart.x + cosf(cyanAngle) * rayLength,
+                cyanStart.y + sinf(cyanAngle) * rayLength
+            };
+
+            pRT->DrawLine(purpleStart, purpleEnd, pPurpleBrush, 2.0f);
+            if (cyanAngle > -999) {
+                pRT->DrawLine(cyanStart, cyanEnd, pCyanBrush, 2.0f);                
+            }
+
+        }
+        // <<< Purple & Cyan logic ends here
+
+    }
+    else if (aimingAtRail && hitRailIndex != -1) {
+        float reflectAngle = trueAimAngle; // --- FIX: Use trueAimAngle ---
+        if (hitRailIndex == 0 || hitRailIndex == 1) {
+            reflectAngle = PI - trueAimAngle;
+        }
+        else {
+            reflectAngle = -trueAimAngle;
+        }
+        while (reflectAngle > PI) reflectAngle -= 2 * PI;
+        while (reflectAngle <= -PI) reflectAngle += 2 * PI;
+
+        float reflectionLength = 150.0f;
+        D2D1_POINT_2F reflectionEnd = {
+            finalLineEnd.x + cosf(reflectAngle) * reflectionLength,
+            finalLineEnd.y + sinf(reflectAngle) * reflectionLength
+        };
+        pRT->DrawLine(finalLineEnd, reflectionEnd, pReflectBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
+    }
+
+// <<< 3rd aiming aids here
 
     SafeRelease(&pBrush);
     SafeRelease(&pGhostBrush);
