@@ -5469,7 +5469,7 @@ case WM_ACTIVATE: {
 
         return 0; // Standard return for message handled
     } // End WM_LBUTTONUP case
-// FOOLPROOF FIX: Handle ONLY the UP event to prevent double-firing
+    // FOOLPROOF FIX: Handle ONLY the UP event to prevent double-firing
     // --- GUARANTEED FIX: Handle Mouse Down instead of Up ---
     case WM_RBUTTONDOWN:
     {
@@ -13315,12 +13315,12 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
     }
 
     // =========================================================================
-// 3RD AIMING-AID: Chevron Trail — FULLY STANDALONE
-// Has ZERO connection to Purple/Cyan. Owns every variable it uses.
-// Its own FindFirstHitBall call + own ghost-ball geometry + own physics.
-// Fires whenever a ball is on the angleToDraw ray, regardless of whether
-// the Purple/Cyan lines are shown or suppressed.
-// =========================================================================
+    // 3RD AIMING-AID: Chevron Trail — FULLY STANDALONE
+    // Has ZERO connection to Purple/Cyan. Owns every variable it uses.
+    // Its own FindFirstHitBall call + own ghost-ball geometry + own physics.
+    // Fires whenever a ball is on the angleToDraw ray, regardless of whether
+    // the Purple/Cyan lines are shown or suppressed.
+    // =========================================================================
     if (pFactory)
     {
         // --- Own independent ray-cast using trueAimAngle ----------------------
@@ -13335,9 +13335,9 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
         if (chv_ball && chv_hitDistSq >= 0.0f)
         {
             // TRUE ghost ball — solve |cue + t*dir - target| = 2r exactly.
-// FindFirstHitBall uses only 1r, so chv_hitDistSq would place the
-// ghost inside the target ball, producing the same nx/ny as the
-// purple line. Re-solving with 2r breaks that identity for cut shots.
+            // FindFirstHitBall uses only 1r, so chv_hitDistSq would place the
+            // ghost inside the target ball, producing the same nx/ny as the
+            // purple line. Re-solving with 2r breaks that identity for cut shots.
             float chv_relX = chv_ball->x - cueBall->x;
             float chv_relY = chv_ball->y - cueBall->y;
             float chv_projFwd = chv_relX * chv_cosA + chv_relY * chv_sinA;
@@ -13408,6 +13408,76 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
             chv_maxD = std::max(chv_maxD, 60.0f);
 
             // --- Animated chevron draw ----------------------------------------
+            static DWORD chv_t0 = GetTickCount();
+            const float chv_spacing = 32.0f;
+            const float chv_sweep = 12.0f;
+            const float chv_halfW = BALL_RADIUS * 1.6f; // Widened slightly to fit the thicker strokes (def: 1.25f)
+            const float chv_gap = BALL_RADIUS * 1.5f;
+            float chv_elapsed = (GetTickCount() - chv_t0) / 1000.0f;
+            float chv_offset = std::fmod(chv_elapsed * 40.0f, chv_spacing);
+
+            ID2D1SolidColorBrush* chv_brush = nullptr;
+            if (SUCCEEDED(pRT->CreateSolidColorBrush(D2D1::ColorF(1.0f, 0.95f, 0.35f, 0.75f), &chv_brush))) //white: (1.0f, 1.0f, 1.0f, 0.75f) -> 0.85falpha
+            {
+                ID2D1PathGeometry* chv_geo = nullptr;
+                if (SUCCEEDED(pFactory->CreatePathGeometry(&chv_geo)))
+                {
+                    ID2D1GeometrySink* chv_sink = nullptr;
+                    if (SUCCEEDED(chv_geo->Open(&chv_sink)))
+                    {
+                        for (float d = chv_gap + chv_offset; d < chv_maxD - chv_sweep; d += chv_spacing) {
+                            D2D1_POINT_2F tip = { chv_start.x + chv_dirX * d, chv_start.y + chv_dirY * d };
+                            float bkX = tip.x - chv_dirX * chv_sweep;
+                            float bkY = tip.y - chv_dirY * chv_sweep;
+                            float pX = -chv_dirY, pY = chv_dirX;
+                            D2D1_POINT_2F lw = { bkX + pX * chv_halfW, bkY + pY * chv_halfW };
+                            D2D1_POINT_2F rw = { bkX - pX * chv_halfW, bkY - pY * chv_halfW };
+                            chv_sink->BeginFigure(lw, D2D1_FIGURE_BEGIN_HOLLOW);
+                            chv_sink->AddLine(tip);
+                            chv_sink->AddLine(rw);
+                            chv_sink->EndFigure(D2D1_FIGURE_END_OPEN);
+                        }
+                        chv_sink->Close();
+
+                        D2D1_STROKE_STYLE_PROPERTIES cv_ssp;
+                        memset(&cv_ssp, 0, sizeof(cv_ssp));
+                        cv_ssp.startCap = D2D1_CAP_STYLE_ROUND;
+                        cv_ssp.endCap = D2D1_CAP_STYLE_ROUND;
+                        cv_ssp.dashCap = D2D1_CAP_STYLE_ROUND;
+                        cv_ssp.lineJoin = D2D1_LINE_JOIN_ROUND;
+                        cv_ssp.miterLimit = 1.0f;
+                        cv_ssp.dashStyle = D2D1_DASH_STYLE_SOLID;
+
+                        // ---> [ADJUST THIS VALUE TO CHANGE THICKNESS] <---
+                        // Increased from 4.0f to 10.0f for massive visibility
+                        float chevronThickness = 10.0f;
+
+                        ID2D1StrokeStyle* cv_ss = nullptr;
+                        if (SUCCEEDED(pFactory->CreateStrokeStyle(&cv_ssp, nullptr, 0, &cv_ss))) {
+                            pRT->DrawGeometry(chv_geo, chv_brush, chevronThickness, cv_ss);
+                            cv_ss->Release();
+                        }
+                        else {
+                            pRT->DrawGeometry(chv_geo, chv_brush, chevronThickness);
+                        }
+                        chv_sink->Release();
+                    }
+                    chv_geo->Release();
+                }
+                chv_brush->Release();
+            }
+        }
+    }
+
+    /*chv_thickness: This is the value to change.A higher number increases the boldness of the chevrons.
+
+    chv_halfW : Since the lines are now much thicker, you might find that the chevrons look "clunky." You can increase chv_halfW(currently BALL_RADIUS * 1.25f) to make the chevrons wider to match their new thickness.
+
+    chv_sweep : This controls how "deep" the V - shape is.If you want a sharper or flatter arrow, adjust this value.*/
+    
+    /*
+    ++=====================++
+    ++=====================++ Orig Gemini AI /app
             static DWORD  chv_t0 = GetTickCount();
             const  float  chv_spacing = 32.0f;
             const  float  chv_sweep = 12.0f;
@@ -13447,7 +13517,9 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
                             chv_sink->EndFigure(D2D1_FIGURE_END_OPEN);
                         }
                         chv_sink->Close();
-                        pRT->DrawGeometry(chv_geo, chv_brush, 4.0f);
+                        float chv_thickness = 8.0f; // [+] 2X thicker (Original was 4.0f)
+                        pRT->DrawGeometry(chv_geo, chv_brush, chv_thickness);
+                        //pRT->DrawGeometry(chv_geo, chv_brush, 4.0f);
                         chv_sink->Release();
                     }
                     chv_geo->Release();
@@ -13456,6 +13528,9 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
             }
         } // end if (chv_ball)
     }
+++=====================++
+++=====================++
+    */
     // =========================================================================
     // END 3RD AIMING-AID
     // =========================================================================
