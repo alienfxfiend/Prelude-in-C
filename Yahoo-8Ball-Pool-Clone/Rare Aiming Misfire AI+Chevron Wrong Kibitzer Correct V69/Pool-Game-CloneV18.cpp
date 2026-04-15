@@ -5469,15 +5469,24 @@ case WM_ACTIVATE: {
 
         return 0; // Standard return for message handled
     } // End WM_LBUTTONUP case
-    // FOOLPROOF FIX: Handle ONLY the UP event to prevent double-firing
+// FOOLPROOF FIX: Handle ONLY the UP event to prevent double-firing
     // --- GUARANTEED FIX: Handle Mouse Down instead of Up ---
     case WM_RBUTTONDOWN:
     {
+        int x = LOWORD(lParam);
+        int y = HIWORD(lParam);
+
+        // --- FEATURE ADDITION: Right-Click to Reset English Spin ---
+        // Check if the right-click occurred within the bounds of the Spin Indicator
+        if (GetDistanceSq((float)x, (float)y, spinIndicatorCenter.x, spinIndicatorCenter.y) <= (spinIndicatorRadius * spinIndicatorRadius)) {
+            cueSpinX = 0.0f;
+            cueSpinY = 0.0f;
+            InvalidateRect(hwnd, NULL, FALSE); // Force redraw to show centered dot
+            return 0; // Consume the message
+        }
+
         // Only require Debug Mode (do NOT require Kibitzer). Use the exact pocket radius
         if (cheatModeEnabled) {
-            int x = LOWORD(lParam);
-            int y = HIWORD(lParam);
-
             bool clickedPocket = false;
             for (int i = 0; i < 6; ++i) {
                 // Use the actual hole radius for hit-testing (no padding).
