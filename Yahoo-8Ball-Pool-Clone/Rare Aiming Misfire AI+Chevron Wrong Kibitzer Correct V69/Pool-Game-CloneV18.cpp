@@ -10814,18 +10814,37 @@ bool IsPathClear(D2D1_POINT_2F start, D2D1_POINT_2F end, int ignoredBallId1, int
         { vertices[8], vertices[0] }, { vertices[0], vertices[1] }
     };
 
-    D2D1_POINT_2F intersection;
-    for (int j = 0; j < 12; ++j) {
-        if (LineSegmentIntersection(start, end, segments[j][0], segments[j][1], intersection)) {
-            bool insidePocketMouth = false;
-            for (int p = 0; p < 6; ++p) {
-                float acceptanceRadius = GetPocketVisualRadius(p) + 8.0f; // Allow path to pass near pocket
-                if (GetDistanceSq(intersection.x, intersection.y, pocketPositions[p].x, pocketPositions[p].y) < acceptanceRadius * acceptanceRadius) {
-                    insidePocketMouth = true;
-                    break;
+    // --- BUG FIX: AI Volume Sweep Rim Check ---
+        // Previously used a zero-width raycast which allowed the AI to take shots that grazed
+        // chamfer tips, causing the physics engine (and Kibitzer) to bounce them.
+        // We now sample the path to ensure the actual BALL volume clears the rims.
+    float pathDx = end.x - start.x;
+    float pathDy = end.y - start.y;
+    float pathLen = sqrtf(pathDx * pathDx + pathDy * pathDy);
+
+    if (pathLen > 1e-4f) {
+        int steps = (int)(pathLen / (BALL_RADIUS * 0.5f)); // Sample every half radius for safety
+        if (steps < 1) steps = 1;
+
+        for (int step = 0; step <= steps; ++step) {
+            D2D1_POINT_2F pt = {
+                start.x + pathDx * ((float)step / steps),
+                start.y + pathDy * ((float)step / steps)
+            };
+
+            for (int j = 0; j < 12; ++j) {
+                if (PointToLineSegmentDistanceSq(pt, segments[j][0], segments[j][1]) < BALL_RADIUS * BALL_RADIUS) {
+                    bool insidePocketMouth = false;
+                    for (int p = 0; p < 6; ++p) {
+                        float acceptanceRadius = GetPocketVisualRadius(p) * 1.05f;
+                        if (GetDistanceSq(pt.x, pt.y, pocketPositions[p].x, pocketPositions[p].y) < acceptanceRadius * acceptanceRadius) {
+                            insidePocketMouth = true;
+                            break;
+                        }
+                    }
+                    if (!insidePocketMouth) return false; // Volumetric path blocked by rim
                 }
             }
-            if (!insidePocketMouth) return false; // Blocked by a solid part of the rim
         }
     }
 
@@ -12793,15 +12812,14 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
         Ball* simCue = nullptr;
         for (auto& b : simBalls) { if (b.id == 0) simCue = &b; }
 
+        float simSpinX = def_sX;
+        float simSpinY = def_sY;
+
         // 2. Apply the shot to the simulated cue ball
         if (simCue) {
-            simCue->vx = rawCosA * powerToDraw;
-            simCue->vy = rawSinA * powerToDraw;
-            // --- BUG FIX: Match ApplyShot exactly for Kibitzer ---
-            simCue->vx += rawCosA * def_sY * 0.5f;
-            simCue->vy += rawSinA * def_sY * 0.5f;
-            simCue->vx += rawSinA * def_sX * 0.5f;
-            simCue->vy -= rawCosA * def_sX * 0.5f;
+            // --- BUG FIX: Use def_Vx/def_Vy so Kibitzer doesn't glitch sideways when power is 0 ---
+            simCue->vx = def_Vx;
+            simCue->vy = def_Vy;
         }
 
         // 3. Trajectory Recording
@@ -12883,6 +12901,13 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
                             b.vy -= 2 * dot * normalY;
                             b.x += normalX * (BALL_RADIUS - sqrtf(distSq));
                             b.y += normalY * (BALL_RADIUS - sqrtf(distSq));
+
+                            // --- BUG FIX: Apply Spin Decay on Wall Hit for Parity ---
+                            if (b.id == 0) {
+                                if (b.x <= TABLE_LEFT + BALL_RADIUS || b.x >= TABLE_RIGHT - BALL_RADIUS) { b.vy += simSpinX * b.vx * 0.05f; }
+                                if (b.y <= TABLE_TOP + BALL_RADIUS || b.y >= TABLE_BOTTOM - BALL_RADIUS) { b.vx -= simSpinY * b.vy * 0.05f; }
+                                simSpinX *= 0.7f; simSpinY *= 0.7f;
+                            }
                         }
                         break;
                     }
@@ -12899,19 +12924,56 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
                     float distSq = dx * dx + dy * dy;
                     float minDist = BALL_RADIUS * 2.0f;
 
-                    if (distSq < minDist * minDist) {
+                    if (distSq > 1e-6f && distSq < minDist * minDist) {
                         float dist = sqrtf(distSq);
+
+                        // --- BUG FIX: Match Exact Time-Of-Impact (CCD) Normal from Main Engine ---
+                        float rvx = b1.vx - b2.vx;
+                        float rvy = b1.vy - b2.vy;
+                        float rvSq = rvx * rvx + rvy * rvy;
+
+                        float nx, ny;
+                        if (rvSq > 1e-6f) {
+                            float A = rvSq;
+                            float B = (dx * rvx + dy * rvy);
+                            float C = distSq - minDist * minDist;
+                            float discriminant = B * B - A * C;
+
+                            if (discriminant > 0.0f) {
+                                float t = (-B + sqrtf(discriminant)) / A;
+                                float exactDx = dx + rvx * t;
+                                float exactDy = dy + rvy * t;
+                                float exactDist = sqrtf(exactDx * exactDx + exactDy * exactDy);
+                                if (exactDist > 1e-6f) {
+                                    nx = exactDx / exactDist;
+                                    ny = exactDy / exactDist;
+                                }
+                                else { nx = dx / dist; ny = dy / dist; }
+                            }
+                            else { nx = dx / dist; ny = dy / dist; }
+                        }
+                        else { nx = dx / dist; ny = dy / dist; }
+
                         float overlap = minDist - dist;
-                        float nx = dx / dist; float ny = dy / dist;
                         b1.x -= overlap * 0.5f * nx; b1.y -= overlap * 0.5f * ny;
                         b2.x += overlap * 0.5f * nx; b2.y += overlap * 0.5f * ny;
 
-                        float rvx = b1.vx - b2.vx; float rvy = b1.vy - b2.vy;
                         float velAlongNormal = rvx * nx + rvy * ny;
 
                         if (velAlongNormal > 0) {
-                            b1.vx -= velAlongNormal * nx; b1.vy -= velAlongNormal * ny;
-                            b2.vx += velAlongNormal * nx; b2.vy += velAlongNormal * ny;
+                            float impulse = velAlongNormal;
+                            b1.vx -= impulse * nx; b1.vy -= impulse * ny;
+                            b2.vx += impulse * nx; b2.vy += impulse * ny;
+
+                            // --- BUG FIX: Apply English Throw Physics for Parity ---
+                            if (b1.id == 0 || b2.id == 0) {
+                                float spinEffectFactor = 0.08f;
+                                b1.vx += (simSpinY * ny - simSpinX * nx) * spinEffectFactor;
+                                b1.vy += (simSpinY * nx + simSpinX * ny) * spinEffectFactor;
+                                b2.vx -= (simSpinY * ny - simSpinX * nx) * spinEffectFactor;
+                                b2.vy -= (simSpinY * nx + simSpinX * ny) * spinEffectFactor;
+                                simSpinX *= 0.85f; simSpinY *= 0.85f;
+                            }
                         }
                     }
                 }
