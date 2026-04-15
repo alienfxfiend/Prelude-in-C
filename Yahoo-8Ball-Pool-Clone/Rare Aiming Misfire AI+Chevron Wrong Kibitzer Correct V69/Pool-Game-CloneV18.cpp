@@ -13351,7 +13351,7 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
             float chv_offset = std::fmod(chv_elapsed * 40.0f, chv_spacing);
 
             ID2D1SolidColorBrush* chv_brush = nullptr;
-            if (SUCCEEDED(pRT->CreateSolidColorBrush(D2D1::ColorF(1.0f, 0.95f, 0.35f, 0.75f), &chv_brush))) //white: (1.0f, 1.0f, 1.0f, 0.75f) -> 0.85falpha
+            if (SUCCEEDED(pRT->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f), &chv_brush))) //white: (1.0f, 1.0f, 1.0f, 0.75f) -> 0.85falpha | yellow: (1.0f, 0.95f, 0.35f, 0.75f)
             {
                 ID2D1PathGeometry* chv_geo = nullptr;
                 if (SUCCEEDED(pFactory->CreatePathGeometry(&chv_geo)))
@@ -13410,8 +13410,8 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
     chv_sweep : This controls how "deep" the V - shape is.If you want a sharper or flatter arrow, adjust this value.*/
 
     /*
-    ++=====================++
-    ++=====================++ Orig Gemini AI /app
+++=====================++
+++=====================++ Orig Gemini AI /app
             static DWORD  chv_t0 = GetTickCount();
             const  float  chv_spacing = 32.0f;
             const  float  chv_sweep = 12.0f;
@@ -13461,6 +13461,71 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
                 chv_brush->Release();
             }
         } // end if (chv_ball)
+    }
+++=====================++
+++=====================++
+
+++=====================++
+++=====================++ AI Studio Rounded
+            static DWORD chv_t0 = GetTickCount();
+            const float chv_spacing = 32.0f;
+            const float chv_sweep = 12.0f;
+            const float chv_halfW = BALL_RADIUS * 1.6f; // Widened slightly to fit the thicker strokes
+            const float chv_gap = BALL_RADIUS * 1.5f;
+            float chv_elapsed = (GetTickCount() - chv_t0) / 1000.0f;
+            float chv_offset = std::fmod(chv_elapsed * 40.0f, chv_spacing);
+
+            ID2D1SolidColorBrush* chv_brush = nullptr;
+            if (SUCCEEDED(pRT->CreateSolidColorBrush(D2D1::ColorF(1.0f, 0.95f, 0.35f, 0.85f), &chv_brush)))
+            {
+                ID2D1PathGeometry* chv_geo = nullptr;
+                if (SUCCEEDED(pFactory->CreatePathGeometry(&chv_geo)))
+                {
+                    ID2D1GeometrySink* chv_sink = nullptr;
+                    if (SUCCEEDED(chv_geo->Open(&chv_sink)))
+                    {
+                        for (float d = chv_gap + chv_offset; d < chv_maxD - chv_sweep; d += chv_spacing) {
+                            D2D1_POINT_2F tip = { chv_start.x + chv_dirX * d, chv_start.y + chv_dirY * d };
+                            float bkX = tip.x - chv_dirX * chv_sweep;
+                            float bkY = tip.y - chv_dirY * chv_sweep;
+                            float pX = -chv_dirY, pY = chv_dirX;
+                            D2D1_POINT_2F lw = { bkX + pX * chv_halfW, bkY + pY * chv_halfW };
+                            D2D1_POINT_2F rw = { bkX - pX * chv_halfW, bkY - pY * chv_halfW };
+                            chv_sink->BeginFigure(lw, D2D1_FIGURE_BEGIN_HOLLOW);
+                            chv_sink->AddLine(tip);
+                            chv_sink->AddLine(rw);
+                            chv_sink->EndFigure(D2D1_FIGURE_END_OPEN);
+                        }
+                        chv_sink->Close();
+
+                        D2D1_STROKE_STYLE_PROPERTIES cv_ssp;
+                        memset(&cv_ssp, 0, sizeof(cv_ssp));
+                        cv_ssp.startCap = D2D1_CAP_STYLE_ROUND;
+                        cv_ssp.endCap = D2D1_CAP_STYLE_ROUND;
+                        cv_ssp.dashCap = D2D1_CAP_STYLE_ROUND;
+                        cv_ssp.lineJoin = D2D1_LINE_JOIN_ROUND;
+                        cv_ssp.miterLimit = 1.0f;
+                        cv_ssp.dashStyle = D2D1_DASH_STYLE_SOLID;
+
+                        // ---> [ADJUST THIS VALUE TO CHANGE THICKNESS] <---
+                        // Increased from 4.0f to 10.0f for massive visibility
+                        float chevronThickness = 10.0f;
+
+                        ID2D1StrokeStyle* cv_ss = nullptr;
+                        if (SUCCEEDED(pFactory->CreateStrokeStyle(&cv_ssp, nullptr, 0, &cv_ss))) {
+                            pRT->DrawGeometry(chv_geo, chv_brush, chevronThickness, cv_ss);
+                            cv_ss->Release();
+                        }
+                        else {
+                            pRT->DrawGeometry(chv_geo, chv_brush, chevronThickness);
+                        }
+                        chv_sink->Release();
+                    }
+                    chv_geo->Release();
+                }
+                chv_brush->Release();
+            }
+        }
     }
 ++=====================++
 ++=====================++
