@@ -56,6 +56,7 @@
 #define IDC_CHECK_PRACTICE              1028
 #define IDC_HACKER_PIC                  1029
 #define IDC_CHECK_DEMO                  1030
+#define IDC_LINK_MATHCORE               1040
 #define _WIN32_WINNT_WIN2K              0x0500
 #define _WIN32_IE_IE50                  0x0500
 #define _WIN32_WINNT_WINXP              0x0501
@@ -99,6 +100,7 @@
 #define ID_TABLECOLOR_CUSTOM            40019
 #define ID_TABLECOLOR_VIOLET            40024
 #define ID_TABLECOLOR_GRAY              40025
+#define ID_TABLECOLOR_FORESTGREEN       40026
 #define ID_HELP_CONTROLS                40020
 #define ID_HELP_INSTRUCTIONS            40021
 #define ID_HELP_ABOUT                   40022

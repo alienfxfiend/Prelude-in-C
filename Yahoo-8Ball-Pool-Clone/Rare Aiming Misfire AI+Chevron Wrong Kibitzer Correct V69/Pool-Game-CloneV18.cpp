@@ -36,6 +36,7 @@
 #include <wincodec.h>   // WIC
 #include <locale>       // Add this header
 #include <codecvt>      // Add this header
+#include <shellapi.h>   // [+] NEW: Required for ShellExecute (clickable links)
 #include <map>          // NEW: Required for Trajectory recording
 #include <random>       // [+] C++20 Migration: Required for std::shuffle
 #include <numbers>      // [+] C++20 Migration: Standard math constants
@@ -236,6 +237,7 @@ enum TableColor {
     RED,
     VIOLET,
     GRAY,
+    FOREST_GREEN,
     CUSTOM
 };
 
@@ -327,9 +329,9 @@ int g_hintTargetBallId = -1;
 int g_hintIndex = 0;
 //std::vector<AIShotInfo> g_cachedHints;
 // --- NEW: Debug Mode Flag ---
-bool g_debugMode = false;
+bool g_debugMode = true; // Enabled by default on first initial run
 // [+] NEW: Paths Feature Globals
-bool g_tracePaths = false;       // Toggle for ball trails
+bool g_tracePaths = true;       // Toggle for ball trails
 std::map<int, std::vector<D2D1_POINT_2F>> g_lastShotTrails; // Trails from the previous shot
 std::map<int, std::vector<D2D1_POINT_2F>> g_tempShotTrails; // Trails being recorded for the current shot
 bool foulCommitted = false;
@@ -430,11 +432,11 @@ void StartMidi(HWND hwnd, int resourceId);
 void StopMidi();
 
 // NEW: Global for selected table color and definitions
-TableColor selectedTableColor = INDIGO; // Default color
-D2D1_COLOR_F g_customTableColor = D2D1::ColorF(0.05f, 0.09f, 0.28f); // Memory for Custom
-const WCHAR* tableColorNames[] = { L"Nebula Night", L"Desert Royale", L"Lagoon Neon", L"Classic Green", L"Blood Red", L"Neon Tokyo", L"Urban Slate", L"Custom..." };
+TableColor selectedTableColor = FOREST_GREEN; // Default color
+D2D1_COLOR_F g_customTableColor = D2D1::ColorF(0.0f, 63.0f / 255.0f, 0.0f); // Memory for Custom
+const WCHAR* tableColorNames[] = { L"Nebula Night", L"Desert Royale", L"Lagoon Neon", L"Classic Green", L"Blood Red", L"Neon Tokyo", L"Urban Slate", L"Forest Green", L"Custom..." };
 //const WCHAR* tableColorNames[] = { L"Indigo", L"Tan", L"Teal", L"Green", L"Red", L"Violet", L"Gray", L"Custom..." };
-const D2D1_COLOR_F tableColorValues[8] = {
+const D2D1_COLOR_F tableColorValues[9] = {
 D2D1::ColorF(0.05f, 0.09f, 0.28f),       // Indigo
 D2D1::ColorF(0.3529f, 0.3137f, 0.2196f), // Tan
 D2D1::ColorF(0.00392f, 0.467f, 0.439f),  // Teal
@@ -442,6 +444,7 @@ D2D1::ColorF(0.1608f, 0.4000f, 0.1765f), // Green
 D2D1::ColorF(0.3882f, 0.1059f, 0.10196f),// Red
 D2D1::ColorF(0.25098f, 0.0f, 0.50196f),  // Violet (64, 0, 128)
 D2D1::ColorF(0.23137f, 0.23137f, 0.23137f), // Gray (59, 59, 59)
+D2D1::ColorF(0.0f, 63.0f / 255.0f, 0.0f),  // Forest Green
 D2D1::ColorF(0.0f, 0.0f, 0.0f)           // Custom Placeholder
 };
 
@@ -465,7 +468,7 @@ const D2D1_POINT_2F pocketPositions[6] = {
 // Colors
 //const D2D1_COLOR_F TABLE_COLOR = D2D1::ColorF(0.0f, 0.5f, 0.5f); // Darker Green NEWCOLOR (0.0f, 0.5f, 0.1f) => (0.1608f, 0.4000f, 0.1765f) (uncomment this l8r if needbe)
 // This is now a variable that can be changed, not a constant.
-D2D1_COLOR_F TABLE_COLOR = D2D1::ColorF(0.05f, 0.09f, 0.28f); // Default to Indigo
+D2D1_COLOR_F TABLE_COLOR = D2D1::ColorF(0.0f, 63.0f / 255.0f, 0.0f); // Default to Forest Green
 //const D2D1_COLOR_F TABLE_COLOR = D2D1::ColorF(0.0f, 0.5f, 0.1f); // Darker Green NEWCOLOR (0.0f, 0.5f, 0.1f) => (0.1608f, 0.4000f, 0.1765f)
 /*
 MPool: *Darker tan= (0.3529f, 0.3137f, 0.2196f) *Indigo= (0.05f, 0.09f, 0.28f) xPurple= (0.1922f, 0.2941f, 0.4118f); xTan= (0.5333f, 0.4706f, 0.3569f); (Red= (0.3882f, 0.1059f, 0.10196f); *Green(default)= (0.1608f, 0.4000f, 0.1765f); *Teal= (0.0f, 0.4f, 0.4392f) + Teal40%reduction= (0.0f, 0.3333f, 0.4235f);
@@ -2512,11 +2515,11 @@ void LoadSettings() {
 
         // [+] NEW: Kibitzer Mode persistence
         inFile >> g_debugMode;
-        if (inFile.fail()) { g_debugMode = false; inFile.clear(); }
+        if (inFile.fail()) { g_debugMode = true; inFile.clear(); }
 
         // [+] NEW: Trace Paths persistence
         inFile >> g_tracePaths;
-        if (inFile.fail()) { g_tracePaths = false; inFile.clear(); }
+        if (inFile.fail()) { g_tracePaths = true; inFile.clear(); }
 
         inFile.close();
 
@@ -2524,7 +2527,7 @@ void LoadSettings() {
         if (gameMode < HUMAN_VS_HUMAN || gameMode > HUMAN_VS_AI) gameMode = HUMAN_VS_HUMAN;
         if (aiDifficulty < EASY || aiDifficulty > HARD) aiDifficulty = MEDIUM;
         if (openingBreakMode < CPU_BREAK || openingBreakMode > FLIP_COIN_BREAK) openingBreakMode = CPU_BREAK;
-        if (selectedTableColor < INDIGO || selectedTableColor > CUSTOM) selectedTableColor = INDIGO;
+        if (selectedTableColor < INDIGO || selectedTableColor > CUSTOM) selectedTableColor = FOREST_GREEN;
         if (targetScoreStraightPool < 1 || targetScoreStraightPool > 999) targetScoreStraightPool = 25;
     }
     else {
@@ -2715,7 +2718,7 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
 
         // --- NEW: Populate the Table Color ComboBox ---
         HWND hCombo = GetDlgItem(hDlg, IDC_COMBO_TABLECOLOR);
-        for (int i = 0; i < 8; ++i) {
+        for (int i = 0; i < 9; ++i) {
             SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)tableColorNames[i]);
         }
         // Set the initial selection based on the loaded/default setting
@@ -3243,8 +3246,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
         else if (selectedTableColor == RED) colorID = ID_TABLECOLOR_RED;
         else if (selectedTableColor == VIOLET) colorID = ID_TABLECOLOR_VIOLET;
         else if (selectedTableColor == GRAY) colorID = ID_TABLECOLOR_GRAY;
+        else if (selectedTableColor == FOREST_GREEN) colorID = ID_TABLECOLOR_FORESTGREEN;
         else if (selectedTableColor == CUSTOM) colorID = ID_TABLECOLOR_CUSTOM;
-        CheckMenuRadioItem(hCurrentMenu, ID_TABLECOLOR_INDIGO, ID_TABLECOLOR_GRAY, colorID, MF_BYCOMMAND);
+        CheckMenuRadioItem(hCurrentMenu, ID_TABLECOLOR_INDIGO, ID_TABLECOLOR_FORESTGREEN, colorID, MF_BYCOMMAND);
     }
 
     // Initialize Direct2D Resources AFTER window creation
@@ -3453,7 +3457,35 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
         return (INT_PTR)TRUE;
     }
 
+        case WM_CTLCOLORSTATIC:
+        {
+            // Color the URL text blue to look like a hyperlink
+            if (GetDlgCtrlID((HWND)lParam) == IDC_LINK_MATHCORE) {
+                SetTextColor((HDC)wParam, RGB(0, 102, 204));
+                SetBkMode((HDC)wParam, TRANSPARENT);
+                return (INT_PTR)GetStockObject(NULL_BRUSH);
+            }
+            return (INT_PTR)FALSE;
+        }
+
+        case WM_SETCURSOR:
+        {
+            // Show hand cursor when hovering over the link
+            if (GetDlgCtrlID((HWND)wParam) == IDC_LINK_MATHCORE) {
+                SetCursor(LoadCursor(NULL, IDC_HAND));
+                return (INT_PTR)TRUE;
+            }
+            return (INT_PTR)FALSE;
+        }
+
+
     case WM_COMMAND:
+        // Open browser when the text is clicked
+        if (LOWORD(wParam) == IDC_LINK_MATHCORE && HIWORD(wParam) == STN_CLICKED) {
+            ShellExecute(NULL, L"open", L"http://tiny.cc/mathcore/", NULL, NULL, SW_SHOWNORMAL);
+            return (INT_PTR)TRUE;
+        }
+
         // Close dialog when OK is clicked or Esc is pressed
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
@@ -3641,6 +3673,7 @@ void CreateAppMenu(HWND hwnd) {
     AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_RED, L"&Blood Red");
     AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_VIOLET, L"Neon &Tokyo");
     AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_GRAY, L"&Urban Slate");
+    AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_FORESTGREEN, L"Forest &Green");
     AppendMenu(hTableColor, MF_SEPARATOR, 0, NULL);
     AppendMenu(hTableColor, MF_STRING, ID_TABLECOLOR_CUSTOM, L"Custo&m...");
     AppendMenu(hGame, MF_POPUP, (UINT_PTR)hTableColor, L"&Table Color");
@@ -4321,6 +4354,7 @@ case WM_ACTIVATE: {
         case ID_TABLECOLOR_RED:
         case ID_TABLECOLOR_VIOLET:
         case ID_TABLECOLOR_GRAY:
+        case ID_TABLECOLOR_FORESTGREEN:
         case ID_TABLECOLOR_CUSTOM:
         {
             if (wmId == ID_TABLECOLOR_CUSTOM) {
@@ -4348,9 +4382,10 @@ case WM_ACTIVATE: {
                 else if (wmId == ID_TABLECOLOR_RED) selectedTableColor = RED;
                 else if (wmId == ID_TABLECOLOR_VIOLET) selectedTableColor = VIOLET;
                 else if (wmId == ID_TABLECOLOR_GRAY) selectedTableColor = GRAY;
+                else if (wmId == ID_TABLECOLOR_FORESTGREEN) selectedTableColor = FOREST_GREEN;
 
                 TABLE_COLOR = tableColorValues[selectedTableColor];
-                CheckMenuRadioItem(hMenu, ID_TABLECOLOR_INDIGO, ID_TABLECOLOR_GRAY, wmId, MF_BYCOMMAND);
+                CheckMenuRadioItem(hMenu, ID_TABLECOLOR_INDIGO, ID_TABLECOLOR_FORESTGREEN, wmId, MF_BYCOMMAND);
                 InvalidateRect(hwnd, NULL, TRUE);
             }
         }

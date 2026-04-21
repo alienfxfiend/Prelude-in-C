@@ -104,7 +104,7 @@ DEFPUSHBUTTON   "OK", IDOK, 372, 190, 50, 14
 CTEXT           "CodeBreakers", IDC_STATIC, 5, 22, 133, 10
 CONTROL         "", IDC_HACKER_PIC, "Static", SS_BITMAP, 23, 34, 133, 110
 CONTROL         "", IDC_CAPTBOAT_PIC, "Static", SS_BITMAP, 173, 136, 133, 40
-CTEXT           "tiny.cc/mathcore", IDC_STATIC, 9, 188, 133, 10
+CTEXT           "tiny.cc/mathcore", IDC_LINK_MATHCORE, 9, 188, 133, 10, SS_NOTIFY
 LTEXT           "", IDC_ABOUT_TEXT, 165, 20, 245, 107
 END
 
