@@ -3494,10 +3494,10 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
                 SetTextColor((HDC)wParam, RGB(223, 223, 223)); //RGB(0, 102, 204) (48, 25, 52)
                 SetBkMode((HDC)wParam, OPAQUE);             // solid background
                 SetBkColor((HDC)wParam, RGB(56, 56, 56));   // light gray background
-                //SetBkMode((HDC)wParam, TRANSPARENT); //orig
-                //static HBRUSH hBrush = CreateSolidBrush(RGB(56, 56, 56));
-                //return (INT_PTR)hBrush;
-                return (INT_PTR)GetStockObject(NULL_BRUSH); //orig
+                //SetBkMode((HDC)wParam, TRANSPARENT); //orig disable
+                static HBRUSH hBrush = CreateSolidBrush(RGB(56, 56, 56)); //disable (block bg)
+                return (INT_PTR)hBrush; //disable (block bg)
+                //return (INT_PTR)GetStockObject(NULL_BRUSH); //orig enable
             }
             return (INT_PTR)FALSE;
         }
