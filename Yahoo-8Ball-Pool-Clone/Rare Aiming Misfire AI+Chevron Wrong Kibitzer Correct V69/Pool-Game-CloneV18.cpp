@@ -3352,6 +3352,8 @@ void UpdateWindowTitle() {
 INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
+    static HFONT s_hUnderlineFont = NULL;
+
     switch (message)
     {
     case WM_INITDIALOG:
@@ -3454,6 +3456,26 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
             L"ArrowKeys(+Shift)=AimCueStick, Up/Down=ShotPower, Spacebar=Shoot";
 
         SetDlgItemText(hDlg, IDC_ABOUT_TEXT, aboutText);
+
+        // [+] FIX: Make the hyperlink text realistically underlined AND Size 12
+        HWND hLink = GetDlgItem(hDlg, IDC_LINK_MATHCORE);
+        if (hLink) {
+            HFONT hFont = (HFONT)SendMessage(hLink, WM_GETFONT, 0, 0);
+            if (hFont) {
+                LOGFONT lf;
+                GetObject(hFont, sizeof(LOGFONT), &lf);
+                lf.lfUnderline = TRUE; // Enable underline
+
+                // Convert Point Size 12 to Logical Pixels based on screen DPI
+                HDC hdc = GetDC(hDlg);
+                lf.lfHeight = -MulDiv(12, GetDeviceCaps(hdc, LOGPIXELSY), 72);
+                ReleaseDC(hDlg, hdc);
+
+                s_hUnderlineFont = CreateFontIndirect(&lf); // Create the new font
+                SendMessage(hLink, WM_SETFONT, (WPARAM)s_hUnderlineFont, TRUE); // Apply it
+            }
+        }
+
         return (INT_PTR)TRUE;
     }
 
@@ -3461,9 +3483,13 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
         {
             // Color the URL text blue to look like a hyperlink
             if (GetDlgCtrlID((HWND)lParam) == IDC_LINK_MATHCORE) {
-                SetTextColor((HDC)wParam, RGB(0, 102, 204));
-                SetBkMode((HDC)wParam, TRANSPARENT);
-                return (INT_PTR)GetStockObject(NULL_BRUSH);
+                SetTextColor((HDC)wParam, RGB(223, 223, 223)); //RGB(0, 102, 204) (48, 25, 52)
+                SetBkMode((HDC)wParam, OPAQUE);             // solid background
+                SetBkColor((HDC)wParam, RGB(56, 56, 56));   // light gray background
+                //SetBkMode((HDC)wParam, TRANSPARENT); //orig
+                //static HBRUSH hBrush = CreateSolidBrush(RGB(56, 56, 56));
+                //return (INT_PTR)hBrush;
+                return (INT_PTR)GetStockObject(NULL_BRUSH); //orig
             }
             return (INT_PTR)FALSE;
         }
@@ -3491,6 +3517,14 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
         {
             EndDialog(hDlg, LOWORD(wParam));
             return (INT_PTR)TRUE;
+        }
+        break;
+
+    case WM_DESTROY:
+        // [+] FIX: Prevent GDI memory leaks by deleting the custom font
+        if (s_hUnderlineFont) {
+            DeleteObject(s_hUnderlineFont);
+            s_hUnderlineFont = NULL;
         }
         break;
     }
