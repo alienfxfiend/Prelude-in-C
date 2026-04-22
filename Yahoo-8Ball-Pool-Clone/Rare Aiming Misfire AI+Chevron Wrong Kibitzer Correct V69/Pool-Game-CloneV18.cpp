@@ -3481,8 +3481,16 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 
         case WM_CTLCOLORSTATIC:
         {
+            // [+] FIX: Ensure IDC_STATIC is defined for the C++ compiler
+            #ifndef IDC_STATIC
+            #define IDC_STATIC -1
+            #endif
+
             // Color the URL text blue to look like a hyperlink
-            if (GetDlgCtrlID((HWND)lParam) == IDC_LINK_MATHCORE) {
+            //if (GetDlgCtrlID((HWND)lParam) == IDC_LINK_MATHCORE) {
+            // Apply White FG on Gray BG to the Hyperlink, the CodeBreakers title, and the main About text
+            int ctrlID = GetDlgCtrlID((HWND)lParam);
+            if (ctrlID == IDC_LINK_MATHCORE || ctrlID == IDC_ABOUT_TEXT || ctrlID == IDC_STATIC) {
                 SetTextColor((HDC)wParam, RGB(223, 223, 223)); //RGB(0, 102, 204) (48, 25, 52)
                 SetBkMode((HDC)wParam, OPAQUE);             // solid background
                 SetBkColor((HDC)wParam, RGB(56, 56, 56));   // light gray background
