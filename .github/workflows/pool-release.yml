@@ -12,7 +12,8 @@ on:
         type: string
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Opt into Node.js 24 now
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true  # Suppress deprecation warnings
 
 jobs:
   release-pool-exe:
