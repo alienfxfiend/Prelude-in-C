@@ -11,9 +11,12 @@ on:
         required: false
         type: string
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Opt into Node.js 24 now
+
 jobs:
   release-pool-exe:
-    runs-on: ubuntu-latest  # This is just for the GitHub Action runner, not your game
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     
@@ -90,9 +93,9 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.find-exe.outputs.found == 'true'
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v2
         with:
-          tag: ${{ steps.tag.outputs.tag }}
+          tag_name: ${{ steps.tag.outputs.tag }}
           name: "🎱 Yahoo 8 Ball Pool Clone - V${{ steps.find-exe.outputs.version }}"
           body: |
             # 🎱 Yahoo 8 Ball Pool Clone - V${{ steps.find-exe.outputs.version }}
@@ -133,13 +136,10 @@ jobs:
             
             ---
             *Auto-generated release from your latest Pool Game build*
-          artifacts: ${{ steps.find-exe.outputs.full_path }}
-          artifactContentType: application/vnd.microsoft.portable-executable
+          files: ${{ steps.find-exe.outputs.full_path }}
           draft: false
           prerelease: false
-          makeLatest: true
-          removeArtifacts: false
-          replacesArtifacts: true
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
