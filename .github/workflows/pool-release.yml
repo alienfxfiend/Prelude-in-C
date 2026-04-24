@@ -1,0 +1,159 @@
+name: Pool Game Auto Release
+
+on:
+  push:
+    paths:
+      - 'Yahoo-8Ball-Pool-Clone/**.exe'
+  workflow_dispatch:
+    inputs:
+      version_override:
+        description: 'Manually specify version number (e.g., 70)'
+        required: false
+        type: string
+
+jobs:
+  release-pool-exe:
+    runs-on: ubuntu-latest  # This is just for the GitHub Action runner, not your game
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find Latest Pool EXE
+        id: find-exe
+        run: |
+          # Navigate to your pool folder and find the latest EXE
+          cd Yahoo-8Ball-Pool-Clone
+          
+          # Find all Yahoo-8Ball-Pool-Clone EXE files and sort by version
+          LATEST_EXE=$(ls Yahoo-8Ball-Pool-CloneV*.exe 2>/dev/null | sort -V | tail -n1)
+          
+          if [ -z "$LATEST_EXE" ]; then
+            echo "No Pool Game EXE files found!"
+            echo "found=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "found=true" >> $GITHUB_OUTPUT
+          echo "filename=$LATEST_EXE" >> $GITHUB_OUTPUT
+          echo "full_path=Yahoo-8Ball-Pool-Clone/$LATEST_EXE" >> $GITHUB_OUTPUT
+          
+          # Extract version number from filename (handles Yahoo-8Ball-Pool-CloneV69.exe)
+          VERSION_NUM=$(echo "$LATEST_EXE" | grep -oP 'V\K\d+')
+          echo "version=$VERSION_NUM" >> $GITHUB_OUTPUT
+          
+          echo "Latest Pool EXE: $LATEST_EXE (Version: $VERSION_NUM)"
+
+      - name: Get File Details
+        id: file-details
+        if: steps.find-exe.outputs.found == 'true'
+        run: |
+          FILE_PATH="${{ steps.find-exe.outputs.full_path }}"
+          FILE_SIZE=$(stat -c%s "$FILE_PATH" 2>/dev/null || echo "unknown")
+          FILE_SIZE_MB=$(echo "scale=2; $FILE_SIZE / 1048576" | bc 2>/dev/null || echo "unknown")
+          
+          echo "size_bytes=$FILE_SIZE" >> $GITHUB_OUTPUT
+          echo "size_mb=$FILE_SIZE_MB" >> $GITHUB_OUTPUT
+          
+          # Get commit info
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          COMMIT_DATE=$(git log -1 --pretty=%ci)
+          
+          echo "commit_msg=$COMMIT_MSG" >> $GITHUB_OUTPUT
+          echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+          echo "commit_date=$COMMIT_DATE" >> $GITHUB_OUTPUT
+
+      - name: Create Release Tag
+        if: steps.find-exe.outputs.found == 'true'
+        id: tag
+        run: |
+          VERSION="${{ steps.find-exe.outputs.version }}"
+          TAG_NAME="pool-v${VERSION}"
+          
+          # Check if tag exists and delete if needed
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME exists, removing..."
+            git tag -d "$TAG_NAME"
+            git push origin ":refs/tags/$TAG_NAME" 2>/dev/null || true
+          fi
+          
+          # Create new tag
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
+          
+          echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        if: steps.find-exe.outputs.found == 'true'
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag.outputs.tag }}
+          name: "🎱 Yahoo 8 Ball Pool Clone - V${{ steps.find-exe.outputs.version }}"
+          body: |
+            # 🎱 Yahoo 8 Ball Pool Clone - V${{ steps.find-exe.outputs.version }}
+            
+            ![Pool Game](https://img.shields.io/badge/Version-${{ steps.find-exe.outputs.version }}-blue)
+            ![Platform](https://img.shields.io/badge/Platform-Windows%2010%20x64-lightgrey)
+            
+            ---
+            
+            ### 📋 Release Details
+            
+            | Detail | Info |
+            |--------|------|
+            | **File** | `${{ steps.find-exe.outputs.filename }}` |
+            | **Size** | ${{ steps.file-details.outputs.size_mb }} MB |
+            | **Platform** | Windows 10 x64 |
+            | **Release Date** | ${{ steps.file-details.outputs.commit_date }} |
+            | **Commit** | `${{ steps.file-details.outputs.commit_sha }}` |
+            
+            ### 📦 Download
+            Click the **${{ steps.find-exe.outputs.filename }}** file below to download.
+            
+            ### 🚀 How to Run
+            1. Download `${{ steps.find-exe.outputs.filename }}`
+            2. Extract if needed (it's compressed)
+            3. Run the executable
+            4. Enjoy the game! 🎱
+            
+            ### 📝 Changelog
+            ```
+            ${{ steps.file-details.outputs.commit_msg }}
+            ```
+            
+            ### ⚠️ Notes
+            - **Windows 10 x64** or later required
+            - May trigger SmartScreen on first run (click "More Info" → "Run Anyway")
+            - Built for performance and fun!
+            
+            ---
+            *Auto-generated release from your latest Pool Game build*
+          artifacts: ${{ steps.find-exe.outputs.full_path }}
+          artifactContentType: application/vnd.microsoft.portable-executable
+          draft: false
+          prerelease: false
+          makeLatest: true
+          removeArtifacts: false
+          replacesArtifacts: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release Summary
+        if: steps.find-exe.outputs.found == 'true'
+        run: |
+          echo "========================================="
+          echo "✅ RELEASE CREATED SUCCESSFULLY!"
+          echo "========================================="
+          echo "Game: Yahoo 8 Ball Pool Clone V${{ steps.find-exe.outputs.version }}"
+          echo "File: ${{ steps.find-exe.outputs.filename }}"
+          echo "Size: ${{ steps.file-details.outputs.size_mb }} MB"
+          echo "Tag:  ${{ steps.tag.outputs.tag }}"
+          echo "========================================="
+          echo "Check your Releases page:"
+          echo "https://github.com/alienfxfiend/Prelude-in-C/releases"
+          echo "========================================="
