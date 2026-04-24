@@ -120,9 +120,9 @@ jobs:
             Click the **${{ steps.find-exe.outputs.filename }}** file below to download.
             
             ### 🚀 How to Run
-            1. Download `${{ steps.find-exe.outputs.filename }}`
-            2. Extract if needed (it's compressed)
-            3. Run the executable
+            1. Download `${{ steps.find-exe.outputs.filename }}` from the assets below
+            2. Double-click the executable to launch the game
+            3. No installation required - runs directly as a standalone application!
             4. Enjoy the game! 🎱
             
             ### 📝 Changelog
@@ -132,8 +132,9 @@ jobs:
             
             ### ⚠️ Notes
             - **Windows 10 x64** or later required
-            - May trigger SmartScreen on first run (click "More Info" → "Run Anyway")
-            - Built for performance and fun!
+            - May trigger Windows SmartScreen on first run (click "More Info" → "Run Anyway")
+            - This is a standalone executable - no installation or extraction needed
+            - Report any issues on the [Issues page](https://github.com/alienfxfiend/Prelude-in-C/issues)
             
             ---
             *Auto-generated release from your latest Pool Game build*
