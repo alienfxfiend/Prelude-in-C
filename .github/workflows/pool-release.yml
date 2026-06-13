@@ -11,10 +11,6 @@ on:
         required: false
         type: string
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-
 jobs:
   release-pool-exe:
     runs-on: ubuntu-latest
