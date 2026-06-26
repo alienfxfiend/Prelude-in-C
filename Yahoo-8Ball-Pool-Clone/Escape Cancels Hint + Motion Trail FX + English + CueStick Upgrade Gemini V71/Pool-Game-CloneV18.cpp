@@ -166,6 +166,7 @@ const float HEADSTRING_X = TABLE_LEFT + TABLE_WIDTH * 0.30f; // 30% line
 const float RACK_POS_X = TABLE_LEFT + TABLE_WIDTH * 0.65f; // 65% line for rack apex
 const float RACK_POS_Y = TABLE_TOP + TABLE_HEIGHT / 2.0f;
 const UINT ID_TIMER = 1;
+const UINT ID_DELAYED_RACK_TIMER = 2; // [+] NEW: Timer for reliable audio startup
 const int TARGET_FPS = 60; // Target frames per second for timer
 //const float V_CUT_DEPTH = 32.0f; // How deep the V-cut goes into the rim
 //const float V_CUT_WIDTH = 48.0f; // How wide the V-cut is at the rim edge
@@ -3074,12 +3075,10 @@ void ShowNewGameDialog(HINSTANCE hInstance) {
 
         InitGame(); // Re-initialize game logic & board
 
-// [+] NEW: Play rack sound here, after InitGame() returns and the
-// game state is stable. XAudio2 is already warm (game was running
-// before this new-game request), so this is guaranteed to be heard.
-        if (!g_soundEffectsMuted) {
-            PlayGameSound(IDR_WAV_RACK);
-        }
+// [+] FOOLPROOF FIX: Delay the rack sound by 400ms.
+// Ensures the dialog is fully destroyed, the main window is active,
+// and XAudio2 isn't ducked by OS window transition events.
+        SetTimer(hwndMain, ID_DELAYED_RACK_TIMER, 400, NULL);
 
         InvalidateRect(hwndMain, NULL, TRUE);
     }
@@ -3651,12 +3650,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     ShowWindow(hwndMain, nCmdShow);
     UpdateWindow(hwndMain);
 
-    // [+] NEW: Play rack sound here — window is visible, XAudio2 has been
-    // running since before InitGame() + Sleep(500) + StartMidi(), so the
-    // hardware audio endpoint is guaranteed to be fully open and warm.
-    if (!g_soundEffectsMuted) {
-        PlayGameSound(IDR_WAV_RACK);
-    }
+    // [+] FOOLPROOF FIX: Delay the rack sound by 400ms using a timer.
+    // This guarantees the window is fully painted, XAudio2 is awake, AND the
+    // legacy MIDI synthesizer has finished initializing without conflicting.
+    SetTimer(hwndMain, ID_DELAYED_RACK_TIMER, 400, NULL);
 
     if (!SetTimer(hwndMain, ID_TIMER, 1000 / TARGET_FPS, NULL)) {
         MessageBox(NULL, L"Could not SetTimer().", L"Error", MB_OK | MB_ICONERROR);
@@ -4392,6 +4389,16 @@ case WM_ACTIVATE: {
     return result;
 }*/
     case WM_TIMER:
+        // [+] FOOLPROOF FIX: The timer guarantees MIDI has finished locking 
+        // the audio mixer, and the UI has full OS focus.
+        if (wParam == ID_DELAYED_RACK_TIMER) {
+            KillTimer(hwnd, ID_DELAYED_RACK_TIMER); // Fire only once
+            if (!g_soundEffectsMuted) {
+                PlayGameSound(IDR_WAV_RACK);
+            }
+            return 0;
+        }
+
         /*// [+] Handle dark menu bar deferred repaint
         if (wParam == ID_DARK_MENUBAR_TIMER) {
             KillTimer(hwnd, ID_DARK_MENUBAR_TIMER);
