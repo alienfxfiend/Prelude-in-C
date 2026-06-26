@@ -453,8 +453,8 @@ D2D1::ColorF(0.0f, 0.0f, 0.0f)           // Custom Placeholder
 
 // UI Element Positions
 D2D1_RECT_F powerMeterRect = { TABLE_RIGHT + WOODEN_RAIL_THICKNESS + 20, TABLE_TOP, TABLE_RIGHT + WOODEN_RAIL_THICKNESS + 50, TABLE_BOTTOM };
-// [+] FIX: Shifted English Indicator ~15 pixels to the right to prevent edge-clipping
-D2D1_RECT_F spinIndicatorRect = { TABLE_LEFT - WOODEN_RAIL_THICKNESS - 45, TABLE_TOP + 20, TABLE_LEFT - WOODEN_RAIL_THICKNESS - 5, TABLE_TOP + 60 }; // Circle area
+// [+] FIX: Shifted English Indicator 5 pixels to the left as requested
+D2D1_RECT_F spinIndicatorRect = { TABLE_LEFT - WOODEN_RAIL_THICKNESS - 50, TABLE_TOP + 20, TABLE_LEFT - WOODEN_RAIL_THICKNESS - 10, TABLE_TOP + 60 }; // Circle area
 D2D1_POINT_2F spinIndicatorCenter = { spinIndicatorRect.left + (spinIndicatorRect.right - spinIndicatorRect.left) / 2.0f, spinIndicatorRect.top + (spinIndicatorRect.bottom - spinIndicatorRect.top) / 2.0f };
 float spinIndicatorRadius = (spinIndicatorRect.right - spinIndicatorRect.left) / 2.0f;
 D2D1_RECT_F pocketedBallsBarRect = { TABLE_LEFT, TABLE_BOTTOM + WOODEN_RAIL_THICKNESS + 30, TABLE_RIGHT, TABLE_BOTTOM + WOODEN_RAIL_THICKNESS + 70 };
@@ -13318,8 +13318,8 @@ void DrawCueStick(ID2D1RenderTarget* pRT)
     Ball* cue = GetCueBall();
     if (!cue) return;
 
-    // [+] FIX: Supercharged Realism, Increased Dimensions & Professional Graphics
-    const float scale = 1.65f; // Considerably larger for a prominent, elegant look
+    // [+] FIX: Adjusted Dimensions & Professional Graphics
+    const float scale = 1.25f; // Scaled down to be more proportional to the table
 
     // Proportional Cue Stick Segments
     const float bumperLen = 12.0f * scale;
@@ -15242,6 +15242,64 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
     int p1DrawnCount = 0;
     int p2DrawnCount = 0;
 
+    // [+] NEW: Create brushes for 3D Ball Rendering
+    ID2D1SolidColorBrush* pStripeBrush = nullptr;
+    ID2D1SolidColorBrush* pBorderBrush = nullptr;
+    ID2D1SolidColorBrush* pNumWhite = nullptr;
+    ID2D1SolidColorBrush* pNumBlack = nullptr;
+    pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &pStripeBrush);
+    pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pBorderBrush);
+    pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &pNumWhite);
+    pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pNumBlack);
+
+    // [+] NEW: Lambda to render brilliant 3D spheres instead of flat circles
+    auto Draw3DPocketBall = [&](const Ball& b, D2D1_POINT_2F center, float radius) {
+        ID2D1GradientStopCollection* pStops = nullptr;
+        ID2D1RadialGradientBrush* pRad = nullptr;
+        D2D1_GRADIENT_STOP gs[3] = {
+            { 0.0f, D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.95f) },
+            { 0.35f, Lighten(b.color) },
+            { 1.0f, b.color }
+        };
+        pRT->CreateGradientStopCollection(gs, 3, &pStops);
+        if (pStops) {
+            D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES props = D2D1::RadialGradientBrushProperties(
+                D2D1::Point2F(center.x - radius * 0.4f, center.y - radius * 0.4f), // Offset highlight
+                D2D1::Point2F(0, 0), radius * 1.3f, radius * 1.3f);
+            pRT->CreateRadialGradientBrush(props, pStops, &pRad);
+            SafeRelease(&pStops);
+        }
+
+        D2D1_ELLIPSE body = D2D1::Ellipse(center, radius, radius);
+        if (pRad) pRT->FillEllipse(&body, pRad);
+        else { pBallBrush->SetColor(b.color); pRT->FillEllipse(&body, pBallBrush); }
+
+        // Draw Stripes
+        if (b.type == BallType::STRIPE && pStripeBrush) {
+            D2D1_RECT_F stripe = { center.x - radius, center.y - radius * 0.40f, center.x + radius, center.y + radius * 0.40f };
+            pRT->FillRectangle(&stripe, pStripeBrush);
+            if (pRad) {
+                D2D1_ELLIPSE inner = D2D1::Ellipse(center, radius * 0.60f, radius * 0.60f);
+                pRT->FillEllipse(&inner, pRad);
+            }
+        }
+
+        // Draw Decal & Number
+        if (b.id != 0 && pBallNumFormat && pNumWhite && pNumBlack) {
+            float decalR = (b.type == BallType::STRIPE) ? radius * 0.40f : radius * 0.45f;
+            D2D1_ELLIPSE decal = D2D1::Ellipse(center, decalR, decalR);
+            pRT->FillEllipse(&decal, pNumWhite);
+            pRT->DrawEllipse(&decal, pNumBlack, 0.8f);
+
+            std::wstring numText = std::to_wstring(b.id);
+            D2D1_RECT_F layout = { center.x - decalR, center.y - decalR, center.x + decalR, center.y + decalR };
+            pRT->DrawTextW(numText.c_str(), static_cast<UINT32>(numText.length()), pBallNumFormat, &layout, pNumBlack);
+        }
+
+        if (pBorderBrush) pRT->DrawEllipse(&body, pBorderBrush, 1.5f);
+        SafeRelease(&pRad);
+    };
+
     // --- FIX: Split logic by game type ---
     if (currentGameType == GameType::EIGHT_BALL_MODE) {
         const int maxBallsToShow = 7;
@@ -15253,21 +15311,17 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
                 bool isPlayer2Ball = (player2Info.assignedType != BallType::NONE && b.type == player2Info.assignedType);
 
                 if (isPlayer1Ball && p1DrawnCount < maxBallsToShow) {
-                    pBallBrush->SetColor(b.color);
-                    D2D1_ELLIPSE ballEllipse = D2D1::Ellipse(D2D1::Point2F(currentX_P1 + p1DrawnCount * spacing, center_Y), ballDisplayRadius, ballDisplayRadius);
-                    pRT->FillEllipse(&ballEllipse, pBallBrush);
+                    Draw3DPocketBall(b, D2D1::Point2F(currentX_P1 + p1DrawnCount * spacing, center_Y), ballDisplayRadius);
                     p1DrawnCount++;
                 }
                 else if (isPlayer2Ball && p2DrawnCount < maxBallsToShow) {
-                    pBallBrush->SetColor(b.color);
-                    D2D1_ELLIPSE ballEllipse = D2D1::Ellipse(D2D1::Point2F(currentX_P2 - p2DrawnCount * spacing, center_Y), ballDisplayRadius, ballDisplayRadius);
-                    pRT->FillEllipse(&ballEllipse, pBallBrush);
+                    Draw3DPocketBall(b, D2D1::Point2F(currentX_P2 - p2DrawnCount * spacing, center_Y), ballDisplayRadius);
                     p2DrawnCount++;
                 }
             }
         }
     }
-    // --- NEW LOGIC FOR 9-BALL (and
+    // --- NEW LOGIC FOR 9-BALL (and Straight Pool)
     else if (currentGameType == GameType::NINE_BALL || currentGameType == GameType::STRAIGHT_POOL) {
         const int maxBallsToShow = 15; // Max possible
         int drawnCount = 0;
@@ -15281,14 +15335,17 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
 
             Ball* b = GetBallById(id);
             if (b && b->isPocketed) {
-                pBallBrush->SetColor(b->color);
-                D2D1_ELLIPSE ballEllipse = D2D1::Ellipse(D2D1::Point2F(currentX_P1 + drawnCount * spacing, center_Y), ballDisplayRadius, ballDisplayRadius);
-                pRT->FillEllipse(&ballEllipse, pBallBrush);
+                Draw3DPocketBall(*b, D2D1::Point2F(currentX_P1 + drawnCount * spacing, center_Y), ballDisplayRadius);
                 drawnCount++;
             }
         }
     }
     // --- END FIX ---
+
+    SafeRelease(&pStripeBrush);
+    SafeRelease(&pBorderBrush);
+    SafeRelease(&pNumWhite);
+    SafeRelease(&pNumBlack);
 
     SafeRelease(&pBgBrush);    // FIXED
     SafeRelease(&pBallBrush); // FIXED
