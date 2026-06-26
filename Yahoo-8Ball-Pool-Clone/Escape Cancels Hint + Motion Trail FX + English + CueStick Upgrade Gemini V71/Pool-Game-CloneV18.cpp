@@ -3073,6 +3073,14 @@ void ShowNewGameDialog(HINSTANCE hInstance) {
         }
 
         InitGame(); // Re-initialize game logic & board
+
+// [+] NEW: Play rack sound here, after InitGame() returns and the
+// game state is stable. XAudio2 is already warm (game was running
+// before this new-game request), so this is guaranteed to be heard.
+        if (!g_soundEffectsMuted) {
+            PlayGameSound(IDR_WAV_RACK);
+        }
+
         InvalidateRect(hwndMain, NULL, TRUE);
     }
     else {
@@ -3608,6 +3616,22 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     // Set the final, correct window title after everything is ready
     UpdateWindowTitle();
 
+    // [+] NEW: Pre-load all WAV resources into memory and start the XAudio2
+    // engine NOW — before InitGame(). This separates engine creation from
+    // first-buffer-submit so the hardware audio endpoint is fully open and
+    // the warm-up drop window is long past by the time rack.wav actually plays.
+    {
+        const int sfxIds[] = { IDR_WAV_CUE,  IDR_WAV_POCKET, IDR_WAV_WALL,
+                                IDR_WAV_HIT,  IDR_WAV_RACK,   IDR_WAV_WON,
+                                IDR_WAV_LOSS, IDR_WAV_FOUL };
+        for (int id : sfxIds) {
+            LoadedSound snd;
+            if (LoadWavResource(id, snd))
+                g_loadedSounds.emplace(id, std::move(snd));
+        }
+        InitAudioEngine(); // open XAudio2 device early; Sleep(500) below lets it fully warm up
+    }
+
     // --- NEW: Preload Sound Effects ---
     InitGame(); // Initialize game state AFTER resources are ready & mode is set
     Sleep(500); // Allow window to fully initialize before starting the countdown //midi func
@@ -3626,6 +3650,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
 
     ShowWindow(hwndMain, nCmdShow);
     UpdateWindow(hwndMain);
+
+    // [+] NEW: Play rack sound here — window is visible, XAudio2 has been
+    // running since before InitGame() + Sleep(500) + StartMidi(), so the
+    // hardware audio endpoint is guaranteed to be fully open and warm.
+    if (!g_soundEffectsMuted) {
+        PlayGameSound(IDR_WAV_RACK);
+    }
 
     if (!SetTimer(hwndMain, ID_TIMER, 1000 / TARGET_FPS, NULL)) {
         MessageBox(NULL, L"Could not SetTimer().", L"Error", MB_OK | MB_ICONERROR);
@@ -6453,10 +6484,9 @@ void InitGame() {
         aiTurnPending = true;
     }
 
-    // [+] NEW: Play Rack sound for the initial break
-    if (!g_soundEffectsMuted) {
-        PlayGameSound(IDR_WAV_RACK);
-    }
+    // [+] NOTE: IDR_WAV_RACK is NOT played here. It is played by each
+    // caller (wWinMain after ShowWindow; ShowNewGameDialog after InitGame
+    // returns) so the audio pipeline is fully warm when the sound fires.
 }
 
 
