@@ -656,7 +656,7 @@ std::wstring ExtractMidiResource(int resourceId) {
 
 // In-memory decoded WAV data, cached after first use.
 struct LoadedSound {
-    WAVEFORMATEX wfx = {};
+    std::vector<BYTE> fmtChunk; // [+] FIX: Variable size allows WAVEFORMATEXTENSIBLE headers
     std::vector<BYTE> audioData;
 };
 
@@ -667,7 +667,7 @@ std::vector<IXAudio2SourceVoice*> g_activeVoices;
 const size_t MAX_CONCURRENT_SOUNDS = 32; // Safety cap against runaway voice spam
 
 // Parses a WAVE resource directly from the EXE's resource section into memory.
-// No temp files needed.
+// Now robustly supports 24-bit, 32-bit float, and WAVEFORMATEXTENSIBLE formats.
 bool LoadWavResource(int resourceId, LoadedSound& outSound) {
     HMODULE hModule = GetModuleHandle(NULL);
     HRSRC hResource = FindResource(hModule, MAKEINTRESOURCE(resourceId), L"WAVE");
@@ -679,9 +679,11 @@ bool LoadWavResource(int resourceId, LoadedSound& outSound) {
     BYTE* pData = (BYTE*)LockResource(hLoaded);
     DWORD size = SizeofResource(hModule, hResource);
     if (!pData || size < 44) return false;
+
     if (memcmp(pData, "RIFF", 4) != 0 || memcmp(pData + 8, "WAVE", 4) != 0) return false;
 
-    ZeroMemory(&outSound.wfx, sizeof(WAVEFORMATEX));
+    outSound.fmtChunk.clear();
+    outSound.audioData.clear();
     bool foundFmt = false, foundData = false;
 
     DWORD pos = 12; // skip "RIFF" <size> "WAVE"
@@ -690,17 +692,24 @@ bool LoadWavResource(int resourceId, LoadedSound& outSound) {
         memcpy(chunkId, pData + pos, 4);
         DWORD chunkSize;
         memcpy(&chunkSize, pData + pos + 4, 4);
+
         DWORD chunkStart = pos + 8;
-        if (chunkStart > size || chunkSize > size - chunkStart) break; // corrupted/short chunk
+        if (chunkStart > size) break;
+        DWORD actualChunkSize = std::min<DWORD>(chunkSize, size - chunkStart);
 
         if (memcmp(chunkId, "fmt ", 4) == 0) {
-            DWORD copySize = std::min<DWORD>(chunkSize, (DWORD)sizeof(WAVEFORMATEX));
-            memcpy(&outSound.wfx, pData + chunkStart, copySize);
-            outSound.wfx.cbSize = 0; // Plain PCM/IEEE float fmt chunks don't use cbSize
+            // [+] FIX: Copy the ENTIRE fmt chunk (whether it's 16, 18, or 40 bytes)
+            outSound.fmtChunk.assign(pData + chunkStart, pData + chunkStart + actualChunkSize);
+
+            // [+] FIX: A basic PCMWAVEFORMAT chunk is exactly 16 bytes and lacks cbSize.
+            // XAudio2 expects WAVEFORMATEX (18 bytes). If it's missing, we pad it out with zeros.
+            if (outSound.fmtChunk.size() == 16) {
+                outSound.fmtChunk.resize(sizeof(WAVEFORMATEX), 0);
+            }
             foundFmt = true;
         }
         else if (memcmp(chunkId, "data", 4) == 0) {
-            outSound.audioData.assign(pData + chunkStart, pData + chunkStart + chunkSize);
+            outSound.audioData.assign(pData + chunkStart, pData + chunkStart + actualChunkSize);
             foundData = true;
         }
 
@@ -708,7 +717,7 @@ bool LoadWavResource(int resourceId, LoadedSound& outSound) {
         if (pos % 2 != 0) pos++; // RIFF chunks are word-aligned
     }
 
-    return foundFmt && foundData && !outSound.audioData.empty();
+    return foundFmt && foundData && !outSound.audioData.empty() && !outSound.fmtChunk.empty();
 }
 
 // Creates the XAudio2 engine + mastering voice once.
@@ -750,20 +759,40 @@ void ShutdownAudioEngine() {
 }
 
 // Plays a sound effect on its own XAudio2 source voice so any number of
-// effects (and the MCI MIDI music) can overlap cleanly. WAV data is decoded
-// once per resource and cached for the rest of the program's life.
+// effects (and the MCI MIDI music) can overlap cleanly. 
 void PlayGameSound(int resourceId) {
     if (g_soundEffectsMuted) return;
-    if (!InitAudioEngine()) return;
+    if (!InitAudioEngine()) {
+        MessageBox(NULL, L"Audio Engine Error: XAudio2 Failed to Initialize!", L"Audio System Error", MB_OK | MB_ICONERROR);
+        return;
+    }
 
     auto it = g_loadedSounds.find(resourceId);
     if (it == g_loadedSounds.end()) {
         LoadedSound sound;
-        if (!LoadWavResource(resourceId, sound)) return;
+        if (!LoadWavResource(resourceId, sound)) {
+            const wchar_t* resName = L"UNKNOWN_AUDIO_ID";
+            switch (resourceId) {
+            case IDR_WAV_CUE: resName = L"IDR_WAV_CUE (cue.wav)"; break;
+            case IDR_WAV_POCKET: resName = L"IDR_WAV_POCKET (pocket.wav)"; break;
+            case IDR_WAV_WALL: resName = L"IDR_WAV_WALL (wall.wav)"; break;
+            case IDR_WAV_HIT: resName = L"IDR_WAV_HIT (poolballhit.wav)"; break;
+            case IDR_WAV_RACK: resName = L"IDR_WAV_RACK (rack.wav)"; break;
+            case IDR_WAV_WON: resName = L"IDR_WAV_WON (won.wav)"; break;
+            case IDR_WAV_LOSS: resName = L"IDR_WAV_LOSS (loss.wav)"; break;
+            case IDR_WAV_FOUL: resName = L"IDR_WAV_FOUL (foul.wav)"; break;
+            }
+
+            wchar_t msg[512];
+            swprintf_s(msg, 512, L"Failed to parse Audio Resource:\n%ls\n\nEnsure the .WAV file is compiled into the .rc file correctly.", resName);
+            MessageBox(NULL, msg, L"Missing Sound Resource", MB_OK | MB_ICONWARNING);
+            return;
+        }
         it = g_loadedSounds.emplace(resourceId, std::move(sound)).first;
     }
+
     LoadedSound& sound = it->second;
-    if (sound.audioData.empty()) return;
+    if (sound.audioData.empty() || sound.fmtChunk.empty()) return;
 
     // Remove voices that have finished playing
     for (size_t i = 0; i < g_activeVoices.size(); ) {
@@ -778,11 +807,19 @@ void PlayGameSound(int resourceId) {
         }
     }
 
-    // Safety cap: don't let runaway sound spam exhaust voices
     if (g_activeVoices.size() >= MAX_CONCURRENT_SOUNDS) return;
 
     IXAudio2SourceVoice* pSourceVoice = nullptr;
-    if (FAILED(g_pXAudio2->CreateSourceVoice(&pSourceVoice, &sound.wfx)) || !pSourceVoice) return;
+    // [+] FIX: Cast the dynamically sized header correctly
+    WAVEFORMATEX* pWfx = reinterpret_cast<WAVEFORMATEX*>(sound.fmtChunk.data());
+
+    HRESULT hr = g_pXAudio2->CreateSourceVoice(&pSourceVoice, pWfx);
+    if (FAILED(hr) || !pSourceVoice) {
+        wchar_t msg[512];
+        swprintf_s(msg, 512, L"XAudio2 rejected the WAV format (ID: %d)\nHRESULT: 0x%08X", resourceId, hr);
+        MessageBox(NULL, msg, L"Audio Format Error", MB_OK | MB_ICONWARNING);
+        return;
+    }
 
     XAUDIO2_BUFFER buffer = {};
     buffer.AudioBytes = (UINT32)sound.audioData.size();
@@ -3281,7 +3318,7 @@ LRESULT CALLBACK SplashWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
         DestroyWindow(hwnd); // [+] CRITICAL FIX: Safely destroy the window. Do NOT use PostQuitMessage!
         return 0;
     case WM_DESTROY:
-        // [+] CRITICAL FIX: Leave this completely empty! 
+        // [+] CRITICAL FIX: Leave this completely empty!
         // Calling PostQuitMessage(0) here would kill the New Game Dialog.
         return 0;
     }
@@ -3789,38 +3826,38 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
         return (INT_PTR)TRUE;
     }
 
-        case WM_CTLCOLORSTATIC:
-        {
-            // [+] FIX: Ensure IDC_STATIC is defined for the C++ compiler
-            #ifndef IDC_STATIC
-            #define IDC_STATIC -1
-            #endif
+    case WM_CTLCOLORSTATIC:
+    {
+        // [+] FIX: Ensure IDC_STATIC is defined for the C++ compiler
+#ifndef IDC_STATIC
+#define IDC_STATIC -1
+#endif
 
-            // Color the URL text blue to look like a hyperlink
-            //if (GetDlgCtrlID((HWND)lParam) == IDC_LINK_MATHCORE) {
-            // Apply White FG on Gray BG to the Hyperlink, the CodeBreakers title, and the main About text
-            int ctrlID = GetDlgCtrlID((HWND)lParam);
-            if (ctrlID == IDC_LINK_MATHCORE || ctrlID == IDC_ABOUT_TEXT || ctrlID == IDC_STATIC) {
-                SetTextColor((HDC)wParam, RGB(223, 223, 223)); //RGB(0, 102, 204) (48, 25, 52)
-                SetBkMode((HDC)wParam, OPAQUE);             // solid background
-                SetBkColor((HDC)wParam, RGB(56, 56, 56));   // light gray background
-                //SetBkMode((HDC)wParam, TRANSPARENT); //orig disable
-                static HBRUSH hBrush = CreateSolidBrush(RGB(56, 56, 56)); //disable (block bg)
-                return (INT_PTR)hBrush; //disable (block bg)
-                //return (INT_PTR)GetStockObject(NULL_BRUSH); //orig enable
-            }
-            return (INT_PTR)FALSE;
+// Color the URL text blue to look like a hyperlink
+//if (GetDlgCtrlID((HWND)lParam) == IDC_LINK_MATHCORE) {
+// Apply White FG on Gray BG to the Hyperlink, the CodeBreakers title, and the main About text
+        int ctrlID = GetDlgCtrlID((HWND)lParam);
+        if (ctrlID == IDC_LINK_MATHCORE || ctrlID == IDC_ABOUT_TEXT || ctrlID == IDC_STATIC) {
+            SetTextColor((HDC)wParam, RGB(223, 223, 223)); //RGB(0, 102, 204) (48, 25, 52)
+            SetBkMode((HDC)wParam, OPAQUE);             // solid background
+            SetBkColor((HDC)wParam, RGB(56, 56, 56));   // light gray background
+            //SetBkMode((HDC)wParam, TRANSPARENT); //orig disable
+            static HBRUSH hBrush = CreateSolidBrush(RGB(56, 56, 56)); //disable (block bg)
+            return (INT_PTR)hBrush; //disable (block bg)
+            //return (INT_PTR)GetStockObject(NULL_BRUSH); //orig enable
         }
+        return (INT_PTR)FALSE;
+    }
 
-        case WM_SETCURSOR:
-        {
-            // Show hand cursor when hovering over the link
-            if (GetDlgCtrlID((HWND)wParam) == IDC_LINK_MATHCORE) {
-                SetCursor(LoadCursor(NULL, IDC_HAND));
-                return (INT_PTR)TRUE;
-            }
-            return (INT_PTR)FALSE;
+    case WM_SETCURSOR:
+    {
+        // Show hand cursor when hovering over the link
+        if (GetDlgCtrlID((HWND)wParam) == IDC_LINK_MATHCORE) {
+            SetCursor(LoadCursor(NULL, IDC_HAND));
+            return (INT_PTR)TRUE;
         }
+        return (INT_PTR)FALSE;
+    }
 
 
     case WM_COMMAND:
@@ -12930,8 +12967,8 @@ void DrawBalls(ID2D1RenderTarget* pRT)
                     }
                 }
             }
-        }        
-        
+        }
+
         /*// [+] NEW: Dark gray motion trail for fast-moving balls
         if (pMotionTrailBrush) {
             float speedSq = b.vx * b.vx + b.vy * b.vy;
@@ -13996,9 +14033,9 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
         const float MAX_CONTACT_DIST_SQ = (BALL_RADIUS * 2.0f) * (BALL_RADIUS * 2.0f) + 1.0f; // Epsilon fix for float precision
 
         if (distToCenterSq <= MAX_CONTACT_DIST_SQ) {
-        
 
-        // <<< Chevron trails goes here
+
+            // <<< Chevron trails goes here
 
             float purpleAngle = atan2f(targetCenter.y - ghostCenter.y, targetCenter.x - ghostCenter.x);
             D2D1_POINT_2F purpleStart = targetCenter;
@@ -14027,7 +14064,7 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
 
             pRT->DrawLine(purpleStart, purpleEnd, pPurpleBrush, 2.0f);
             if (cyanAngle > -999) {
-                pRT->DrawLine(cyanStart, cyanEnd, pCyanBrush, 2.0f);                
+                pRT->DrawLine(cyanStart, cyanEnd, pCyanBrush, 2.0f);
             }
 
         }
@@ -14053,14 +14090,14 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
         pRT->DrawLine(finalLineEnd, reflectionEnd, pReflectBrush, 1.0f, pDashedStyle ? pDashedStyle : NULL);
     }
 
-// <<< 3rd aiming aids here
-    // =========================================================================
-    // 3RD AIMING-AID: Chevron Trail — FULLY STANDALONE
-    // Has ZERO connection to Purple/Cyan. Owns every variable it uses.
-    // Its own FindFirstHitBall call + own ghost-ball geometry + own physics.
-    // Fires whenever a ball is on the angleToDraw ray, regardless of whether
-    // the Purple/Cyan lines are shown or suppressed.
-    // =========================================================================
+    // <<< 3rd aiming aids here
+        // =========================================================================
+        // 3RD AIMING-AID: Chevron Trail — FULLY STANDALONE
+        // Has ZERO connection to Purple/Cyan. Owns every variable it uses.
+        // Its own FindFirstHitBall call + own ghost-ball geometry + own physics.
+        // Fires whenever a ball is on the angleToDraw ray, regardless of whether
+        // the Purple/Cyan lines are shown or suppressed.
+        // =========================================================================
     if (pFactory)
     {
         // --- Own independent ray-cast using trueAimAngle ----------------------
