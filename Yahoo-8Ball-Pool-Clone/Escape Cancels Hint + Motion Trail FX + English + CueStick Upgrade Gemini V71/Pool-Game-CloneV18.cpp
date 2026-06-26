@@ -166,7 +166,7 @@ const float HEADSTRING_X = TABLE_LEFT + TABLE_WIDTH * 0.30f; // 30% line
 const float RACK_POS_X = TABLE_LEFT + TABLE_WIDTH * 0.65f; // 65% line for rack apex
 const float RACK_POS_Y = TABLE_TOP + TABLE_HEIGHT / 2.0f;
 const UINT ID_TIMER = 1;
-const UINT ID_DELAYED_RACK_TIMER = 2; // [+] NEW: Timer for reliable audio startup
+const UINT ID_DELAYED_RACK_TIMER = 2; // [+] FOOLPROOF FIX: Timer for reliable audio startup
 const int TARGET_FPS = 60; // Target frames per second for timer
 //const float V_CUT_DEPTH = 32.0f; // How deep the V-cut goes into the rim
 //const float V_CUT_WIDTH = 48.0f; // How wide the V-cut is at the rim edge
@@ -761,8 +761,21 @@ void ShutdownAudioEngine() {
 
 // Plays a sound effect on its own XAudio2 source voice so any number of
 // effects (and the MCI MIDI music) can overlap cleanly. 
+// Plays a sound effect on its own XAudio2 source voice so any number of
+// effects (and the MCI MIDI music) can overlap cleanly. 
 void PlayGameSound(int resourceId) {
     if (g_soundEffectsMuted) return;
+
+    // [+] FOOLPROOF HYBRID ROUTING: Route high-fidelity Event sounds to the Native OS Mixer.
+    // The native mixer perfectly decodes 24-bit, 32-bit float, and Extensible WAV metadata
+    // without requiring complex binary parsing, and handles overlapping with XAudio2 safely.
+    if (resourceId == IDR_WAV_RACK || resourceId == IDR_WAV_WON ||
+        resourceId == IDR_WAV_LOSS || resourceId == IDR_WAV_FOUL) {
+        PlaySound(MAKEINTRESOURCE(resourceId), GetModuleHandle(NULL), SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
+        return;
+    }
+
+    // [+] Route polyphonic Physics sounds (hit, wall, pocket, cue) to XAudio2
     if (!InitAudioEngine()) {
         MessageBox(NULL, L"Audio Engine Error: XAudio2 Failed to Initialize!", L"Audio System Error", MB_OK | MB_ICONERROR);
         return;
@@ -778,10 +791,6 @@ void PlayGameSound(int resourceId) {
             case IDR_WAV_POCKET: resName = L"IDR_WAV_POCKET (pocket.wav)"; break;
             case IDR_WAV_WALL: resName = L"IDR_WAV_WALL (wall.wav)"; break;
             case IDR_WAV_HIT: resName = L"IDR_WAV_HIT (poolballhit.wav)"; break;
-            case IDR_WAV_RACK: resName = L"IDR_WAV_RACK (rack.wav)"; break;
-            case IDR_WAV_WON: resName = L"IDR_WAV_WON (won.wav)"; break;
-            case IDR_WAV_LOSS: resName = L"IDR_WAV_LOSS (loss.wav)"; break;
-            case IDR_WAV_FOUL: resName = L"IDR_WAV_FOUL (foul.wav)"; break;
             }
 
             wchar_t msg[512];
@@ -811,7 +820,7 @@ void PlayGameSound(int resourceId) {
     if (g_activeVoices.size() >= MAX_CONCURRENT_SOUNDS) return;
 
     IXAudio2SourceVoice* pSourceVoice = nullptr;
-    // [+] FIX: Cast the dynamically sized header correctly
+    // [+] FIX: Cast the dynamically sized header correctly for XAudio2
     WAVEFORMATEX* pWfx = reinterpret_cast<WAVEFORMATEX*>(sound.fmtChunk.data());
 
     HRESULT hr = g_pXAudio2->CreateSourceVoice(&pSourceVoice, pWfx);
@@ -3076,8 +3085,7 @@ void ShowNewGameDialog(HINSTANCE hInstance) {
         InitGame(); // Re-initialize game logic & board
 
 // [+] FOOLPROOF FIX: Delay the rack sound by 400ms.
-// Ensures the dialog is fully destroyed, the main window is active,
-// and XAudio2 isn't ducked by OS window transition events.
+// Ensures the dialog is fully destroyed and the main window is active.
         SetTimer(hwndMain, ID_DELAYED_RACK_TIMER, 400, NULL);
 
         InvalidateRect(hwndMain, NULL, TRUE);
@@ -3615,20 +3623,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     // Set the final, correct window title after everything is ready
     UpdateWindowTitle();
 
-    // [+] NEW: Pre-load all WAV resources into memory and start the XAudio2
-    // engine NOW — before InitGame(). This separates engine creation from
-    // first-buffer-submit so the hardware audio endpoint is fully open and
-    // the warm-up drop window is long past by the time rack.wav actually plays.
+    // [+] PRELOAD FIX: Only cache the physics sounds that require XAudio2 overlapping
     {
-        const int sfxIds[] = { IDR_WAV_CUE,  IDR_WAV_POCKET, IDR_WAV_WALL,
-                                IDR_WAV_HIT,  IDR_WAV_RACK,   IDR_WAV_WON,
-                                IDR_WAV_LOSS, IDR_WAV_FOUL };
+        const int sfxIds[] = { IDR_WAV_CUE, IDR_WAV_POCKET, IDR_WAV_WALL, IDR_WAV_HIT };
         for (int id : sfxIds) {
             LoadedSound snd;
             if (LoadWavResource(id, snd))
                 g_loadedSounds.emplace(id, std::move(snd));
         }
-        InitAudioEngine(); // open XAudio2 device early; Sleep(500) below lets it fully warm up
+        InitAudioEngine();
     }
 
     // --- NEW: Preload Sound Effects ---
@@ -3650,9 +3653,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     ShowWindow(hwndMain, nCmdShow);
     UpdateWindow(hwndMain);
 
-    // [+] FOOLPROOF FIX: Delay the rack sound by 400ms using a timer.
-    // This guarantees the window is fully painted, XAudio2 is awake, AND the
-    // legacy MIDI synthesizer has finished initializing without conflicting.
+    // [+] FOOLPROOF FIX: Delay the startup rack sound by 400ms using a timer.
+    // This guarantees the window is fully painted and the legacy MIDI 
+    // synthesizer has completely finished initializing without audio blocking.
     SetTimer(hwndMain, ID_DELAYED_RACK_TIMER, 400, NULL);
 
     if (!SetTimer(hwndMain, ID_TIMER, 1000 / TARGET_FPS, NULL)) {
@@ -4388,28 +4391,26 @@ case WM_ACTIVATE: {
     SetTimer(hwnd, ID_DARK_MENUBAR_TIMER, 1, NULL);
     return result;
 }*/
-    case WM_TIMER:
-        // [+] FOOLPROOF FIX: The timer guarantees MIDI has finished locking 
-        // the audio mixer, and the UI has full OS focus.
-        if (wParam == ID_DELAYED_RACK_TIMER) {
-            KillTimer(hwnd, ID_DELAYED_RACK_TIMER); // Fire only once
-            if (!g_soundEffectsMuted) {
-                PlayGameSound(IDR_WAV_RACK);
+        case WM_TIMER:
+            // [+] FOOLPROOF FIX: Play the initial rack sound safely once the window
+            // is fully active and the MIDI device has finished locking the audio mixer.
+            if (wParam == ID_DELAYED_RACK_TIMER) {
+                KillTimer(hwnd, ID_DELAYED_RACK_TIMER); // Fire only once
+                if (!g_soundEffectsMuted) PlayGameSound(IDR_WAV_RACK);
+                return 0;
+            }
+
+            /*// [+] Handle dark menu bar deferred repaint
+            if (wParam == ID_DARK_MENUBAR_TIMER) {
+                KillTimer(hwnd, ID_DARK_MENUBAR_TIMER);
+                DrawDarkMenuBar(hwnd);
+                return 0;
+            }*/
+            if (wParam == ID_TIMER) {
+                GameUpdate();
+                InvalidateRect(hwnd, NULL, FALSE);
             }
             return 0;
-        }
-
-        /*// [+] Handle dark menu bar deferred repaint
-        if (wParam == ID_DARK_MENUBAR_TIMER) {
-            KillTimer(hwnd, ID_DARK_MENUBAR_TIMER);
-            DrawDarkMenuBar(hwnd);
-            return 0;
-        }*/
-        if (wParam == ID_TIMER) {
-            GameUpdate();
-            InvalidateRect(hwnd, NULL, FALSE);
-        }
-        return 0;
         // [+] FOOLPROOF FIX: Force Menu Bar Strip to Black (Persists through AHK/Resize)
     // [+] FOOLPROOF FIX: Force Dark Menu Background AND Visible Text
     // [+] PERMANENT FIX: Force Entire MenuStrip Row to Stay Black
@@ -6494,6 +6495,9 @@ void InitGame() {
     // [+] NOTE: IDR_WAV_RACK is NOT played here. It is played by each
     // caller (wWinMain after ShowWindow; ShowNewGameDialog after InitGame
     // returns) so the audio pipeline is fully warm when the sound fires.
+
+    // [+] FIX: Initial Rack sound playback moved to ID_DELAYED_RACK_TIMER 
+    // to prevent OS audio ducking during window/MIDI initialization.
 }
 
 
