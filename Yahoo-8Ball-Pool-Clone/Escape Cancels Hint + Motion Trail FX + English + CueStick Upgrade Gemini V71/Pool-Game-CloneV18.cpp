@@ -12883,13 +12883,13 @@ void DrawTable(ID2D1RenderTarget* pRT, ID2D1Factory* pFactory) {
     }
 
     // --- Layer 6: Headstring and Kitchen Arc ---
-    // This is drawn on top of the felt and cushions.
+// This is drawn on top of the felt (delimited by inner rim).
     ID2D1SolidColorBrush* pLineBrush = nullptr;
     pRT->CreateSolidColorBrush(D2D1::ColorF(0.4235f, 0.5647f, 0.1765f, 1.0f), &pLineBrush);
     if (pLineBrush) {
         pRT->DrawLine(
-            D2D1::Point2F(HEADSTRING_X, TABLE_TOP),
-            D2D1::Point2F(HEADSTRING_X, TABLE_BOTTOM),
+            D2D1::Point2F(HEADSTRING_X, TABLE_TOP + INNER_RIM_THICKNESS),
+            D2D1::Point2F(HEADSTRING_X, TABLE_BOTTOM - INNER_RIM_THICKNESS),
             pLineBrush,
             1.0f
         );
