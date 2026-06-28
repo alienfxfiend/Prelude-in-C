@@ -138,6 +138,7 @@ typedef struct tagUAHDRAWMENUITEM {
 
 #define ID_MENUBAR_EMPTY_SPACE 49999
 #define WM_UPDATE_MENU_STRIP (WM_APP + 1)
+#define WM_FORCE_SCROLLBAR (WM_APP + 2) // [+] NEW: Defers scrollbar execution safely
 
 // [+] Timer ID for deferred menu bar repaint
 //#define ID_DARK_MENUBAR_TIMER 9999
@@ -2861,24 +2862,24 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
     switch (message) {
     case WM_INITDIALOG:
     {
-        // [+] FOOLPROOF FIX: Configure the Dialog Scrollbar (Convert DLU to Pixels securely)
-        RECT rcFull = { 0, 0, 0, 310 }; // The absolute dialog units height specified in the .rc file
+        // [+] THE IRONCLAD FIX: The Win32 Dialog Manager aggressively strips WS_VSCROLL 
+        // if the dialog fits on the screen. We must physically jam it back into the style.
+        LONG_PTR style = GetWindowLongPtr(hDlg, GWL_STYLE);
+        SetWindowLongPtr(hDlg, GWL_STYLE, style | WS_VSCROLL);
+
+        // [+] FOOLPROOF FIX: Configure the Dialog Scrollbar
+        RECT rcFull = { 0, 0, 0, 310 };
         MapDialogRect(hDlg, &rcFull);
         RECT rcClient;
         GetClientRect(hDlg, &rcClient);
 
-        // Explicitly show the scrollbar slot before writing metrics into it,
-        // so the non-client frame includes the scrollbar width from the start.
+        // Explicitly show the scrollbar slot before writing metrics into it
         ShowScrollBar(hDlg, SB_VERT, TRUE);
 
-        // [+] FIX: Explicit casts resolve C4838 Narrowing Warning
-        // SIF_DISABLENOSCROLL ensures the scrollbar track is perpetually drawn, resolving 
-        // the glitch where interrupting the Splash Screen bypassed the rendering queue.
         SCROLLINFO si = { sizeof(SCROLLINFO), SIF_ALL | SIF_DISABLENOSCROLL, 0, (int)rcFull.bottom, (UINT)rcClient.bottom, 0, 0 };
         SetScrollInfo(hDlg, SB_VERT, &si, TRUE);
         s_scrollPos = 0;
 
-        // Force the Non-Client Area (Scrollbar) to recalculate its visible frame immediately
         SetWindowPos(hDlg, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
         // [+] FOOLPROOF FIX: Load Previews for the Owner-Drawn ImageBoxes just once
@@ -2926,40 +2927,21 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
         InvalidateRect(GetDlgItem(hDlg, IDC_PIC_P1_SPRITE), NULL, TRUE);
         InvalidateRect(GetDlgItem(hDlg, IDC_PIC_P2_SPRITE), NULL, TRUE);
 
-        // --- ACTION 4: Center Dialog Box ---
-// Optional: Force centering if default isn't working
-        RECT rcDlg, rcOwner, rcScreen;
-        HWND hwndOwner = GetParent(hDlg); // GetParent(hDlg) might be better if hwndMain is passed
-        if (hwndOwner == NULL) hwndOwner = GetDesktopWindow();
-
-        GetWindowRect(hwndOwner, &rcOwner);
+        // --- ACTION 4: Center Dialog Box (Always On Screen) ---
+        // [+] FIX: Ignore the parent window position completely to guarantee 
+        // dead-center placement even when opened mid-game via F2.
+        RECT rcDlg;
         GetWindowRect(hDlg, &rcDlg);
-        CopyRect(&rcScreen, &rcOwner); // Use owner rect as reference bounds
+        int dlgWidth = rcDlg.right - rcDlg.left;
+        int dlgHeight = rcDlg.bottom - rcDlg.top;
 
-        // Offset the owner rect relative to the screen if it's not the desktop
-        if (GetParent(hDlg) != NULL) { // If parented to main window (passed to DialogBoxParam)
-            OffsetRect(&rcOwner, -rcScreen.left, -rcScreen.top);
-            OffsetRect(&rcDlg, -rcScreen.left, -rcScreen.top);
-            OffsetRect(&rcScreen, -rcScreen.left, -rcScreen.top);
-        }
+        int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+        int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
+        int xPos = (screenWidth - dlgWidth) / 2;
+        int yPos = (screenHeight - dlgHeight) / 2;
 
-        // Calculate centered position
-        int x = rcOwner.left + (rcOwner.right - rcOwner.left - (rcDlg.right - rcDlg.left)) / 2;
-        int y = rcOwner.top + (rcOwner.bottom - rcOwner.top - (rcDlg.bottom - rcDlg.top)) / 2;
-
-        // Ensure it stays within screen bounds (optional safety)
-        x = std::max(static_cast<int>(rcScreen.left), x);
-        y = std::max(static_cast<int>(rcScreen.top), y);
-        if (x + (rcDlg.right - rcDlg.left) > rcScreen.right)
-            x = rcScreen.right - (rcDlg.right - rcDlg.left);
-        if (y + (rcDlg.bottom - rcDlg.top) > rcScreen.bottom)
-            y = rcScreen.bottom - (rcDlg.bottom - rcDlg.top);
-
-
-        // Set the dialog position
-        SetWindowPos(hDlg, HWND_TOP, x, y, 0, 0, SWP_NOSIZE);
-
+        SetWindowPos(hDlg, HWND_TOP, xPos, yPos, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
         // --- End Centering Code ---
 
         // [+] NEW: Set the Dialog Icon (Small and Big)
@@ -3018,6 +3000,10 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
 
         // --- Initial update of enabled/disabled controls ---
         UpdateControlStates();
+
+        // [+] FOOLPROOF FIX: Defer the final Scrollbar layout rendering to bypass 
+        // the Windows Theme Engine and AHK race conditions stripping the disabled flag.
+        PostMessage(hDlg, WM_FORCE_SCROLLBAR, 0, 0);
     }
     return (INT_PTR)TRUE;
 
@@ -3202,24 +3188,62 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
         break;
     }
 
-    // [FIX] Re-apply scrollbar at the last possible moment before the dialog is
-    // painted for the first time. This catches the race condition where an early
-    // splash-screen dismissal left pending messages ahead of WM_INITDIALOG's
-    // SWP_FRAMECHANGED, causing the NC area to render before scrollbar metrics
-    // were committed.
+    case WM_FORCE_SCROLLBAR:
+    {
+        // [+] DEFINITIVE FIX: The message queue has settled. We assert our disabled scrollbar state.
+        LONG_PTR style = GetWindowLongPtr(hDlg, GWL_STYLE);
+        SetWindowLongPtr(hDlg, GWL_STYLE, style | WS_VSCROLL);
+
+        RECT rcFull = { 0, 0, 0, 310 };
+        MapDialogRect(hDlg, &rcFull);
+        RECT rcClient;
+        GetClientRect(hDlg, &rcClient);
+
+        SCROLLINFO si = { sizeof(SCROLLINFO), SIF_ALL | SIF_DISABLENOSCROLL,
+                          0, (int)rcFull.bottom, (UINT)rcClient.bottom, s_scrollPos, 0 };
+        SetScrollInfo(hDlg, SB_VERT, &si, TRUE);
+        ShowScrollBar(hDlg, SB_VERT, TRUE);
+
+        // Force the non-client area to redraw itself immediately
+        SetWindowPos(hDlg, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED | SWP_DRAWFRAME);
+        return (INT_PTR)TRUE;
+    }
+
+    case WM_SIZE:
+    {
+        // [+] DEFINITIVE FIX: Intercept any external resizing (e.g. from AutoHotkey)
+        // and physically re-establish the WS_VSCROLL style before the OS hides it.
+        LONG_PTR style = GetWindowLongPtr(hDlg, GWL_STYLE);
+        SetWindowLongPtr(hDlg, GWL_STYLE, style | WS_VSCROLL);
+
+        RECT rcFull = { 0, 0, 0, 310 };
+        MapDialogRect(hDlg, &rcFull);
+        int clientHeight = HIWORD(lParam);
+
+        SCROLLINFO si = { sizeof(SCROLLINFO), SIF_RANGE | SIF_PAGE | SIF_DISABLENOSCROLL,
+                          0, (int)rcFull.bottom, (UINT)clientHeight, 0, 0 };
+        SetScrollInfo(hDlg, SB_VERT, &si, TRUE);
+        ShowScrollBar(hDlg, SB_VERT, TRUE);
+        return (INT_PTR)FALSE; // Let default sizing continue
+    }
+
     case WM_SHOWWINDOW:
         if (wParam) {   // TRUE = window is transitioning to visible
+            LONG_PTR style = GetWindowLongPtr(hDlg, GWL_STYLE);
+            SetWindowLongPtr(hDlg, GWL_STYLE, style | WS_VSCROLL);
+
             RECT rcF = { 0, 0, 0, 310 };
             MapDialogRect(hDlg, &rcF);
             RECT rcC;
             GetClientRect(hDlg, &rcC);
             SCROLLINFO si2 = { sizeof(SCROLLINFO), SIF_ALL | SIF_DISABLENOSCROLL,
-                               0, (int)rcF.bottom, (UINT)rcC.bottom, 0, 0 };
+                               0, (int)rcF.bottom, (UINT)rcC.bottom, s_scrollPos, 0 };
             SetScrollInfo(hDlg, SB_VERT, &si2, TRUE);
+            ShowScrollBar(hDlg, SB_VERT, TRUE);
             SetWindowPos(hDlg, NULL, 0, 0, 0, 0,
                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
         }
-        return (INT_PTR)FALSE;
+        return (INT_PTR)TRUE; // Return TRUE to tell Windows we handled the state
 
     }
     return (INT_PTR)FALSE; // Default processing
@@ -4569,26 +4593,26 @@ case WM_ACTIVATE: {
     SetTimer(hwnd, ID_DARK_MENUBAR_TIMER, 1, NULL);
     return result;
 }*/
-        case WM_TIMER:
-            // [+] FOOLPROOF FIX: Play the initial rack sound safely once the window
-            // is fully active and the MIDI device has finished locking the audio mixer.
-            if (wParam == ID_DELAYED_RACK_TIMER) {
-                KillTimer(hwnd, ID_DELAYED_RACK_TIMER); // Fire only once
-                if (!g_soundEffectsMuted) PlayGameSound(IDR_WAV_RACK);
-                return 0;
-            }
-
-            /*// [+] Handle dark menu bar deferred repaint
-            if (wParam == ID_DARK_MENUBAR_TIMER) {
-                KillTimer(hwnd, ID_DARK_MENUBAR_TIMER);
-                DrawDarkMenuBar(hwnd);
-                return 0;
-            }*/
-            if (wParam == ID_TIMER) {
-                GameUpdate();
-                InvalidateRect(hwnd, NULL, FALSE);
-            }
+    case WM_TIMER:
+        // [+] FOOLPROOF FIX: Play the initial rack sound safely once the window
+        // is fully active and the MIDI device has finished locking the audio mixer.
+        if (wParam == ID_DELAYED_RACK_TIMER) {
+            KillTimer(hwnd, ID_DELAYED_RACK_TIMER); // Fire only once
+            if (!g_soundEffectsMuted) PlayGameSound(IDR_WAV_RACK);
             return 0;
+        }
+
+        /*// [+] Handle dark menu bar deferred repaint
+        if (wParam == ID_DARK_MENUBAR_TIMER) {
+            KillTimer(hwnd, ID_DARK_MENUBAR_TIMER);
+            DrawDarkMenuBar(hwnd);
+            return 0;
+        }*/
+        if (wParam == ID_TIMER) {
+            GameUpdate();
+            InvalidateRect(hwnd, NULL, FALSE);
+        }
+        return 0;
         // [+] FOOLPROOF FIX: Force Menu Bar Strip to Black (Persists through AHK/Resize)
     // [+] FOOLPROOF FIX: Force Dark Menu Background AND Visible Text
     // [+] PERMANENT FIX: Force Entire MenuStrip Row to Stay Black
