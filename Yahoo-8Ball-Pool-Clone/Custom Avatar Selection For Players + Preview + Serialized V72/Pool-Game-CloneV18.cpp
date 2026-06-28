@@ -138,7 +138,6 @@ typedef struct tagUAHDRAWMENUITEM {
 
 #define ID_MENUBAR_EMPTY_SPACE 49999
 #define WM_UPDATE_MENU_STRIP (WM_APP + 1)
-#define WM_FORCE_SCROLLBAR (WM_APP + 2) // [+] NEW: Defers scrollbar execution safely
 
 // [+] Timer ID for deferred menu bar repaint
 //#define ID_DARK_MENUBAR_TIMER 9999
@@ -2859,28 +2858,62 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
         // Break modes are also relevant for who breaks.
     };
 
+    
+    // Deterministic New Game dialog scrollbar.
+    // Do NOT use WS_VSCROLL on the dialog itself. The dialog manager can recalc/hide
+    // a native non-client scrollbar during creation/theme/layout passes.
+    // This child scrollbar is a real control: visible 100% of the time, disabled
+    // when no scrolling is needed, enabled only if the client becomes shorter.
+    auto ForceNewGameVScroll = [hDlg]() {
+        HWND hScroll = GetDlgItem(hDlg, IDC_NEWGAME_VSCROLL);
+        if (!hScroll) return;
+
+        RECT rcClient{};
+        GetClientRect(hDlg, &rcClient);
+
+        const int clientWidth = static_cast<int>(rcClient.right - rcClient.left);
+        const int clientHeight = static_cast<int>(rcClient.bottom - rcClient.top);
+        const int cxScroll = GetSystemMetrics(SM_CXVSCROLL);
+
+        SetWindowPos(
+            hScroll,
+            HWND_TOP,
+            std::max(0, clientWidth - cxScroll),
+            0,
+            cxScroll,
+            clientHeight,
+            SWP_NOACTIVATE | SWP_SHOWWINDOW
+        );
+
+        RECT rcContent = { 0, 0, 0, 310 };
+        MapDialogRect(hDlg, &rcContent);
+
+        const int contentHeight = std::max(1, static_cast<int>(rcContent.bottom));
+        const int pageHeight = std::max(1, clientHeight);
+        const int maxScrollPos = std::max(0, contentHeight - pageHeight);
+
+        s_scrollPos = std::max(0, std::min(s_scrollPos, maxScrollPos));
+
+        SCROLLINFO si{};
+        si.cbSize = sizeof(si);
+        si.fMask = SIF_RANGE | SIF_PAGE | SIF_POS | SIF_DISABLENOSCROLL;
+        si.nMin = 0;
+        si.nMax = contentHeight - 1; // Important: nMax is inclusive.
+        si.nPage = (UINT)pageHeight;
+        si.nPos = s_scrollPos;
+
+        SetScrollInfo(hScroll, SB_CTL, &si, TRUE);
+
+        // Disabled when not needed, but still visible.
+        EnableWindow(hScroll, maxScrollPos > 0);
+        ShowWindow(hScroll, SW_SHOWNA);
+        InvalidateRect(hScroll, NULL, TRUE);
+    };
+
     switch (message) {
     case WM_INITDIALOG:
     {
-        // [+] THE IRONCLAD FIX: The Win32 Dialog Manager aggressively strips WS_VSCROLL 
-        // if the dialog fits on the screen. We must physically jam it back into the style.
-        LONG_PTR style = GetWindowLongPtr(hDlg, GWL_STYLE);
-        SetWindowLongPtr(hDlg, GWL_STYLE, style | WS_VSCROLL);
-
-        // [+] FOOLPROOF FIX: Configure the Dialog Scrollbar
-        RECT rcFull = { 0, 0, 0, 310 };
-        MapDialogRect(hDlg, &rcFull);
-        RECT rcClient;
-        GetClientRect(hDlg, &rcClient);
-
-        // Explicitly show the scrollbar slot before writing metrics into it
-        ShowScrollBar(hDlg, SB_VERT, TRUE);
-
-        SCROLLINFO si = { sizeof(SCROLLINFO), SIF_ALL | SIF_DISABLENOSCROLL, 0, (int)rcFull.bottom, (UINT)rcClient.bottom, 0, 0 };
-        SetScrollInfo(hDlg, SB_VERT, &si, TRUE);
-        s_scrollPos = 0;
-
-        SetWindowPos(hDlg, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        ForceNewGameVScroll();
 
         // [+] FOOLPROOF FIX: Load Previews for the Owner-Drawn ImageBoxes just once
         for (int i = 0; i < 24; ++i) {
@@ -3001,9 +3034,8 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
         // --- Initial update of enabled/disabled controls ---
         UpdateControlStates();
 
-        // [+] FOOLPROOF FIX: Defer the final Scrollbar layout rendering to bypass 
-        // the Windows Theme Engine and AHK race conditions stripping the disabled flag.
-        PostMessage(hDlg, WM_FORCE_SCROLLBAR, 0, 0);
+        // Final deterministic placement/state after all child controls are initialized.
+        ForceNewGameVScroll();
     }
     return (INT_PTR)TRUE;
 
@@ -3132,11 +3164,19 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
     } // Add a closing brace for the new scope.
     break; // End WM_COMMAND
 
-    // [+] FOOLPROOF FIX: Custom vertical scrolling implementation for Win32 dialogs
+    // Child-scrollbar scrolling. Ignore unrelated WM_VSCROLL traffic.
     case WM_VSCROLL:
     {
-        SCROLLINFO si = { sizeof(SCROLLINFO), SIF_ALL };
-        GetScrollInfo(hDlg, SB_VERT, &si);
+        HWND hScroll = GetDlgItem(hDlg, IDC_NEWGAME_VSCROLL);
+        if ((HWND)lParam != hScroll) {
+            break;
+        }
+
+        SCROLLINFO si{};
+        si.cbSize = sizeof(si);
+        si.fMask = SIF_ALL;
+        GetScrollInfo(hScroll, SB_CTL, &si);
+
         int oldPos = si.nPos;
 
         switch (LOWORD(wParam)) {
@@ -3149,12 +3189,24 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
         case SB_THUMBTRACK: si.nPos = si.nTrackPos; break;
         }
 
-        si.nPos = std::max(si.nMin, std::min(si.nPos, (int)(si.nMax - si.nPage + 1)));
+        int maxPos = std::max(si.nMin, si.nMax - (int)si.nPage + 1);
+        si.nPos = std::max(si.nMin, std::min(si.nPos, maxPos));
 
         if (si.nPos != oldPos) {
-            ScrollWindow(hDlg, 0, oldPos - si.nPos, NULL, NULL);
-            SetScrollInfo(hDlg, SB_VERT, &si, TRUE);
+            ScrollWindowEx(
+                hDlg,
+                0,
+                oldPos - si.nPos,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                SW_INVALIDATE | SW_ERASE | SW_SCROLLCHILDREN
+            );
+
             s_scrollPos = si.nPos;
+            SetScrollInfo(hScroll, SB_CTL, &si, TRUE);
+            ForceNewGameVScroll();
             UpdateWindow(hDlg);
         }
         return (INT_PTR)TRUE;
@@ -3187,63 +3239,18 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
         }
         break;
     }
-
-    case WM_FORCE_SCROLLBAR:
-    {
-        // [+] DEFINITIVE FIX: The message queue has settled. We assert our disabled scrollbar state.
-        LONG_PTR style = GetWindowLongPtr(hDlg, GWL_STYLE);
-        SetWindowLongPtr(hDlg, GWL_STYLE, style | WS_VSCROLL);
-
-        RECT rcFull = { 0, 0, 0, 310 };
-        MapDialogRect(hDlg, &rcFull);
-        RECT rcClient;
-        GetClientRect(hDlg, &rcClient);
-
-        SCROLLINFO si = { sizeof(SCROLLINFO), SIF_ALL | SIF_DISABLENOSCROLL,
-                          0, (int)rcFull.bottom, (UINT)rcClient.bottom, s_scrollPos, 0 };
-        SetScrollInfo(hDlg, SB_VERT, &si, TRUE);
-        ShowScrollBar(hDlg, SB_VERT, TRUE);
-
-        // Force the non-client area to redraw itself immediately
-        SetWindowPos(hDlg, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED | SWP_DRAWFRAME);
-        return (INT_PTR)TRUE;
-    }
-
+    
     case WM_SIZE:
     {
-        // [+] DEFINITIVE FIX: Intercept any external resizing (e.g. from AutoHotkey)
-        // and physically re-establish the WS_VSCROLL style before the OS hides it.
-        LONG_PTR style = GetWindowLongPtr(hDlg, GWL_STYLE);
-        SetWindowLongPtr(hDlg, GWL_STYLE, style | WS_VSCROLL);
-
-        RECT rcFull = { 0, 0, 0, 310 };
-        MapDialogRect(hDlg, &rcFull);
-        int clientHeight = HIWORD(lParam);
-
-        SCROLLINFO si = { sizeof(SCROLLINFO), SIF_RANGE | SIF_PAGE | SIF_DISABLENOSCROLL,
-                          0, (int)rcFull.bottom, (UINT)clientHeight, 0, 0 };
-        SetScrollInfo(hDlg, SB_VERT, &si, TRUE);
-        ShowScrollBar(hDlg, SB_VERT, TRUE);
-        return (INT_PTR)FALSE; // Let default sizing continue
+        ForceNewGameVScroll();
+        return (INT_PTR)FALSE;
     }
 
     case WM_SHOWWINDOW:
-        if (wParam) {   // TRUE = window is transitioning to visible
-            LONG_PTR style = GetWindowLongPtr(hDlg, GWL_STYLE);
-            SetWindowLongPtr(hDlg, GWL_STYLE, style | WS_VSCROLL);
-
-            RECT rcF = { 0, 0, 0, 310 };
-            MapDialogRect(hDlg, &rcF);
-            RECT rcC;
-            GetClientRect(hDlg, &rcC);
-            SCROLLINFO si2 = { sizeof(SCROLLINFO), SIF_ALL | SIF_DISABLENOSCROLL,
-                               0, (int)rcF.bottom, (UINT)rcC.bottom, s_scrollPos, 0 };
-            SetScrollInfo(hDlg, SB_VERT, &si2, TRUE);
-            ShowScrollBar(hDlg, SB_VERT, TRUE);
-            SetWindowPos(hDlg, NULL, 0, 0, 0, 0,
-                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        if (wParam) {
+            ForceNewGameVScroll();
         }
-        return (INT_PTR)TRUE; // Return TRUE to tell Windows we handled the state
+        return (INT_PTR)TRUE;
 
     }
     return (INT_PTR)FALSE; // Default processing

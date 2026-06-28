@@ -61,7 +61,7 @@ IDI_ICON1               ICON                    "8Ball_Colored.ico"
 //
 
 IDD_NEWGAMEDLG DIALOGEX 0, 0, 240, 310
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VSCROLL
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "New Game Setup"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
@@ -108,6 +108,11 @@ GROUPBOX        "Character Select", IDC_GROUP_CHAR_SELECT, 7, 235, 215, 45
     // Shifted down
     DEFPUSHBUTTON   "Start",IDOK,55,290,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,115,290,50,14
+
+    // Permanent New Game dialog scrollbar.
+    // This is intentionally a child SCROLLBAR control instead of WS_VSCROLL.
+    // When scrolling is not needed, it remains visible but disabled.
+    CONTROL         "", IDC_NEWGAME_VSCROLL, "ScrollBar", SBS_VERT | WS_VISIBLE | WS_DISABLED, 228, 0, 10, 310
 END
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 429, 211

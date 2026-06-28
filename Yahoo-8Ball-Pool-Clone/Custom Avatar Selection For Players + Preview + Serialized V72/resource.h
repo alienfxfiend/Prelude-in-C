@@ -113,6 +113,7 @@
 #define IDC_PIC_P1_SPRITE               1052
 #define IDC_COMBO_P2_SPRITE             1053
 #define IDC_PIC_P2_SPRITE               1054
+#define IDC_NEWGAME_VSCROLL             1055
 
 // [+] NEW: Sprite PNG Resources
 #define IDB_SPRITE_01                   2001
