@@ -2867,10 +2867,19 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
         RECT rcClient;
         GetClientRect(hDlg, &rcClient);
 
+        // Explicitly show the scrollbar slot before writing metrics into it,
+        // so the non-client frame includes the scrollbar width from the start.
+        ShowScrollBar(hDlg, SB_VERT, TRUE);
+
         // [+] FIX: Explicit casts resolve C4838 Narrowing Warning
-        SCROLLINFO si = { sizeof(SCROLLINFO), SIF_ALL, 0, (int)rcFull.bottom, (UINT)rcClient.bottom, 0, 0 };
+        // SIF_DISABLENOSCROLL ensures the scrollbar track is perpetually drawn, resolving 
+        // the glitch where interrupting the Splash Screen bypassed the rendering queue.
+        SCROLLINFO si = { sizeof(SCROLLINFO), SIF_ALL | SIF_DISABLENOSCROLL, 0, (int)rcFull.bottom, (UINT)rcClient.bottom, 0, 0 };
         SetScrollInfo(hDlg, SB_VERT, &si, TRUE);
         s_scrollPos = 0;
+
+        // Force the Non-Client Area (Scrollbar) to recalculate its visible frame immediately
+        SetWindowPos(hDlg, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
         // [+] FOOLPROOF FIX: Load Previews for the Owner-Drawn ImageBoxes just once
         for (int i = 0; i < 24; ++i) {
@@ -3192,6 +3201,25 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
         }
         break;
     }
+
+    // [FIX] Re-apply scrollbar at the last possible moment before the dialog is
+    // painted for the first time. This catches the race condition where an early
+    // splash-screen dismissal left pending messages ahead of WM_INITDIALOG's
+    // SWP_FRAMECHANGED, causing the NC area to render before scrollbar metrics
+    // were committed.
+    case WM_SHOWWINDOW:
+        if (wParam) {   // TRUE = window is transitioning to visible
+            RECT rcF = { 0, 0, 0, 310 };
+            MapDialogRect(hDlg, &rcF);
+            RECT rcC;
+            GetClientRect(hDlg, &rcC);
+            SCROLLINFO si2 = { sizeof(SCROLLINFO), SIF_ALL | SIF_DISABLENOSCROLL,
+                               0, (int)rcF.bottom, (UINT)rcC.bottom, 0, 0 };
+            SetScrollInfo(hDlg, SB_VERT, &si2, TRUE);
+            SetWindowPos(hDlg, NULL, 0, 0, 0, 0,
+                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        }
+        return (INT_PTR)FALSE;
 
     }
     return (INT_PTR)FALSE; // Default processing
