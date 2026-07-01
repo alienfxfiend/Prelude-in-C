@@ -363,7 +363,11 @@ int firstHitBallIdThisShot = -1;      // ID of the first object ball hit by cue 
 bool cueHitObjectBallThisShot = false; // Did cue ball hit an object ball this shot?
 bool railHitAfterContact = false;     // Did any ball hit a rail AFTER cue hit an object ball?
 // How long to display the FOUL! HUD after a foul is detected (frames)
+const int HUD_TEXT_ANIMATION_FRAMES = 120;
 int foulDisplayCounter = 0;           // counts down each frame; >0 => show FOUL!
+int shootAgainDisplayCounter = 0;     // counts down each frame; >0 => show SHOOT AGAIN!
+int comboShotDisplayCounter = 0;      // counts down each frame; >0 => show COMBO SHOT!
+int consecutivePocketShotStreak = 0;  // legal non-practice pocket streak across consecutive shots
 // --- End New Foul Tracking Globals ---
 
 // NEW Game Mode/AI Globals
@@ -493,6 +497,7 @@ const D2D1_COLOR_F SOLID_COLOR = D2D1::ColorF(D2D1::ColorF::Goldenrod); // Solid
 const D2D1_COLOR_F STRIPE_COLOR = D2D1::ColorF(D2D1::ColorF::DarkOrchid);   // Stripes = Red DarkOrchid
 const D2D1_COLOR_F AIM_LINE_COLOR = D2D1::ColorF(D2D1::ColorF::White, 0.7f); // Semi-transparent white
 const D2D1_COLOR_F FOUL_TEXT_COLOR = D2D1::ColorF(D2D1::ColorF::Red);
+const D2D1_COLOR_F POCKET_HUD_TEXT_COLOR = D2D1::ColorF(0.05f, 0.09f, 0.28f); // Indigo
 const D2D1_COLOR_F TURN_ARROW_COLOR = D2D1::ColorF(0.1333f, 0.7294f, 0.7490f); //NEWCOLOR 0.1333f, 0.7294f, 0.7490f => ::Blue
 //const D2D1_COLOR_F TURN_ARROW_COLOR = D2D1::ColorF(D2D1::ColorF::Blue);
 const D2D1_COLOR_F ENGLISH_DOT_COLOR = D2D1::ColorF(D2D1::ColorF::Red);
@@ -6728,6 +6733,10 @@ void InitGame() {
 
     // Reset other state variables
     foulCommitted = false;
+    foulDisplayCounter = 0;
+    shootAgainDisplayCounter = 0;
+    comboShotDisplayCounter = 0;
+    consecutivePocketShotStreak = 0;
     gameOverMessage = L"";
     // firstBallPocketedAfterBreak used only in 8-ball for assignment
     shotPower = 0.0f; cueSpinX = 0.0f; cueSpinY = 0.0f;
@@ -7704,6 +7713,11 @@ void ProcessShotResults() {
 
     // --- PRACTICE MODE LOGIC ---
     if (g_isPracticeMode) {
+        foulDisplayCounter = 0;
+        shootAgainDisplayCounter = 0;
+        comboShotDisplayCounter = 0;
+        consecutivePocketShotStreak = 0;
+
         if (cueBallPocketedThisTurn) {
             RespawnCueBall(false);
             // RespawnCueBall sets state to BALL_IN_HAND_P1
@@ -7719,6 +7733,26 @@ void ProcessShotResults() {
         return;
     }
     // --- END PRACTICE MODE LOGIC ---
+
+    auto StartPocketHudAnimation = [&]() {
+        if (g_isPracticeMode || numberedBallsPocketedThisTurn <= 0) return;
+
+        // Count legal successful pocketing shots across the same player's continued run.
+        // This fixes COMBO SHOT! not appearing when balls are pocketed on consecutive shots.
+        consecutivePocketShotStreak++;
+
+        // COMBO SHOT! appears either when:
+        // 1) two or more object balls were pocketed in this single shot, OR
+        // 2) this is the 2nd+ consecutive legal pocketing shot in the same run.
+        if (numberedBallsPocketedThisTurn >= 2 || consecutivePocketShotStreak >= 2) {
+            comboShotDisplayCounter = HUD_TEXT_ANIMATION_FRAMES;
+            shootAgainDisplayCounter = 0;
+        }
+        else {
+            shootAgainDisplayCounter = HUD_TEXT_ANIMATION_FRAMES;
+            comboShotDisplayCounter = 0;
+        }
+    };
 
     // --- Step 2: Check Fouls (Must happen before checking Game Over) ---
     bool turnFoul = false;
@@ -7781,6 +7815,7 @@ void ProcessShotResults() {
     }
 
     if (currentGameState == GAME_OVER) {
+        consecutivePocketShotStreak = 0;
         pocketedThisTurn.clear();
         return;
     }
@@ -7789,6 +7824,12 @@ void ProcessShotResults() {
     bool straightPoolNeedsRerack = (currentGameType == GameType::STRAIGHT_POOL && ballsOnTableCount <= 1);
 
     if (foulCommitted) {
+        if (turnFoul && !g_isPracticeMode) {
+            foulDisplayCounter = HUD_TEXT_ANIMATION_FRAMES; // Restart FOUL! zoom animation
+            shootAgainDisplayCounter = 0;
+            comboShotDisplayCounter = 0;
+            consecutivePocketShotStreak = 0;
+        }
         if (turnFoul && foulDisplayCounter <= 0) foulDisplayCounter = 120; // Show "FOUL!" text
 
         // [+] NEW: Play Foul Sound
@@ -7839,11 +7880,13 @@ void ProcessShotResults() {
             AssignPlayerBallTypes(firstType, true); // Assign and credit the shooter
         }
         playerContinuesTurn = true; // Ensure turn continues
+        StartPocketHudAnimation();
         CheckAndTransitionToPocketChoice(currentPlayer); // Check if now on 8-ball
 
     }
     else if (straightPoolNeedsRerack) {
         // Straight Pool: Trigger normal re-rack
+        StartPocketHudAnimation();
         ReRackStraightPool();
     }
     else if (playerContinuesTurn) {
@@ -7856,6 +7899,8 @@ void ProcessShotResults() {
             SwitchTurns(); // Turn *does* switch, opponent decides push-out
         }
         else {
+            StartPocketHudAnimation();
+
             if (currentGameType == GameType::EIGHT_BALL_MODE) {
                 CheckAndTransitionToPocketChoice(currentPlayer);
             }
@@ -7874,6 +7919,8 @@ void ProcessShotResults() {
         if (isOpeningBreakShot && currentGameType == GameType::NINE_BALL) {
             isPushOutAvailable = true; // Legal break, no pocket, opponent gets push-out
         }
+        // Miss/no continued legal pocket breaks the consecutive pocket streak.
+        consecutivePocketShotStreak = 0;
 
         // Missed or pocketed opponent's ball (in 8-ball)
         SwitchTurns();
@@ -14828,6 +14875,9 @@ void ReRackPracticeMode() {
     aiTurnPending = false;
     foulCommitted = false;
     foulDisplayCounter = 0;
+    shootAgainDisplayCounter = 0;
+    comboShotDisplayCounter = 0;
+    consecutivePocketShotStreak = 0;
 
     if (!g_soundEffectsMuted) {
         PlayGameSound(IDR_WAV_RACK);
@@ -15123,24 +15173,69 @@ void DrawUI(ID2D1RenderTarget* pRT) {
     } // --- End else (not practice mode) ---
 
     // --- Foul Text (Large Red, Bottom Center) ---
-    if ((foulCommitted || foulDisplayCounter > 0) && currentGameState != SHOT_IN_PROGRESS) {
-        ID2D1SolidColorBrush* pFoulBrush = nullptr;
-        pRT->CreateSolidColorBrush(FOUL_TEXT_COLOR, &pFoulBrush);
-        if (pFoulBrush && pLargeTextFormat) {
-            float foulWidth = 200.0f;
-            float foulHeight = 60.0f;
-            float foulLeft = TABLE_LEFT + (TABLE_WIDTH / 2.0f) - (foulWidth / 2.0f);
-            float foulTop = pocketedBallsBarRect.bottom + 10.0f;
-            D2D1_RECT_F foulRect = D2D1::RectF(foulLeft, foulTop, foulLeft + foulWidth, foulTop + foulHeight);
-
-            pLargeTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-            pLargeTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-            pRT->DrawText(L"FOUL!", 5, pLargeTextFormat, &foulRect, pFoulBrush);
-            SafeRelease(&pFoulBrush);
-        }
+    // --- Animated HUD Text: FOUL!, SHOOT AGAIN!, COMBO SHOT! ---
+    // Disabled completely in Practice Mode.
+    if (g_isPracticeMode) {
+        foulDisplayCounter = 0;
+        shootAgainDisplayCounter = 0;
+        comboShotDisplayCounter = 0;
     }
+    else {
+        auto DrawZoomHudText = [&](const wchar_t* text, UINT32 textLen, const D2D1_COLOR_F& color, int counter) {
+            if (!pLargeTextFormat || counter <= 0 || currentGameState == SHOT_IN_PROGRESS) return;
 
-    if (foulDisplayCounter > 0) foulDisplayCounter--;
+            float t = (float)(HUD_TEXT_ANIMATION_FRAMES - counter) / (float)HUD_TEXT_ANIMATION_FRAMES;
+            if (t < 0.0f) t = 0.0f;
+            if (t > 1.0f) t = 1.0f;
+
+            // Starts small, zooms larger, then shrinks back down.
+            float zoomScale = 0.70f + 0.40f * sinf(t * PI);
+
+            float hudWidth = 300.0f;
+            float hudHeight = 70.0f;
+            float hudLeft = TABLE_LEFT + (TABLE_WIDTH / 2.0f) - (hudWidth / 2.0f);
+            float hudTop = pocketedBallsBarRect.bottom + 10.0f;
+            D2D1_RECT_F hudRect = D2D1::RectF(hudLeft, hudTop, hudLeft + hudWidth, hudTop + hudHeight);
+
+            D2D1_POINT_2F zoomCenter = D2D1::Point2F(
+                hudLeft + hudWidth / 2.0f,
+                hudTop + hudHeight / 2.0f
+            );
+
+            ID2D1SolidColorBrush* pHudBrush = nullptr;
+            pRT->CreateSolidColorBrush(color, &pHudBrush);
+            if (pHudBrush) {
+                D2D1_MATRIX_3X2_F oldTransform;
+                pRT->GetTransform(&oldTransform);
+
+                pRT->SetTransform(
+                    D2D1::Matrix3x2F::Scale(zoomScale, zoomScale, zoomCenter) * oldTransform
+                );
+
+                pLargeTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+                pLargeTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+                pRT->DrawText(text, textLen, pLargeTextFormat, &hudRect, pHudBrush);
+
+                pRT->SetTransform(oldTransform);
+                SafeRelease(&pHudBrush);
+            }
+        };
+
+        // Priority: FOUL overrides pocket messages; Combo overrides Shoot Again.
+        if (foulDisplayCounter > 0) {
+            DrawZoomHudText(L"FOUL!", 5, FOUL_TEXT_COLOR, foulDisplayCounter);
+        }
+        else if (comboShotDisplayCounter > 0) {
+            DrawZoomHudText(L"COMBO SHOT!", 11, POCKET_HUD_TEXT_COLOR, comboShotDisplayCounter);
+        }
+        else if (shootAgainDisplayCounter > 0) {
+            DrawZoomHudText(L"SHOOT AGAIN!", 12, POCKET_HUD_TEXT_COLOR, shootAgainDisplayCounter);
+        }
+
+        if (foulDisplayCounter > 0) foulDisplayCounter--;
+        if (shootAgainDisplayCounter > 0) shootAgainDisplayCounter--;
+        if (comboShotDisplayCounter > 0) comboShotDisplayCounter--;
+    }
 
     // --- Blue Arrow & Prompt for 8?Ball Call ---
     if (currentGameType == GameType::EIGHT_BALL_MODE && !g_isPracticeMode) {
