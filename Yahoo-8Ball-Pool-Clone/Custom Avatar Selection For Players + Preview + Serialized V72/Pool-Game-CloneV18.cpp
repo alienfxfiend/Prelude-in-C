@@ -4192,9 +4192,10 @@ void DebugReturnLastBall() {
     }
     else if (currentGameType == GameType::EIGHT_BALL_MODE) {
         if (b->id != 0 && b->id != 8) {
-            if (lastEvent.playerId == 1 && player1Info.assignedType == b->type)
+            // Decrement the rightful owner's count, regardless of who shot the foul/undo
+            if (player1Info.assignedType != BallType::NONE && b->type == player1Info.assignedType)
                 player1Info.ballsPocketedCount = std::max(0, player1Info.ballsPocketedCount - 1);
-            else if (lastEvent.playerId == 2 && player2Info.assignedType == b->type)
+            else if (player2Info.assignedType != BallType::NONE && b->type == player2Info.assignedType)
                 player2Info.ballsPocketedCount = std::max(0, player2Info.ballsPocketedCount - 1);
         }
         // Reset 8-ball selection state if needed
@@ -7692,12 +7693,19 @@ void ProcessShotResults() {
             }
             // Score/Continuation logic for 8-Ball (needs assigned types)
             else if (currentGameType == GameType::EIGHT_BALL_MODE) {
+                // 1. Credit the ball to its rightful owner, regardless of who accidentally shot it
+                if (b->id != 8) {
+                    if (player1Info.assignedType != BallType::NONE && b->type == player1Info.assignedType) {
+                        player1Info.ballsPocketedCount++;
+                    }
+                    else if (player2Info.assignedType != BallType::NONE && b->type == player2Info.assignedType) {
+                        player2Info.ballsPocketedCount++;
+                    }
+                }
+
+                // 2. Separately check turn continuation for the shooter
                 PlayerInfo& shootingPlayer = (currentPlayer == 1) ? player1Info : player2Info;
                 if (shootingPlayer.assignedType != BallType::NONE && b->type == shootingPlayer.assignedType) {
-                    // Must update the count *before* checking game over conditions
-                    if (b->id != 8) { // Don't double-count 8-ball here
-                        shootingPlayer.ballsPocketedCount++;
-                    }
                     playerContinuesTurn = true; // Continues turn if own ball pocketed
                 }
             }
@@ -7774,7 +7782,16 @@ void ProcessShotResults() {
         else if (currentGameType == GameType::EIGHT_BALL_MODE) {
             if (player1Info.assignedType != BallType::NONE) { // Colors are assigned
                 PlayerInfo& shootingPlayer = (currentPlayer == 1) ? player1Info : player2Info;
-                bool wasOnEightBall = (shootingPlayer.assignedType != BallType::NONE && (shootingPlayer.ballsPocketedCount) >= 7);
+
+                // --- FIX: Calculate if player was on 8-Ball BEFORE the shot ---
+                int pocketedThisTurnOfMyGroup = 0;
+                for (int id : pocketedThisTurn) {
+                    Ball* b = GetBallById(id);
+                    if (b && b->type == shootingPlayer.assignedType && b->id != 8) {
+                        pocketedThisTurnOfMyGroup++;
+                    }
+                }
+                bool wasOnEightBall = (shootingPlayer.assignedType != BallType::NONE && (shootingPlayer.ballsPocketedCount - pocketedThisTurnOfMyGroup) >= 7);
 
                 if (wasOnEightBall) {
                     if (firstHit->id != 8) turnFoul = true; // Must hit 8-ball first when on it
@@ -7877,7 +7894,23 @@ void ProcessShotResults() {
             }
         }
         if (firstType != BallType::NONE) {
-            AssignPlayerBallTypes(firstType, true); // Assign and credit the shooter
+            AssignPlayerBallTypes(firstType, false); // Assign types but do NOT blindly add +1
+
+            // Recalculate from the actual table state to accurately catch ALL balls 
+            // pocketed on this shot (e.g. if 3 solids and 1 stripe fell on the break).
+            player1Info.ballsPocketedCount = 0;
+            player2Info.ballsPocketedCount = 0;
+
+            for (const Ball& ball : balls) {
+                if (!ball.isPocketed || ball.id == 0 || ball.id == 8) continue;
+
+                if (ball.type == player1Info.assignedType) {
+                    player1Info.ballsPocketedCount++;
+                }
+                else if (ball.type == player2Info.assignedType) {
+                    player2Info.ballsPocketedCount++;
+                }
+            }
         }
         playerContinuesTurn = true; // Ensure turn continues
         StartPocketHudAnimation();
@@ -8136,7 +8169,16 @@ void CheckGameOverConditions(bool eightBallPocketed, bool cueBallPocketed) {
         // Check if player had cleared their group *before* this shot finished.
         // ballsPocketedCount includes balls made *this* turn.
         int ballsNeeded = 7;
-        bool clearedGroupBeforeShot = (shooterInfo.ballsPocketedCount >= ballsNeeded);
+
+        // --- FIX: Calculate group balls pocketed BEFORE this shot ---
+        int pocketedThisTurnOfMyGroup = 0;
+        for (int id : pocketedThisTurn) {
+            Ball* b = GetBallById(id);
+            if (b && b->type == shooterInfo.assignedType && b->id != 8) {
+                pocketedThisTurnOfMyGroup++;
+            }
+        }
+        bool clearedGroupBeforeShot = ((shooterInfo.ballsPocketedCount - pocketedThisTurnOfMyGroup) >= ballsNeeded);
 
         bool isLegalWin =
             clearedGroupBeforeShot &&             // Must have cleared group before this shot
