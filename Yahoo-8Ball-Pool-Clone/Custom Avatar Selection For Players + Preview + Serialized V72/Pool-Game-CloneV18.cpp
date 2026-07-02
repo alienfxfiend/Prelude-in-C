@@ -561,6 +561,7 @@ void SwitchTurns();
 //bool AssignPlayerBallTypes(BallType firstPocketedType);
 bool AssignPlayerBallTypes(BallType firstPocketedType,
     bool creditShooter = true);
+void RecountEightBallGroupProgressFromTable();
 void CheckGameOverConditions(bool eightBallPocketed, bool cueBallPocketed);
 void FinalizeGame(int winner, int loser, const std::wstring& reason); // <<< ADD THIS NEW LINE
 void ReRackPracticeMode(); // NEW: For re-racking in practice mode
@@ -2863,7 +2864,7 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
         // Break modes are also relevant for who breaks.
     };
 
-    
+
     // Deterministic New Game dialog scrollbar.
     // Do NOT use WS_VSCROLL on the dialog itself. The dialog manager can recalc/hide
     // a native non-client scrollbar during creation/theme/layout passes.
@@ -3244,7 +3245,7 @@ INT_PTR CALLBACK NewGameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
         }
         break;
     }
-    
+
     case WM_SIZE:
     {
         ForceNewGameVScroll();
@@ -4192,10 +4193,9 @@ void DebugReturnLastBall() {
     }
     else if (currentGameType == GameType::EIGHT_BALL_MODE) {
         if (b->id != 0 && b->id != 8) {
-            // Decrement the rightful owner's count, regardless of who shot the foul/undo
-            if (player1Info.assignedType != BallType::NONE && b->type == player1Info.assignedType)
+            if (lastEvent.playerId == 1 && player1Info.assignedType == b->type)
                 player1Info.ballsPocketedCount = std::max(0, player1Info.ballsPocketedCount - 1);
-            else if (player2Info.assignedType != BallType::NONE && b->type == player2Info.assignedType)
+            else if (lastEvent.playerId == 2 && player2Info.assignedType == b->type)
                 player2Info.ballsPocketedCount = std::max(0, player2Info.ballsPocketedCount - 1);
         }
         // Reset 8-ball selection state if needed
@@ -7693,19 +7693,15 @@ void ProcessShotResults() {
             }
             // Score/Continuation logic for 8-Ball (needs assigned types)
             else if (currentGameType == GameType::EIGHT_BALL_MODE) {
-                // 1. Credit the ball to its rightful owner, regardless of who accidentally shot it
-                if (b->id != 8) {
-                    if (player1Info.assignedType != BallType::NONE && b->type == player1Info.assignedType) {
-                        player1Info.ballsPocketedCount++;
-                    }
-                    else if (player2Info.assignedType != BallType::NONE && b->type == player2Info.assignedType) {
-                        player2Info.ballsPocketedCount++;
-                    }
-                }
-
-                // 2. Separately check turn continuation for the shooter
                 PlayerInfo& shootingPlayer = (currentPlayer == 1) ? player1Info : player2Info;
-                if (shootingPlayer.assignedType != BallType::NONE && b->type == shootingPlayer.assignedType) {
+
+                // Do NOT increment ballsPocketedCount here.
+                // Group progress must represent actual table state, not merely
+                // which player shot the ball in. The recount below updates both
+                // players' counts from all currently pocketed balls.
+                if (shootingPlayer.assignedType != BallType::NONE &&
+                    b->id != 8 &&
+                    b->type == shootingPlayer.assignedType) {
                     playerContinuesTurn = true; // Continues turn if own ball pocketed
                 }
             }
@@ -7717,6 +7713,16 @@ void ProcessShotResults() {
                 // If 9-ball is pocketed, game over is checked later
             }
         }
+    }
+
+
+    // 8-Ball safety sync:
+    // Once groups are assigned, rebuild both players' group counts from the
+    // real table state. This fixes opponent-ball pockets, combo pockets, and
+    // rare manual-counter drift before game-over / on-8-ball checks occur.
+    if (currentGameType == GameType::EIGHT_BALL_MODE &&
+        player1Info.assignedType != BallType::NONE) {
+        RecountEightBallGroupProgressFromTable();
     }
 
     // --- PRACTICE MODE LOGIC ---
@@ -7783,15 +7789,28 @@ void ProcessShotResults() {
             if (player1Info.assignedType != BallType::NONE) { // Colors are assigned
                 PlayerInfo& shootingPlayer = (currentPlayer == 1) ? player1Info : player2Info;
 
-                // --- FIX: Calculate if player was on 8-Ball BEFORE the shot ---
-                int pocketedThisTurnOfMyGroup = 0;
+                // IMPORTANT:
+                // ballsPocketedCount has already been synced from the table state,
+                // so it includes balls pocketed during THIS shot.
+                // For foul logic, we must know whether the shooter was on the
+                // 8-ball BEFORE the cue ball was struck.
+                int pocketedThisShotOfShootersGroup = 0;
                 for (int id : pocketedThisTurn) {
-                    Ball* b = GetBallById(id);
-                    if (b && b->type == shootingPlayer.assignedType && b->id != 8) {
-                        pocketedThisTurnOfMyGroup++;
+                    Ball* pocketedBall = GetBallById(id);
+                    if (pocketedBall &&
+                        pocketedBall->id > 0 &&
+                        pocketedBall->id != 8 &&
+                        pocketedBall->type == shootingPlayer.assignedType) {
+                        ++pocketedThisShotOfShootersGroup;
                     }
                 }
-                bool wasOnEightBall = (shootingPlayer.assignedType != BallType::NONE && (shootingPlayer.ballsPocketedCount - pocketedThisTurnOfMyGroup) >= 7);
+
+                int shootersGroupCountBeforeShot =
+                    std::max(0, shootingPlayer.ballsPocketedCount - pocketedThisShotOfShootersGroup);
+
+                bool wasOnEightBall =
+                    (shootingPlayer.assignedType != BallType::NONE &&
+                        shootersGroupCountBeforeShot >= 7);
 
                 if (wasOnEightBall) {
                     if (firstHit->id != 8) turnFoul = true; // Must hit 8-ball first when on it
@@ -7894,23 +7913,11 @@ void ProcessShotResults() {
             }
         }
         if (firstType != BallType::NONE) {
-            AssignPlayerBallTypes(firstType, false); // Assign types but do NOT blindly add +1
-
-            // Recalculate from the actual table state to accurately catch ALL balls 
-            // pocketed on this shot (e.g. if 3 solids and 1 stripe fell on the break).
-            player1Info.ballsPocketedCount = 0;
-            player2Info.ballsPocketedCount = 0;
-
-            for (const Ball& ball : balls) {
-                if (!ball.isPocketed || ball.id == 0 || ball.id == 8) continue;
-
-                if (ball.type == player1Info.assignedType) {
-                    player1Info.ballsPocketedCount++;
-                }
-                else if (ball.type == player2Info.assignedType) {
-                    player2Info.ballsPocketedCount++;
-                }
-            }
+            // Assign groups, then recount from actual table state.
+            // Do not credit only one ball here: the assignment shot may have
+            // pocketed multiple object balls from either group.
+            AssignPlayerBallTypes(firstType, false);
+            RecountEightBallGroupProgressFromTable();
         }
         playerContinuesTurn = true; // Ensure turn continues
         StartPocketHudAnimation();
@@ -8039,6 +8046,37 @@ bool AssignPlayerBallTypes(BallType firstPocketedType, bool creditShooter /*= tr
             ++player2Info.ballsPocketedCount;
     }
     return true;
+}
+
+
+// Rebuild 8-Ball group progress from the actual table state.
+// This prevents rare counter drift when:
+// - a player pockets the opponent's group ball,
+// - multiple balls are pocketed in one shot,
+// - the assignment shot sinks more than one object ball.
+void RecountEightBallGroupProgressFromTable()
+{
+    if (currentGameType != GameType::EIGHT_BALL_MODE) return;
+
+    if (player1Info.assignedType == BallType::NONE ||
+        player2Info.assignedType == BallType::NONE) {
+        return;
+    }
+
+    player1Info.ballsPocketedCount = 0;
+    player2Info.ballsPocketedCount = 0;
+
+    for (const Ball& b : balls) {
+        if (!b.isPocketed) continue;
+        if (b.id == 0 || b.id == 8) continue;
+
+        if (b.type == player1Info.assignedType) {
+            ++player1Info.ballsPocketedCount;
+        }
+        else if (b.type == player2Info.assignedType) {
+            ++player2Info.ballsPocketedCount;
+        }
+    }
 }
 
 /*bool AssignPlayerBallTypes(BallType firstPocketedType) {
@@ -8170,15 +8208,27 @@ void CheckGameOverConditions(bool eightBallPocketed, bool cueBallPocketed) {
         // ballsPocketedCount includes balls made *this* turn.
         int ballsNeeded = 7;
 
-        // --- FIX: Calculate group balls pocketed BEFORE this shot ---
-        int pocketedThisTurnOfMyGroup = 0;
+        // IMPORTANT:
+        // ballsPocketedCount has already been synced from the actual table state,
+        // so if the shooter sank their 7th group ball and the 8-ball in the same
+        // shot, the raw count would already be 7. That must NOT be a legal win.
+        // Subtract this shot's newly-pocketed group balls to recover the
+        // shooter's group count at the moment the cue ball was struck.
+        int pocketedThisShotOfShootersGroup = 0;
         for (int id : pocketedThisTurn) {
-            Ball* b = GetBallById(id);
-            if (b && b->type == shooterInfo.assignedType && b->id != 8) {
-                pocketedThisTurnOfMyGroup++;
+            Ball* pocketedBall = GetBallById(id);
+            if (pocketedBall &&
+                pocketedBall->id > 0 &&
+                pocketedBall->id != 8 &&
+                pocketedBall->type == shooterInfo.assignedType) {
+                ++pocketedThisShotOfShootersGroup;
             }
         }
-        bool clearedGroupBeforeShot = ((shooterInfo.ballsPocketedCount - pocketedThisTurnOfMyGroup) >= ballsNeeded);
+
+        int shootersGroupCountBeforeShot =
+            std::max(0, shooterInfo.ballsPocketedCount - pocketedThisShotOfShootersGroup);
+
+        bool clearedGroupBeforeShot = (shootersGroupCountBeforeShot >= ballsNeeded);
 
         bool isLegalWin =
             clearedGroupBeforeShot &&             // Must have cleared group before this shot
