@@ -7751,14 +7751,65 @@ void ProcessShotResults() {
     auto StartPocketHudAnimation = [&]() {
         if (g_isPracticeMode || numberedBallsPocketedThisTurn <= 0) return;
 
+        // [+] FIX: Count ONLY the shooter's own-group balls pocketed this shot.
+        // Opponent balls in 8-Ball (and non-lowest balls in 9-Ball) must NOT
+        // count toward the COMBO SHOT! streak, otherwise pocketing an opponent's
+        // ball legally will cause "COMBO SHOT!" to incorrectly fire on the next
+        // legal pocket.  Pocketing only opponent (or other non-own) balls breaks
+        // the streak entirely.
+        int ownGroupPocketedThisShot = 0;
+        if (currentGameType == GameType::EIGHT_BALL_MODE) {
+            PlayerInfo& shooterInfo = (currentPlayer == 1) ? player1Info : player2Info;
+            if (shooterInfo.assignedType != BallType::NONE) {
+                for (int id : pocketedThisTurn) {
+                    Ball* b = GetBallById(id);
+                    if (b && b->id > 0 && b->id != 8 && b->type == shooterInfo.assignedType) {
+                        ownGroupPocketedThisShot++;
+                    }
+                }
+            }
+            else {
+                // Open table (right after assignment): treat every numbered ball
+                // pocketed as an "own-group" tick for the just-assigned group.
+                for (int id : pocketedThisTurn) {
+                    Ball* b = GetBallById(id);
+                    if (b && b->id > 0 && b->id != 8) ownGroupPocketedThisShot++;
+                }
+            }
+        }
+        else if (currentGameType == GameType::NINE_BALL) {
+            // 9-Ball: any legal numbered pocket counts as a streak tick (lowest
+            // ball is what determines legality, not group ownership).
+            for (int id : pocketedThisTurn) {
+                Ball* b = GetBallById(id);
+                if (b && b->id > 0 && b->id != 0) ownGroupPocketedThisShot++;
+            }
+        }
+        else { // STRAIGHT_POOL: every legal numbered pocket counts
+            for (int id : pocketedThisTurn) {
+                Ball* b = GetBallById(id);
+                if (b && b->id > 0) ownGroupPocketedThisShot++;
+            }
+        }
+
+        if (ownGroupPocketedThisShot <= 0) {
+            // Only opponent (or other non-own) balls were pocketed this shot.
+            // Break any existing streak so the next legal own-group pocket
+            // starts a fresh streak of 1 (no COMBO).  Show nothing here.
+            consecutivePocketShotStreak = 0;
+            comboShotDisplayCounter = 0;
+            shootAgainDisplayCounter = 0;
+            return;
+        }
+
         // Count legal successful pocketing shots across the same player's continued run.
         // This fixes COMBO SHOT! not appearing when balls are pocketed on consecutive shots.
         consecutivePocketShotStreak++;
 
         // COMBO SHOT! appears either when:
-        // 1) two or more object balls were pocketed in this single shot, OR
-        // 2) this is the 2nd+ consecutive legal pocketing shot in the same run.
-        if (numberedBallsPocketedThisTurn >= 2 || consecutivePocketShotStreak >= 2) {
+        // 1) two or more of the shooter's OWN-GROUP balls were pocketed in this single shot, OR
+        // 2) this is the 2nd+ consecutive legal pocketing shot (own-group) in the same run.
+        if (ownGroupPocketedThisShot >= 2 || consecutivePocketShotStreak >= 2) {
             comboShotDisplayCounter = HUD_TEXT_ANIMATION_FRAMES;
             shootAgainDisplayCounter = 0;
         }
@@ -7960,7 +8011,11 @@ void ProcessShotResults() {
             isPushOutAvailable = true; // Legal break, no pocket, opponent gets push-out
         }
         // Miss/no continued legal pocket breaks the consecutive pocket streak.
+        // [+] NEW: A missed shot (or 8-Ball opponent-only pocket) breaks the streak
+        // so the next legal own-group pocket starts a fresh streak of 1 (no COMBO).
         consecutivePocketShotStreak = 0;
+        comboShotDisplayCounter = 0;
+        shootAgainDisplayCounter = 0;
 
         // Missed or pocketed opponent's ball (in 8-ball)
         SwitchTurns();
