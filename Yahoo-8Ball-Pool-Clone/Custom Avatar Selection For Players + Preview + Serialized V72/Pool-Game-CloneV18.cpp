@@ -6508,6 +6508,11 @@ void InitGame() {
     pocketedThisTurn.clear();
     balls.clear();
 
+    // [+] NEW: Clear ball trail paths from any previous game so the Opening
+    // Break doesn't show ghost trails left over from the last game.
+    g_lastShotTrails.clear();
+    g_tempShotTrails.clear();
+
     // Reset Player Info based on Game Type
     player1Info.assignedType = BallType::NONE; // Always NONE initially, especially for Straight Pool
     player1Info.ballsPocketedCount = 0;        // Used only for 8-ball group tracking
@@ -6739,6 +6744,12 @@ void InitGame() {
     comboShotDisplayCounter = 0;
     consecutivePocketShotStreak = 0;
     gameOverMessage = L"";
+
+    // [+] NEW: Clear ball trail paths from any previous game (safety net
+    // for any code path that reaches this point without going through the
+    // top-of-function clear above).
+    g_lastShotTrails.clear();
+    g_tempShotTrails.clear();
     // firstBallPocketedAfterBreak used only in 8-ball for assignment
     shotPower = 0.0f; cueSpinX = 0.0f; cueSpinY = 0.0f;
     isAiming = false; isDraggingCueBall = false; isSettingEnglish = false;
