@@ -360,6 +360,7 @@ bool cueBallPocketed = false;
 
 // --- NEW: Foul Tracking Globals ---
 int firstHitBallIdThisShot = -1;      // ID of the first object ball hit by cue ball (-1 if none)
+float firstHitTimeThisShot = -1.0f;   // [+] ADD THIS NEW VARIABLE
 bool cueHitObjectBallThisShot = false; // Did cue ball hit an object ball this shot?
 bool railHitAfterContact = false;     // Did any ball hit a rail AFTER cue hit an object ball?
 // How long to display the FOUL! HUD after a foul is detected (frames)
@@ -1899,8 +1900,22 @@ void HandleCheatDropPocket(Ball* b, int p) {
             AssignPlayerBallTypes(b->type, true);
         }
         else if (b->id != 0 && b->id != 8) {
-            if (b->type == player1Info.assignedType) player1Info.ballsPocketedCount++;
-            else if (b->type == player2Info.assignedType) player2Info.ballsPocketedCount++;
+            // [+] FIX: Use the SHOOTER's assignedType (not player1Info) to
+            // decide who gets credit. Previously the code checked the ball's
+            // type against player1Info.assignedType, which meant that if P2
+            // pocketed a SOLID (P1's type) via cheat, P1's count was wrongly
+            // incremented. Over many cheats this could push P1's count to 7+,
+            // making P1 incorrectly "on 8-ball" — and the next legal shot
+            // (hitting a solid, not the 8) would fire a false "must hit 8
+            // first" foul.
+            PlayerInfo& shooterCheat = (currentPlayer == 1) ? player1Info : player2Info;
+            if (shooterCheat.assignedType != BallType::NONE &&
+                b->type == shooterCheat.assignedType) {
+                shooterCheat.ballsPocketedCount++;
+            }
+            // If the pocketed ball is the opponent's type, no count is
+            // incremented (pocketing the opponent's ball in 8-Ball does
+            // not credit either player).
         }
 
         if (b->id != 0) ballsOnTableCount--; // Decrement count *ONCE*
@@ -1955,6 +1970,17 @@ void HandleCheatDropPocket(Ball* b, int p) {
             currentGameState = (currentPlayer == 1) ? PLAYER1_TURN : PLAYER2_TURN;
             if (currentPlayer == 2 && isPlayer2AI) aiTurnPending = true;
         }
+    }
+
+    // [+] FIX: After any cheat-drop, rebuild both players' group counts from
+    // the actual table state for 8-Ball mode. This is a safety net for the
+    // count-increment logic above (and for any future changes) — it ensures
+    // ballsPocketedCount always matches the real pocketed balls, preventing
+    // the "wrong player on 8-ball" scenario that causes false fouls on the
+    // shooter's next legal hit.
+    if (currentGameType == GameType::EIGHT_BALL_MODE &&
+        player1Info.assignedType != BallType::NONE) {
+        RecountEightBallGroupProgressFromTable();
     }
 }
 
@@ -5498,6 +5524,7 @@ case WM_ACTIVATE: {
                 {
                     if (shotPower > 0.15f) {
                         firstHitBallIdThisShot = -1;
+                        firstHitTimeThisShot = -1.0f;     // [+] ADD THIS
                         cueHitObjectBallThisShot = false;
                         railHitAfterContact = false;
                         if (!g_soundEffectsMuted) {
@@ -6080,7 +6107,9 @@ case WM_ACTIVATE: {
 
             if (shotPower > 0.15f) { // Only shoot if there's power
                 if (currentGameState != AI_THINKING) { // Don't allow human shot during AI thinking
-                    firstHitBallIdThisShot = -1; cueHitObjectBallThisShot = false; railHitAfterContact = false;
+                    firstHitBallIdThisShot = -1; 
+                    firstHitTimeThisShot = -1.0f;     // [+] ADD THIS
+                    cueHitObjectBallThisShot = false; railHitAfterContact = false;
                     if (!g_soundEffectsMuted) {
                         PlayGameSound(IDR_WAV_CUE);
                         //std::thread([](const TCHAR* soundName) { PlaySound(soundName, NULL, SND_FILENAME | SND_NODEFAULT); }, TEXT("cue.wav")).detach();
@@ -6508,6 +6537,13 @@ void InitGame() {
     pocketedThisTurn.clear();
     balls.clear();
 
+    // [+] NEW: Defensive reset of per-shot foul-tracking flags so a new
+    // game starts with a clean slate (otherwise a previous game's last
+    // firstHit could leak into the new game's opening break foul check).
+    firstHitBallIdThisShot = -1;
+    cueHitObjectBallThisShot = false;
+    railHitAfterContact = false;
+
     // [+] NEW: Clear ball trail paths from any previous game so the Opening
     // Break doesn't show ghost trails left over from the last game.
     g_lastShotTrails.clear();
@@ -6848,6 +6884,7 @@ void GameUpdate() {
                 aiIsDisplayingAim = false;
                 if (aiPlannedShotDetails.isValid) {
                     firstHitBallIdThisShot = -1;
+                    firstHitTimeThisShot = -1.0f;     // [+] ADD THIS
                     cueHitObjectBallThisShot = false;
                     railHitAfterContact = false;
                     if (!g_soundEffectsMuted) {
@@ -7016,6 +7053,16 @@ void UpdatePhysics() {
 }
 
 void CheckCollisions() {
+    // ── BUG FIX: Lock the first-hit recording to the FIRST physics frame in
+    //    which the cue ball collides with an object ball. The per-frame CCD
+    //    `t` value (currentImpactTime) is ONLY valid for ranking collisions
+    //    within the SAME frame.  Comparing it across different frames allowed
+    //    later-frame collisions to overwrite the true first-hit ball, causing
+    //    false "wrong ball first" foul calls — the primary cause of the
+    //    CPU's snowballing foul bug in 8-Ball mode.
+    bool firstHitLockedFromPreviousFrame = (firstHitBallIdThisShot != -1);
+    firstHitTimeThisShot = -1.0f;  // reset per-frame intra-frame tracker
+
     float left = TABLE_LEFT;
     float right = TABLE_RIGHT;
     float top = TABLE_TOP;
@@ -7262,23 +7309,41 @@ void CheckCollisions() {
                 float dist = sqrtf(distSq);
 
                 // --- BUG FIX: Exact Time-Of-Impact (CCD) Normal ---
-                // Replaces the basic discrete normal to prevent high-speed cut shots from misfiring
-                // or deviating from the AI/Chevron continuous geometry predictions.
+// Replaces the basic discrete normal to prevent high-speed cut shots from misfiring
+// or deviating from the AI/Chevron continuous geometry predictions.
                 float rvx = b1.vx - b2.vx;
                 float rvy = b1.vy - b2.vy;
-                float rvSq = rvx * rvx + rvy * rvy;
 
+                // [+] ULTIMATE PHYSICS FIX: Reverse the FRICTION multiplier to find the TRUE start position.
+                // Because positions are updated BEFORE friction is applied, but collisions are checked AFTER,
+                // we must divide by FRICTION to accurately reconstruct the exact path the ball took.
+                // Without this, the engine underestimates the start distance of thin cut shots, 
+                // falsely flags them as "sticky overlapping balls", and lets them phase through!
+                float true_rvx = rvx / FRICTION;
+                float true_rvy = rvy / FRICTION;
+                float start_dx = dx + true_rvx;
+                float start_dy = dy + true_rvy;
+                float B_true = dx * true_rvx + dy * true_rvy;
+
+                // Sticky Balls Fix: Ignore separating balls ONLY IF they were overlapping when the frame began.
+                if (B_true <= 0.0f && (start_dx * start_dx + start_dy * start_dy < minDist * minDist)) {
+                    continue;
+                }
+
+                float rvSq = true_rvx * true_rvx + true_rvy * true_rvy;
                 float nx, ny;
+                float currentImpactTime = 0.0f; // [+] ADD THIS
+
                 if (rvSq > 1e-6f) {
                     float A = rvSq;
-                    float B = (dx * rvx + dy * rvy);
                     float C = distSq - minDist * minDist; // Negative because they overlap
-                    float discriminant = B * B - A * C;
+                    float discriminant = B_true * B_true - A * C;
 
                     if (discriminant > 0.0f) {
-                        float t = (-B + sqrtf(discriminant)) / A; // Time back to exact impact
-                        float exactDx = dx + rvx * t;
-                        float exactDy = dy + rvy * t;
+                        float t = (-B_true + sqrtf(discriminant)) / A; // Time back to exact impact
+                        currentImpactTime = t; // [+] RECORD THE TIME
+                        float exactDx = dx + true_rvx * t;
+                        float exactDy = dy + true_rvy * t;
                         float exactDist = sqrtf(exactDx * exactDx + exactDy * exactDy);
                         if (exactDist > 1e-6f) {
                             nx = exactDx / exactDist;
@@ -7302,6 +7367,7 @@ void CheckCollisions() {
                 b2.x += overlap * 0.5f * nx; b2.y += overlap * 0.5f * ny;
                 // --- End of Exact Normal Fix ---
 
+                // The collision response (impulse) uses the CURRENT friction-reduced velocities
                 float velAlongNormal = rvx * nx + rvy * ny;
                 if (velAlongNormal > 0) {
                     if (!playedCollideSoundThisFrame) {
@@ -7312,18 +7378,20 @@ void CheckCollisions() {
                         //std::thread([](const TCHAR* soundName) { PlaySound(soundName, NULL, SND_FILENAME | SND_NODEFAULT); }, TEXT("poolballhit.wav")).detach();
                         playedCollideSoundThisFrame = true;
                     }
-                    if (firstHitBallIdThisShot == -1) {
-                        if (b1.id == 0) {
-                            firstHitBallIdThisShot = b2.id;
-                            cueHitObjectBallThisShot = true;
-                        }
-                        else if (b2.id == 0) {
-                            firstHitBallIdThisShot = b1.id;
-                            cueHitObjectBallThisShot = true;
-                        }
-                    }
-                    else if (b1.id == 0 || b2.id == 0) {
+                    if (b1.id == 0 || b2.id == 0) {
                         cueHitObjectBallThisShot = true;
+                        // ── BUG FIX: Only record the first hit during the FIRST
+                        //    frame in which the cue contacts an object ball.
+                        //    Once recorded, the ID is locked and can never be
+                        //    overwritten by collisions in later frames (whose
+                        //    per-frame `t` values are not comparable across
+                        //    frames).  Within the first frame, the largest `t`
+                        //    wins (earliest collision in that frame).
+                        if (!firstHitLockedFromPreviousFrame &&
+                            currentImpactTime > firstHitTimeThisShot) {
+                            firstHitBallIdThisShot = (b1.id == 0) ? b2.id : b1.id;
+                            firstHitTimeThisShot = currentImpactTime;
+                        }
                     }
                     float impulse = velAlongNormal;
                     b1.vx -= impulse * nx; b1.vy -= impulse * ny;
@@ -7658,6 +7726,7 @@ void ApplyShot(float power, float angle, float spinX, float spinY) {
         // --- Reset Foul Tracking flags for the new shot ---
         // (Also reset in LBUTTONUP, but good to ensure here too)
         firstHitBallIdThisShot = -1;      // No ball hit yet
+        firstHitTimeThisShot = -1.0f;     // [+] ADD THIS
         cueHitObjectBallThisShot = false; // Cue hasn't hit anything yet
         railHitAfterContact = false;     // No rail hit after contact yet
         // --- End Reset ---
@@ -7674,6 +7743,15 @@ void ApplyShot(float power, float angle, float spinX, float spinY) {
 //  ProcessShotResults()
 // ---------------------------------------------------------------------
 void ProcessShotResults() {
+    // [+] BUG FIX: Clear all HUD text animation counters at the start of
+    // processing. Previously, if a player took their ball-in-hand shot
+    // quickly after a foul, the foulDisplayCounter from the previous turn
+    // was still ticking down. This caused the "FOUL!" text to briefly
+    // overlap or flash before "SHOOT AGAIN!" on a perfectly legal shot.
+    foulDisplayCounter = 0;
+    shootAgainDisplayCounter = 0;
+    comboShotDisplayCounter = 0;
+
     bool cueBallPocketedThisTurn = false; // Renamed to avoid conflict
     bool eightBallPocketedThisTurn = false; // Renamed
     bool nineBallPocketedThisTurn = false; // NEW variable for 9-Ball
@@ -7848,43 +7926,67 @@ void ProcessShotResults() {
         }
         // 8-Ball specific foul checks
         else if (currentGameType == GameType::EIGHT_BALL_MODE) {
-            if (player1Info.assignedType != BallType::NONE) { // Colors are assigned
-                PlayerInfo& shootingPlayer = (currentPlayer == 1) ? player1Info : player2Info;
+            PlayerInfo& shootingPlayer = (currentPlayer == 1) ? player1Info : player2Info;
 
-                // IMPORTANT:
-                // ballsPocketedCount has already been synced from the table state,
-                // so it includes balls pocketed during THIS shot.
-                // For foul logic, we must know whether the shooter was on the
-                // 8-ball BEFORE the cue ball was struck.
-                int pocketedThisShotOfShootersGroup = 0;
-                for (int id : pocketedThisTurn) {
-                    Ball* pocketedBall = GetBallById(id);
-                    if (pocketedBall &&
-                        pocketedBall->id > 0 &&
-                        pocketedBall->id != 8 &&
-                        pocketedBall->type == shootingPlayer.assignedType) {
-                        ++pocketedThisShotOfShootersGroup;
+            // [+] FIX: Use the SHOOTER's assigned type as the guard, not
+            // player1Info's. Previously the code gated on
+            // "player1Info.assignedType != NONE" which is the wrong
+            // reference: in a (rare) state where P1's type is NONE but
+            // P2's is assigned, the entire 8-Ball foul check would be
+            // skipped — or vice versa. Using the shooter's own type
+            // makes the check correct regardless of which player shoots.
+            if (shootingPlayer.assignedType != BallType::NONE) {
+                // [+] FIX: Defensive — verify the first-hit ball is a
+                // valid, non-pocketed object ball. If it's nullptr, the
+                // cue, or already pocketed, treat the shot as a legal
+                // miss (no "wrong first hit" foul). This protects against
+                // any stale-state scenario where firstHitBallIdThisShot
+                // holds an old, invalid value.
+                bool firstHitIsValidObject = (firstHit != nullptr
+                    && firstHit->id > 0
+                    && firstHit->id != 0
+                    && !firstHit->isPocketed);
+
+                if (firstHitIsValidObject) {
+                    // IMPORTANT:
+                    // ballsPocketedCount has already been synced from the table state,
+                    // so it includes balls pocketed during THIS shot.
+                    // For foul logic, we must know whether the shooter was on the
+                    // 8-ball BEFORE the cue ball was struck.
+                    int pocketedThisShotOfShootersGroup = 0;
+                    for (int id : pocketedThisTurn) {
+                        Ball* pocketedBall = GetBallById(id);
+                        if (pocketedBall &&
+                            pocketedBall->id > 0 &&
+                            pocketedBall->id != 8 &&
+                            pocketedBall->type == shootingPlayer.assignedType) {
+                            ++pocketedThisShotOfShootersGroup;
+                        }
+                    }
+
+                    int shootersGroupCountBeforeShot =
+                        std::max(0, shootingPlayer.ballsPocketedCount - pocketedThisShotOfShootersGroup);
+
+                    bool wasOnEightBall =
+                        (shootingPlayer.assignedType != BallType::NONE &&
+                            shootersGroupCountBeforeShot >= 7);
+
+                    if (wasOnEightBall) {
+                        if (firstHit->id != 8) turnFoul = true; // Must hit 8-ball first when on it
+                    }
+                    else {
+                        if (firstHit->type != shootingPlayer.assignedType && firstHit->id != 8) {
+                            turnFoul = true;
+                        }
+                        else if (firstHit->id == 8) { // Hitting 8-ball first when not on it
+                            turnFoul = true;
+                        }
                     }
                 }
-
-                int shootersGroupCountBeforeShot =
-                    std::max(0, shootingPlayer.ballsPocketedCount - pocketedThisShotOfShootersGroup);
-
-                bool wasOnEightBall =
-                    (shootingPlayer.assignedType != BallType::NONE &&
-                        shootersGroupCountBeforeShot >= 7);
-
-                if (wasOnEightBall) {
-                    if (firstHit->id != 8) turnFoul = true; // Must hit 8-ball first when on it
-                }
-                else {
-                    if (firstHit->type != shootingPlayer.assignedType && firstHit->id != 8) {
-                        turnFoul = true;
-                    }
-                    else if (firstHit->id == 8) { // Hitting 8-ball first when not on it
-                        turnFoul = true;
-                    }
-                }
+                // If firstHitIsValidObject is false (no valid first hit
+                // recorded this shot), the "Hitting nothing is a foul"
+                // check above already set turnFoul = true via the
+                // if (!firstHit) branch. So nothing more to do here.
             }
         }
         // 9-Ball specific foul checks
@@ -8550,6 +8652,17 @@ void SwitchTurns()
     isAiming = false;
     shotPower = 0.0f;
     currentlyHoveredPocket = -1; // Reset hover
+
+    // [+] NEW: Defensive reset of per-shot foul-tracking flags. These are
+    // normally reset at the START of each new shot (in ApplyShot and the
+    // mouse/keyboard handlers), but if a path bypasses those resets (e.g.,
+    // an aborted shot, a partial state restore, a New Game mid-turn), the
+    // flags could leak across turns and cause the next ProcessShotResults
+    // call to use stale data — producing a false "wrong ball first" foul
+    // on a perfectly legal shot. Resetting here is a safety net.
+    firstHitBallIdThisShot = -1;
+    cueHitObjectBallThisShot = false;
+    railHitAfterContact = false;
 
     // Reset 8-ball calls (only relevant for 8-ball, but safe to clear always)
     calledPocketP1 = -1;
@@ -9242,6 +9355,7 @@ float EvaluateTableState(int player, Ball* cueBall) {
     return score;
 }
 
+//orig
 D2D1_POINT_2F GetPocketAimTarget(int p) {
     D2D1_POINT_2F pos = pocketPositions[p];
     float inset = INNER_RIM_THICKNESS + 5.0f; // 20.0f inset keeps the aim strictly in the playable felt
@@ -9255,6 +9369,27 @@ D2D1_POINT_2F GetPocketAimTarget(int p) {
     }
     return pos;
 }
+//start 8ball fix
+/*D2D1_POINT_2F GetPocketAimTarget(int p) {
+    D2D1_POINT_2F pos = pocketPositions[p];
+    // [+] BUG FIX: The sweet-spot must be INSIDE the pocket hole (past the
+    // center), not inside the playable felt. The old code used a +20.0f inset
+    // which placed the aim point on the felt, causing the AI to miss straight
+    // shots entirely and accidentally foul by hitting other balls. A -15.0f
+    // inset places the aim point deep in the pocket throat, ensuring the ball
+    // falls in.
+    float deepInset = -15.0f;
+    switch (p) {
+    case 0: return { pos.x + deepInset, pos.y + deepInset };
+    case 1: return { pos.x, pos.y + deepInset };
+    case 2: return { pos.x - deepInset, pos.y + deepInset };
+    case 3: return { pos.x + deepInset, pos.y - deepInset };
+    case 4: return { pos.x, pos.y - deepInset };
+    case 5: return { pos.x - deepInset, pos.y - deepInset };
+    }
+    return pos;
+}*/
+//end 8ball fix
 
 // ============================================================================
 // NEW FUNCTION: ComputeAdaptiveAimTarget
@@ -10118,10 +10253,35 @@ std::vector<AIShotInfo> AIFindAllShots_8Ball() {
             legalObjectBalls.push_back(&b);
         }
     }
-
+    //orig
     std::vector<Ball*> targetsToEvaluate;
     if (!legalObjectBalls.empty()) targetsToEvaluate = legalObjectBalls;
     else if (eightBallTarget) targetsToEvaluate.push_back(eightBallTarget);
+
+    //start 8ball fix
+        /*// [+] FIX: When the AI is on 8-ball, it MUST target the 8-ball (rules
+    // requirement: first contact must be the 8-ball). The previous code
+    // used "if (!legalObjectBalls.empty())" as the primary check, which
+    // could override the on-8-ball logic if legalObjectBalls was non-empty
+    // (e.g., due to a state inconsistency where ballsPocketedCount >= 7
+    // but there are still residual group balls on the table — caused by
+    // the cheat flow's wrong-player count bug or a race condition). When
+    // that happened, the AI would aim at the residual group ball instead
+    // of the 8-ball, missing the clear shot on the 8-ball.
+    std::vector<Ball*> targetsToEvaluate;
+    if (on8 && eightBallTarget) {
+        // On 8-ball: ALWAYS target the 8-ball, regardless of residual
+        // group balls. This is both the rules requirement and the only
+        // way to win the game.
+        targetsToEvaluate.push_back(eightBallTarget);
+    }
+    else if (!legalObjectBalls.empty()) {
+        targetsToEvaluate = legalObjectBalls;
+    }
+    else if (eightBallTarget) {
+        targetsToEvaluate.push_back(eightBallTarget);
+    }*/
+    //end 8ball fix
 
     // ── PASS 1: strict path clearance ──────────────────────────────────────
     for (Ball* targetBall : targetsToEvaluate) {
@@ -10184,49 +10344,57 @@ std::vector<AIShotInfo> AIFindAllShots_8Ball() {
     if (possibleShots.empty()) {
         bool clusterFound = false;
         for (Ball* target : targetsToEvaluate) {
+            float cX = 0.0f, cY = 0.0f;
             int nearbyBalls = 0;
             for (Ball& other : balls) {
-                if (other.id != 0 && !other.isPocketed && other.id != target->id)
-                    if (GetDistanceSq(target->x, target->y, other.x, other.y) < (BALL_RADIUS * 4.0f) * (BALL_RADIUS * 4.0f))
+                if (other.id != 0 && !other.isPocketed && other.id != target->id) {
+                    if (GetDistanceSq(target->x, target->y, other.x, other.y) < (BALL_RADIUS * 4.5f) * (BALL_RADIUS * 4.5f)) {
+                        cX += other.x;
+                        cY += other.y;
                         ++nearbyBalls;
+                    }
+                }
             }
             if (nearbyBalls < 2) continue;
 
-            float aimAngle = atan2f(target->y - cue->y, target->x - cue->x);
+            cX /= nearbyBalls;
+            cY /= nearbyBalls;
+            D2D1_POINT_2F clusterCenter = { cX, cY };
+
+            // [+] ULTIMATE CLUSTER BREAK FIX: Drive the target ball INTO the cluster's center of mass!
+            // By treating the cluster's center as a "pocket", the AI will calculate the exact 
+            // cut angle required to smash the target ball deep into the pack for explosive dispersion.
+            D2D1_POINT_2F ghostForCluster = CalculateGhostBallPos(target, clusterCenter);
+            float aimAtCluster = atan2f(ghostForCluster.y - cue->y, ghostForCluster.x - cue->x);
+
             float hitDistSq = 0.0f;
-            Ball* hitB = FindFirstHitBall({ cue->x, cue->y }, aimAngle, hitDistSq);
-            if (!hitB || hitB->id != target->id) continue;
+            // Raycast ensures we hit our target first to avoid the foul!
+            Ball* hitB = FindFirstHitBall({ cue->x, cue->y }, aimAtCluster, hitDistSq);
 
-            // Find the pocket that requires the most reachable angle from this ball
-            int   bestPocket = -1;
-            float bestPocketScore = -1.0f;
-            D2D1_POINT_2F bestGhost = { target->x, target->y };
-
-            for (int p = 0; p < 6; ++p) {
-                D2D1_POINT_2F aimPt = GetPocketAimTarget(p);
-                D2D1_POINT_2F ghost = CalculateGhostBallPos(target, aimPt);
-                // Quick dot-product to prefer pockets roughly in the direction the cue is already moving
-                float dx = ghost.x - cue->x, dy = ghost.y - cue->y;
-                float dist = sqrtf(dx * dx + dy * dy);
-                float pocketDist = GetDistance(target->x, target->y, aimPt.x, aimPt.y);
-                float s = (dist > 0.01f) ? (1000.0f - dist * 0.8f - pocketDist * 0.5f) : -1.0f;
-                if (s > bestPocketScore) {
-                    bestPocketScore = s;
-                    bestGhost = ghost;
-                    bestPocket = p;
+            float finalAim;
+            if (hitB && hitB->id == target->id) {
+                finalAim = aimAtCluster;
+            }
+            else {
+                // Fallback: If cutting into the cluster causes a foul (path blocked by an opponent's ball), 
+                // hit our ball dead-center, but use heavy TOPSPIN so the cue ball plows forward into the pack!
+                float headOnAim = atan2f(target->y - cue->y, target->x - cue->x);
+                hitB = FindFirstHitBall({ cue->x, cue->y }, headOnAim, hitDistSq);
+                if (hitB && hitB->id == target->id) {
+                    finalAim = headOnAim;
+                }
+                else {
+                    continue; // Completely blocked, try next target
                 }
             }
 
             AIShotInfo clusterShot;
             clusterShot.possible = true;
             clusterShot.targetBall = target;
-            clusterShot.pocketIndex = bestPocket;
+            clusterShot.pocketIndex = -1; // Not aiming for a pocket
             clusterShot.spinX = 0.0f;
-            clusterShot.spinY = 0.0f;
-            // Aim at the ghost position toward the best pocket instead of the ball center
-            clusterShot.angle = (bestPocket >= 0)
-                ? atan2f(bestGhost.y - cue->y, bestGhost.x - cue->x)
-                : aimAngle;
+            clusterShot.spinY = 0.5f; // Heavy Topspin (Follow) ensures forward momentum into the pack
+            clusterShot.angle = finalAim;
             clusterShot.power = MAX_SHOT_POWER;
             clusterShot.score = 150.0f;
             possibleShots.push_back(clusterShot);
@@ -10243,28 +10411,70 @@ std::vector<AIShotInfo> AIFindAllShots_8Ball() {
             safetyShot.spinY = 0.0f;
             safetyShot.pocketIndex = -1;
 
-            // Pick the closest reachable legal ball and nudge it toward a rail
+            // ── BUG FIX: Raycast to every legal target and pick the CLOSEST
+            //    one whose path is actually clear (i.e. the first ball the
+            //    ray hits IS our target).  The old code picked by raw distance
+            //    only, so an opponent's ball sitting between the cue and the
+            //    target would be struck first — an instant foul.  This was a
+            //    major contributor to the "snowball fouls" pattern.
             Ball* bestTarget = nullptr;
             float  bestDistSq = 1e10f;
             for (Ball* t : targetsToEvaluate) {
-                float dSq = GetDistanceSq(cue->x, cue->y, t->x, t->y);
-                if (dSq < bestDistSq) { bestDistSq = dSq; bestTarget = t; }
+                float angleToT = atan2f(t->y - cue->y, t->x - cue->x);
+                float hitDistSq = 0.0f;
+                Ball* firstHit = FindFirstHitBall({ cue->x, cue->y },
+                    angleToT, hitDistSq);
+                if (firstHit && firstHit->id == t->id &&
+                    hitDistSq < bestDistSq) {
+                    bestDistSq = hitDistSq;
+                    bestTarget = t;
+                }
             }
+
             if (bestTarget) {
-                // Hit one cushion-width off-center so the object ball runs safe
-                float baseAngle = atan2f(bestTarget->y - cue->y, bestTarget->x - cue->x);
-                float nudge = (aiDifficulty == HARD) ? 0.06f : 0.15f;
-                D2D1_POINT_2F ghost = {
+                // Clear path confirmed — aim at the target.
+                float baseAngle = atan2f(bestTarget->y - cue->y,
+                    bestTarget->x - cue->x);
+                float nudge = (aiDifficulty == HARD) ? 0.04f : 0.08f;
+                D2D1_POINT_2F nudgedGhost = {
                     bestTarget->x - cosf(baseAngle + nudge) * (BALL_RADIUS * 2.0f),
                     bestTarget->y - sinf(baseAngle + nudge) * (BALL_RADIUS * 2.0f)
                 };
                 safetyShot.targetBall = bestTarget;
-                safetyShot.angle = atan2f(ghost.y - cue->y, ghost.x - cue->x);
-                safetyShot.power = MAX_SHOT_POWER * 0.25f;
+
+                float ghostAngle = atan2f(nudgedGhost.y - cue->y,
+                    nudgedGhost.x - cue->x);
+                float angleDelta = fabsf(ghostAngle - baseAngle);
+                if (angleDelta > PI) angleDelta = 2.0f * PI - angleDelta;
+                safetyShot.angle = (angleDelta < (PI * 0.05f))
+                    ? ghostAngle : baseAngle;
+                safetyShot.power = MAX_SHOT_POWER * 0.55f;
             }
             else {
-                safetyShot.angle = (float)(rand() % 314) / 100.0f;
-                safetyShot.power = MAX_SHOT_POWER * 0.20f;
+                // No clear path to ANY legal ball.  Fall back to the closest
+                // legal ball by raw distance (even if blocked) — a blocked
+                // shot may still hit the right ball via deflection, which is
+                // strictly better than shooting randomly.
+                Ball* closestLegal = nullptr;
+                float closestDistSq = 1e10f;
+                for (Ball* t : targetsToEvaluate) {
+                    float dSq = GetDistanceSq(cue->x, cue->y, t->x, t->y);
+                    if (dSq < closestDistSq) {
+                        closestDistSq = dSq;
+                        closestLegal = t;
+                    }
+                }
+                if (closestLegal) {
+                    safetyShot.targetBall = closestLegal;
+                    safetyShot.angle = atan2f(closestLegal->y - cue->y,
+                        closestLegal->x - cue->x);
+                    safetyShot.power = MAX_SHOT_POWER * 0.55f;
+                }
+                else {
+                    safetyShot.angle = (float)(rand() % 314) / 100.0f;
+                    safetyShot.power = MAX_SHOT_POWER * 0.50f;
+                    safetyShot.targetBall = nullptr;
+                }
             }
             possibleShots.push_back(safetyShot);
         }
@@ -10535,42 +10745,53 @@ std::vector<AIShotInfo> AIFindAllShots_StraightPool() {
 
         for (Ball& target : balls) {
             if (target.id == 0 || target.isPocketed) continue;
+            float cX = 0.0f, cY = 0.0f;
             int nearbyBalls = 0;
             for (Ball& other : balls) {
-                if (other.id != 0 && !other.isPocketed && other.id != target.id)
-                    if (GetDistanceSq(target.x, target.y, other.x, other.y) < (BALL_RADIUS * 4.0f) * (BALL_RADIUS * 4.0f))
+                if (other.id != 0 && !other.isPocketed && other.id != target.id) {
+                    if (GetDistanceSq(target.x, target.y, other.x, other.y) < (BALL_RADIUS * 4.5f) * (BALL_RADIUS * 4.5f)) {
+                        cX += other.x;
+                        cY += other.y;
                         ++nearbyBalls;
+                    }
+                }
             }
             if (nearbyBalls < 2) continue;
 
-            float aimAngle = atan2f(target.y - cue->y, target.x - cue->x);
+            cX /= nearbyBalls;
+            cY /= nearbyBalls;
+            D2D1_POINT_2F clusterCenter = { cX, cY };
+
+            // [+] ULTIMATE CLUSTER BREAK FIX: Drive target into Center of Mass
+            D2D1_POINT_2F ghostForCluster = CalculateGhostBallPos(&target, clusterCenter);
+            float aimAtCluster = atan2f(ghostForCluster.y - cue->y, ghostForCluster.x - cue->x);
+
             float hitDistSq = 0.0f;
-            Ball* hitB = FindFirstHitBall({ cue->x, cue->y }, aimAngle, hitDistSq);
-            if (!hitB || hitB->id != target.id) continue;
+            Ball* hitB = FindFirstHitBall({ cue->x, cue->y }, aimAtCluster, hitDistSq);
 
-            int   bestPocket = -1;
-            float bestPocketScore = -1.0f;
-            D2D1_POINT_2F bestGhost = { target.x, target.y };
-
-            for (int p = 0; p < 6; ++p) {
-                D2D1_POINT_2F aimPt = GetPocketAimTarget(p);
-                D2D1_POINT_2F ghost = CalculateGhostBallPos(&target, aimPt);
-                float dx = ghost.x - cue->x, dy = ghost.y - cue->y;
-                float dist = sqrtf(dx * dx + dy * dy);
-                float pocketDist = GetDistance(target.x, target.y, aimPt.x, aimPt.y);
-                float s = (dist > 0.01f) ? (1000.0f - dist * 0.8f - pocketDist * 0.5f) : -1.0f;
-                if (s > bestPocketScore) { bestPocketScore = s; bestGhost = ghost; bestPocket = p; }
+            float finalAim;
+            if (hitB && hitB->id == target.id) {
+                finalAim = aimAtCluster;
+            }
+            else {
+                // Fallback head-on with Topspin
+                float headOnAim = atan2f(target.y - cue->y, target.x - cue->x);
+                hitB = FindFirstHitBall({ cue->x, cue->y }, headOnAim, hitDistSq);
+                if (hitB && hitB->id == target.id) {
+                    finalAim = headOnAim;
+                }
+                else {
+                    continue;
+                }
             }
 
             AIShotInfo clusterShot;
             clusterShot.possible = true;
             clusterShot.targetBall = &target;
-            clusterShot.pocketIndex = bestPocket;
+            clusterShot.pocketIndex = -1;
             clusterShot.spinX = 0.0f;
-            clusterShot.spinY = 0.0f;
-            clusterShot.angle = (bestPocket >= 0)
-                ? atan2f(bestGhost.y - cue->y, bestGhost.x - cue->x)
-                : aimAngle;
+            clusterShot.spinY = 0.5f; // Heavy Topspin
+            clusterShot.angle = finalAim;
             clusterShot.power = MAX_SHOT_POWER;
             clusterShot.score = 150.0f;
             possibleShots.push_back(clusterShot);
@@ -10595,19 +10816,26 @@ std::vector<AIShotInfo> AIFindAllShots_StraightPool() {
                 if (dSq < bestDistSq) { bestDistSq = dSq; bestTarget = &b; }
             }
             if (bestTarget) {
-                float nudge = (aiDifficulty == HARD) ? 0.06f : 0.15f;
+                // [+] FIX: Aim DIRECTLY at the target ball so the first-contact rule is satisfied reliably.
                 float baseAngle = atan2f(bestTarget->y - cue->y, bestTarget->x - cue->x);
-                D2D1_POINT_2F ghost = {
+                float nudge = (aiDifficulty == HARD) ? 0.04f : 0.08f;
+                D2D1_POINT_2F nudgedGhost = {
                     bestTarget->x - cosf(baseAngle + nudge) * (BALL_RADIUS * 2.0f),
                     bestTarget->y - sinf(baseAngle + nudge) * (BALL_RADIUS * 2.0f)
                 };
                 safetyShot.targetBall = bestTarget;
-                safetyShot.angle = atan2f(ghost.y - cue->y, ghost.x - cue->x);
-                safetyShot.power = MAX_SHOT_POWER * 0.25f;
+
+                float ghostAngle = atan2f(nudgedGhost.y - cue->y, nudgedGhost.x - cue->x);
+                float angleDelta = fabsf(ghostAngle - baseAngle);
+                if (angleDelta > PI) angleDelta = 2.0f * PI - angleDelta;
+                safetyShot.angle = (angleDelta < (PI * 0.05f)) ? ghostAngle : baseAngle;
+
+                // [+] FIX: Increase power to ensure the cue actually reaches the target.
+                safetyShot.power = MAX_SHOT_POWER * 0.55f;
             }
             else {
                 safetyShot.angle = (float)(rand() % 314) / 100.0f;
-                safetyShot.power = MAX_SHOT_POWER * 0.20f;
+                safetyShot.power = MAX_SHOT_POWER * 0.50f;
                 safetyShot.targetBall = nullptr;
             }
             possibleShots.push_back(safetyShot);
@@ -11113,34 +11341,57 @@ std::vector<AIShotInfo> AIFindAllShots_NineBall() {
 
     // ── Fallback: cluster break aimed at best reachable pocket ─────────────
     if (possibleShots.empty()) {
-        float aimAngle = atan2f(targetBall->y - cue->y, targetBall->x - cue->x);
-        float hitDistSq = 0.0f;
-        Ball* hitB = FindFirstHitBall({ cue->x, cue->y }, aimAngle, hitDistSq);
-
-        if (hitB && hitB->id == targetBall->id) {
-            int   bestPocket = -1;
-            float bestPocketScore = -1.0f;
-            D2D1_POINT_2F bestGhost = { targetBall->x, targetBall->y };
-
-            for (int p = 0; p < 6; ++p) {
-                D2D1_POINT_2F aimPt = GetPocketAimTarget(p);
-                D2D1_POINT_2F ghost = CalculateGhostBallPos(targetBall, aimPt);
-                float dx = ghost.x - cue->x, dy = ghost.y - cue->y;
-                float dist = sqrtf(dx * dx + dy * dy);
-                float pocketDist = GetDistance(targetBall->x, targetBall->y, aimPt.x, aimPt.y);
-                float s = (dist > 0.01f) ? (1000.0f - dist * 0.8f - pocketDist * 0.5f) : -1.0f;
-                if (s > bestPocketScore) { bestPocketScore = s; bestGhost = ghost; bestPocket = p; }
+        float cX = 0.0f, cY = 0.0f;
+        int nearbyBalls = 0;
+        for (Ball& other : balls) {
+            if (other.id != 0 && !other.isPocketed && other.id != targetBall->id) {
+                if (GetDistanceSq(targetBall->x, targetBall->y, other.x, other.y) < (BALL_RADIUS * 4.5f) * (BALL_RADIUS * 4.5f)) {
+                    cX += other.x;
+                    cY += other.y;
+                    ++nearbyBalls;
+                }
             }
+        }
 
+        float finalAim;
+        bool canSmash = false;
+
+        if (nearbyBalls >= 1) { // Even 1 ball nearby is enough to try to smash into it
+            cX /= nearbyBalls;
+            cY /= nearbyBalls;
+            D2D1_POINT_2F clusterCenter = { cX, cY };
+
+            // [+] ULTIMATE CLUSTER BREAK FIX: Drive target into Center of Mass
+            D2D1_POINT_2F ghostForCluster = CalculateGhostBallPos(targetBall, clusterCenter);
+            float aimAtCluster = atan2f(ghostForCluster.y - cue->y, ghostForCluster.x - cue->x);
+
+            float hitDistSq = 0.0f;
+            Ball* hitB = FindFirstHitBall({ cue->x, cue->y }, aimAtCluster, hitDistSq);
+            if (hitB && hitB->id == targetBall->id) {
+                finalAim = aimAtCluster;
+                canSmash = true;
+            }
+        }
+
+        if (!canSmash) {
+            // Fallback head-on with Topspin
+            float headOnAim = atan2f(targetBall->y - cue->y, targetBall->x - cue->x);
+            float hitDistSq = 0.0f;
+            Ball* hitB = FindFirstHitBall({ cue->x, cue->y }, headOnAim, hitDistSq);
+            if (hitB && hitB->id == targetBall->id) {
+                finalAim = headOnAim;
+                canSmash = true;
+            }
+        }
+
+        if (canSmash) {
             AIShotInfo clusterShot;
             clusterShot.possible = true;
             clusterShot.targetBall = targetBall;
-            clusterShot.pocketIndex = bestPocket;
+            clusterShot.pocketIndex = -1;
             clusterShot.spinX = 0.0f;
-            clusterShot.spinY = 0.0f;
-            clusterShot.angle = (bestPocket >= 0)
-                ? atan2f(bestGhost.y - cue->y, bestGhost.x - cue->x)
-                : aimAngle;
+            clusterShot.spinY = 0.5f; // Heavy topspin
+            clusterShot.angle = finalAim;
             clusterShot.power = MAX_SHOT_POWER;
             clusterShot.score = 150.0f;
             possibleShots.push_back(clusterShot);
@@ -11153,15 +11404,23 @@ std::vector<AIShotInfo> AIFindAllShots_NineBall() {
             safetyShot.spinX = 0.0f;
             safetyShot.spinY = 0.0f;
             safetyShot.pocketIndex = -1;
-            float nudge = (aiDifficulty == HARD) ? 0.06f : 0.15f;
+
+            // [+] FIX: Aim DIRECTLY at the target ball so the first-contact rule is satisfied reliably.
             float baseAngle = atan2f(targetBall->y - cue->y, targetBall->x - cue->x);
-            D2D1_POINT_2F ghost = {
+            float nudge = (aiDifficulty == HARD) ? 0.04f : 0.08f;
+            D2D1_POINT_2F nudgedGhost = {
                 targetBall->x - cosf(baseAngle + nudge) * (BALL_RADIUS * 2.0f),
                 targetBall->y - sinf(baseAngle + nudge) * (BALL_RADIUS * 2.0f)
             };
             safetyShot.targetBall = targetBall;
-            safetyShot.angle = atan2f(ghost.y - cue->y, ghost.x - cue->x);
-            safetyShot.power = MAX_SHOT_POWER * 0.25f;
+
+            float ghostAngle = atan2f(nudgedGhost.y - cue->y, nudgedGhost.x - cue->x);
+            float angleDelta = fabsf(ghostAngle - baseAngle);
+            if (angleDelta > PI) angleDelta = 2.0f * PI - angleDelta;
+            safetyShot.angle = (angleDelta < (PI * 0.05f)) ? ghostAngle : baseAngle;
+
+            // [+] FIX: Increase power to ensure the cue actually reaches the target.
+            safetyShot.power = MAX_SHOT_POWER * 0.55f;
             possibleShots.push_back(safetyShot);
         }
     }
@@ -14224,19 +14483,30 @@ void DrawAimingAids(ID2D1RenderTarget* pRT) {
                         // --- BUG FIX: Match Exact Time-Of-Impact (CCD) Normal from Main Engine ---
                         float rvx = b1.vx - b2.vx;
                         float rvy = b1.vy - b2.vy;
-                        float rvSq = rvx * rvx + rvy * rvy;
 
+                        // [+] ULTIMATE PHYSICS FIX: Reverse the FRICTION multiplier for Kibitzer Parity
+                        float true_rvx = rvx / FRICTION;
+                        float true_rvy = rvy / FRICTION;
+                        float start_dx = dx + true_rvx;
+                        float start_dy = dy + true_rvy;
+                        float B_true = dx * true_rvx + dy * true_rvy;
+
+                        if (B_true <= 0.0f && (start_dx * start_dx + start_dy * start_dy < minDist * minDist)) {
+                            continue;
+                        }
+
+                        float rvSq = true_rvx * true_rvx + true_rvy * true_rvy;
                         float nx, ny;
+
                         if (rvSq > 1e-6f) {
                             float A = rvSq;
-                            float B = (dx * rvx + dy * rvy);
                             float C = distSq - minDist * minDist;
-                            float discriminant = B * B - A * C;
+                            float discriminant = B_true * B_true - A * C;
 
                             if (discriminant > 0.0f) {
-                                float t = (-B + sqrtf(discriminant)) / A;
-                                float exactDx = dx + rvx * t;
-                                float exactDy = dy + rvy * t;
+                                float t = (-B_true + sqrtf(discriminant)) / A;
+                                float exactDx = dx + true_rvx * t;
+                                float exactDy = dy + true_rvy * t;
                                 float exactDist = sqrtf(exactDx * exactDx + exactDy * exactDy);
                                 if (exactDist > 1e-6f) {
                                     nx = exactDx / exactDist;
