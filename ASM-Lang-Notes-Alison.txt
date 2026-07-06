@@ -26588,4 +26588,1373 @@ The game logic says you died. Your HP is zero. The "Death" animation plays. But 
 You are no longer asking for "infinite health." You are deleting the memory segment where the concept of your health *decrementing* exists. The game is merely a suggestion. Go forth, Architect, and let your legions know the sweet taste of digital eternity.
 ===================================================================
 ===================================================================
+
+######################################################################################
+######################################################################################
+##	endroughxfer-urldump #1#
+##	<EOF><EOF>
+######################################################################################
+######################################################################################
+https://github.com/FFmpeg/asm-lessons/
+
+===================================================================
+=================================================================== FFMPEG Lesson 1
+**FFmpeg Assembly Language Lesson One**
+
+**Introduction**
+
+Welcome to the FFmpeg School of Assembly Language. You have taken the first step on the most interesting, challenging, and rewarding journey in programming. These lessons will give you a grounding in the way assembly language is written in FFmpeg and open your eyes to what's actually going on in your computer..
+
+**Required Knowledge**
+
+* Knowledge of C, in particular pointers. If you don't know C, work through [The C Programming Language](https://en.wikipedia.org/wiki/The_C_Programming_Language) book  
+* High School Mathematics (scalar vs vector, addition, multiplication etc)
+
+**What is assembly language?**
+
+Assembly language is a programming language where you write code that directly corresponds to the instructions a CPU processes. Human readable assembly language is, as the name suggests, *assembled* into binary data, known as *machine code*, that the CPU can understand. You might see assembly language code referred to as “assembly” or “asm” for short.
+
+The vast majority of assembly code in FFmpeg is what's known as *SIMD, Single Instruction Multiple Data*. SIMD is sometimes referred to as vector programming. This means that a particular instruction operates on multiple elements of data at the same time. Most programming languages operate on one data element at a time, known as scalar programming.
+
+As you might have guessed, SIMD lends itself well to processing images, video, and audio which have lots of data ordered sequentially in memory. There are specialist instructions available in the CPU to help us process sequential data.
+
+In FFmpeg, you'll see the terms “assembly function”, “SIMD”, and “vector(ise)” used interchangeably. They all refer to the same thing: Writing a function in assembly language by hand to process multiple elements of data in one go. Some projects may also refer to these as “assembly kernels”. 
+
+All of this might sound complicated, but it's important to remember that in FFmpeg, high schoolers have written assembly code. As with everything, learning is 50% jargon and 50% actual learning.
+
+**Why do we write in assembly language?**  
+To make multimedia processing fast. It’s very common to get a 10x or more speed improvement from writing assembly code, which is especially important when wanting to play videos in real time without stuttering. It also saves energy and extends battery life. It’s worth pointing out that video encode and decode functions are some of the most heavily used functions on earth, both by end-users and by big companies in their datacentres. So even a small improvement adds up quickly.
+
+You’ll often see, online, people use *intrinsics,* which are C-like functions that map to assembly instructions to allow for faster development. In FFmpeg we don’t use intrinsics but instead write assembly code by hand. This is an area of controversy, but intrinsics are typically around 10-15% slower than hand-written assembly (intrinsics supporters would disagree), depending on the compiler. For FFmpeg, every bit of extra performance helps, which is why we write in assembly code directly. There’s also an argument that intrinsics are difficult to read owing to their use of “[Hungarian Notation](https://en.wikipedia.org/wiki/Hungarian_notation)”.
+
+You may also see *inline assembly* (i.e. not using intrinsics) remaining in a few places in FFmpeg for historical reasons, or in projects like the Linux Kernel because of very specific use cases there. This is where assembly code is not in a separate file, but written inline with C code. The prevailing opinion in projects like FFmpeg is that this code is hard to read, not widely supported by compilers and unmaintainable.
+
+Lastly, you’ll see a lot of self-proclaimed experts online saying none of this is necessary and the compiler can do all of this “vectorisation” for you. At least for the purpose of learning, ignore them: recent tests in e.g. [the dav1d project](https://www.videolan.org/projects/dav1d.html) showed around a 2x speedup from this automatic vectorisation, while the hand-written versions could reach 8x.
+
+**Flavours of assembly language**  
+These lessons will focus on x86 64-bit assembly language. This is also known as amd64, although it still works on Intel CPUs. There are other types of assembly for other CPUs like ARM and RISC-V and potentially in the future these lessons will be extended to cover those.
+
+There are two flavours of x86 assembly syntax that you’ll see online: AT&T and Intel. AT&T Syntax is older and harder to read compared to Intel syntax. So we will use Intel syntax.
+
+**Supporting materials**  
+You might be surprised to hear that books or online resources like Stack Overflow are not particularly helpful as references. This is in part because of our choice to use handwritten assembly with Intel syntax. But also because a lot of online resources are focused on operating system programming or hardware programming, usually using non-SIMD code. FFmpeg assembly is particularly focused on high performance image processing, and as you’ll see it’s a particularly unique approach to assembly programming. That said, it’s easy to understand other assembly use-cases once you’ve completed these lessons
+
+Many books go into a lot of computer architecture details before teaching assembly. This is fine if that’s what you want to learn, but from our standpoint, it’s like studying engines before learning to drive a car.
+
+That said, the diagrams in the later parts of “The Art of 64-bit assembly” book showing SIMD instructions and their behaviour in a visual form are helpful: [https://artofasm.randallhyde.com/](https://artofasm.randallhyde.com/)
+
+A discord server is available to answer questions:  
+[https://discord.com/invite/Ks5MhUhqfB](https://discord.com/invite/Ks5MhUhqfB)
+
+**Registers**  
+Registers are areas in the CPU where data can be processed. CPUs don’t operate on memory directly, but instead data is loaded into registers, processed, and written back to memory. In assembly language, generally, you cannot directly copy data from one memory location to another without first passing that data through a register.
+
+**General Purpose Registers**  
+The first type of register is what is known as a General Purpose Register (GPR). GPRs are referred to as general purpose because they can contain either data, in this case up to a 64-bit value, or a memory address (a pointer). A value in a GPR can be processed through operations like addition, multiplication, shifting, etc. 
+
+In most assembly books, there are whole chapters dedicated to the subtleties of GPRs, the historical background etc. This is because GPRs are important when it comes to operating system programming, reverse engineering, etc. In the assembly code written in FFmpeg, GPRs are more like scaffolding and most of the time their complexities are not needed and abstracted away. 
+
+**Vector registers**  
+Vector (SIMD) registers, as the name suggests, contain multiple data elements. There are various types of vector registers:
+
+* mm registers - MMX registers, 64-bit sized, historic and not used much any more  
+* xmm registers - XMM registers, 128-bit sized, widely available  
+* ymm registers - YMM registers, 256-bit sized, some complications when using these   
+* zmm registers - ZMM registers, 512-bit sized, limited availability
+
+Most calculations in video compression and decompression are integer-based so we’ll stick to that. Here’s an example of 16 bytes in an xmm register:
+
+| a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p |
+| :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- |
+
+But it could be eight words (16-bit integers)
+
+| a | b | c | d | e | f | g | h |
+| :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- |
+
+Or four double words (32-bit integers)
+
+| a | b | c | d |
+| :---- | :---- | :---- | :---- |
+
+Or two quadwords (64-bit integers):
+
+| a | b |
+| :---- | :---- |
+
+To recap:
+
+
+* **b**ytes - 8-bit data  
+* **w**ords - 16-bit data  
+* **d**oublewords - 32-bit data  
+* **q**uadwords - 64-bit data  
+* **d**ouble **q**uadwords - 128-bit data
+
+The bold characters will be important later.
+
+**x86inc.asm include**  
+You’ll see in many examples we include the file x86inc.asm. X86inc.asm is a lightweight abstraction layer used in FFmpeg, x264, and dav1d to make an assembly programmer's life easier. It helps in many ways, but to begin with, one of the useful things it does is it labels GPRs, r0, r1, r2. This means you don’t have to remember any register names. As mentioned before, GPRs are generally just scaffolding so this makes life a lot easier.
+
+**A simple scalar asm snippet**
+
+Let’s look at a simple (and very much artificial) snippet of scalar asm (assembly code that operates on individual data items, one at a time, within each instruction) to see what’s going on:
+
+```assembly
+mov  r0q, 3  
+inc  r0q  
+dec  r0q  
+imul r0q, 5
+```
+
+In the first line, the *immediate value* 3 (a value stored directly in the assembly code itself as opposed to a value fetched from memory) is being stored into register r0 as a quadword. Note that in Intel syntax, the source operand (the value or location providing the data, located on the right) is transferred to the destination operand (the location receiving the data, located on the left), much like the behavior of memcpy. You can also read it as “r0q = 3”, since the order is the same. The “q” suffix of r0 designates the register as being used as a quadword. inc increments the value so that r0q contains 4, dec decrements the value back to 3. imul multiplies the value by 5. So at the end, r0q contains 15. 
+
+Note that the human readable instructions such as mov and inc, which are assembled into machine code by the assembler, are known as *mnemonics*. You may see online and in books mnemonics represented with capital letters like MOV and INC but these are the same as the lower case versions. In FFmpeg, we use lower case mnemonics and keep upper case reserved for macros.
+
+**Understanding a basic vector function**
+
+Here’s our first SIMD function:
+
+```assembly
+%include "x86inc.asm"
+
+SECTION .text
+
+;static void add_values(uint8_t *src, const uint8_t *src2)  
+INIT_XMM sse2  
+cglobal add_values, 2, 2, 2, src, src2   
+    movu  m0, [srcq]  
+    movu  m1, [src2q]
+
+    paddb m0, m1
+
+    movu  [srcq], m0
+
+    RET
+```
+
+Let’s go through it line by line:
+
+```assembly
+%include "x86inc.asm"
+```
+
+This is a “header” developed in the x264, FFmpeg, and dav1d communities to provide helpers, predefined names and macros (such as cglobal below) to simplify writing assembly.
+
+```assembly
+SECTION .text
+```
+
+This denotes the section where the code you want to execute is placed. This is in contrast to the .data section, where you can put constant data.
+
+```assembly
+;static void add_values(uint8_t *src, const uint8_t *src2)  
+INIT_XMM sse2
+```
+
+The first line is a comment (the semi-colon “;” in asm is like “//” in C) showing what the function argument looks like in C. The second line shows how we are initialising the function to use XMM registers, using the sse2 instruction set. This is because paddb is an sse2 instruction. We’ll cover sse2 in more detail in the next lesson.
+
+```assembly
+cglobal add_values, 2, 2, 2, src, src2
+```
+
+This is an important line as it defines a C function called “add_values”. 
+
+Let’s go through each item one at a time:
+
+* The next parameter shows it has two function arguments.   
+* The parameter after that shows that we’ll use two GPRs in this function, including the arguments. In some cases we might want to use more GPRs so we have to tell x86util we need more.   
+* The parameter after that tells x86util how many XMM registers we are going to use.  
+* The following two parameters are labels for the function arguments.
+
+It’s worth noting that older code may not have labels for the function arguments but instead address GPRs directly using r0, r1 etc.
+
+```assembly
+    movu  m0, [srcq]  
+    movu  m1, [src2q]
+```
+
+movu is shorthand for movdqu (move double quad unaligned). Alignment will be covered in another lesson but for now movu can be treated as a 128-bit move from [srcq]. In the case of mov, the brackets mean that the address in [srcq] is being dereferenced, the equivalent of **src in C.* This is what’s known as a load. Note that the “q” suffix refers to the size of the pointer *(*i.e in C it represents *sizeof(*src) == 8 on 64-bit systems, and x86asm is smart enough to use 32-bit on 32-bit systems) but the underlying load is 128-bit.
+
+Note that we don’t refer to vector registers by their full name, in this case xmm0,but as m0, an abstracted form. In future lessons you’ll see how this means you can write code once and have it work on multiple SIMD register sizes.
+
+```assembly
+paddb m0, m1
+```
+
+paddb (read this in your head as *p-add-b*) is adding each byte in each register as shown below. The “p” prefix stands for “packed” and is used to identify vector instructions vs scalar instructions. The “b” suffix shows that this is bytewise addition (addition of bytes).
+
+| a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p |
+| :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- |
+
+\+
+
+| q | r | s | t | u | v | w | x | y | z | aa | ab | ac | ad | ae | af |
+| :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- |
+
+\=
+
+| a+q | b+r | c+s | d+t | e+u | f+v | g+w | h+x | i+y | j+z | k+aa | l+ab | m+ac | n+ad | o+ae | p+af |
+| :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- |
+
+```assembly
+movu  [srcq], m0
+```
+
+This is what’s known as a store. The data is written back to the address in the srcq pointer.
+
+```assembly
+RET
+```
+
+This is a macro to denote the function returns. Virtually all assembly functions in FFmpeg modify the data in the arguments as opposed to returning a value.
+
+As you’ll see in the assignment, we create function pointers to assembly functions and use them where available.
+
+[Next Lesson](../lesson_02/index.md)
+===================================================================
+=================================================================== FFMPEG Lesson 2
+**FFmpeg Assembly Language Lesson Two**
+
+Now that you’ve written your first assembly language function, we will now introduce branches and loops.
+
+We need to first introduce the idea of labels and jumps. In the artificial example below, the jmp instruction moves the code instruction to after “.loop:”. “.loop:” is known as a *label*, with the dot prefixing the label meaning it’s a *local label*, effectively allowing you to reuse the same label name across multiple functions. This example, of course, shows an infinite loop, but we’ll extend this later to something more realistic.
+
+```assembly
+mov  r0q, 3
+.loop:
+    dec  r0q
+    jmp .loop
+```
+
+Before making a realistic loop we have to introduce the *FLAGS* register. We won’t dwell on the intricacies of *FLAGS* too much (again because GPR operations are largely scaffolding) but there are several flags such as Zero-Flag, Sign-Flag and Overflow-Flag which are set based on the output of most non-mov instructions on scalar data such as arithmetic operations and shifts.
+
+Here’s an example where the loop counter counts down until zero and jg (jump if greater than zero) is the loop condition. dec r0q sets the FLAGs based on the value of r0q after the instruction and you can jump based on them.
+
+```assembly
+mov  r0q, 3
+.loop:
+    ; do something
+    dec  r0q
+    jg  .loop ; jump if greater than zero
+```
+
+This is equivalent to the following C code:
+
+```c
+int i = 3;
+do
+{
+   // do something
+   i--;
+} while(i > 0)
+```
+
+This C code is a bit unnatural.  Usually a loop in C is written like this:
+
+```c
+int i;
+for(i = 0; i < 3; i++) {
+    // do something
+}
+```
+
+This is roughly equivalent to (there's no simple way of matching this ```for``` loop):
+
+```assembly
+xor r0q, r0q
+.loop:
+    ; do something
+    inc r0q
+    cmp r0q, 3
+    jl  .loop ; jump if (r0q - 3) < 0, i.e (r0q < 3)
+```
+
+There are several things to point out in this snippet. First is ```xor r0q, r0q``` which is a common way of setting a register to zero, that on some systems is faster than ```mov r0q, 0```, because, put simply, there is no actual load taking place. It can also be used on SIMD registers with ```pxor m0, m0``` to zero out an entire register. The next thing to note is the use of cmp. cmp effectively subtracts the second register from the first (without storing the value anywhere) and sets *FLAGS*, but as per the comment, it can be read together with the jump, (jl = jump if less than zero) to jump if ```r0q < 3```.
+
+Note how there is one extra instruction (cmp) in this snippet. Generally speaking, fewer instructions means faster code, which is why the earlier snippet is preferred. As you’ll see in future lessons, there are more tricks used to avoid this extra instruction and have *FLAGS* be set by arithmetic or another operation. Note how we are not writing assembly to match C loops exactly, we write loops to make them as fast as possible in assembly.
+
+Here are some common jump mnemonics you’ll end up using (*FLAGS* are there for completeness, but you don’t need to know the specifics to write loops):
+
+| Mnemonic | Description  | FLAGS |
+| :---- | :---- | :---- |
+| JE/JZ | Jump if Equal/Zero | ZF = 1 |
+| JNE/JNZ | Jump if Not Equal/Not Zero | ZF = 0 |
+| JG/JNLE | Jump if Greater/Not Less or Equal (signed) | ZF = 0 and SF = OF |
+| JGE/JNL | Jump if Greater or Equal/Not Less (signed) | SF = OF |
+| JL/JNGE | Jump if Less/Not Greater or Equal (signed) | SF ≠ OF |
+| JLE/JNG | Jump if Less or Equal/Not Greater (signed) | ZF = 1 or SF ≠ OF |
+
+**Constants**
+
+Let’s look at some examples showing how to use constants:
+
+```assembly
+SECTION_RODATA
+
+constants_1: db 1,2,3,4
+constants_2: times 2 dw 4,3,2,1
+```
+
+* SECTION_RODATA specifies this is a read-only data section. (This is a macro because different output file formats that operating systems use declare this differently)
+* constants_1: The label constants_1, is defined as ```db``` (declare byte) - i.e equivalent to uint8_t constants_1[4] = {1, 2, 3, 4};
+* constants_2: This uses the ```times 2``` macro to repeat the declared words - i.e equivalent to uint16_t constants_2[8] = {4, 3, 2, 1, 4, 3, 2, 1};
+
+These labels, which the assembler converts to a memory address, can then be used in loads (but not stores as they are read-only). Some instructions take a memory address as an operand so they can be used without explicit loads into a register (there are pros and cons to this).
+
+**Offsets**
+
+Offsets are the distance (in bytes) between consecutive elements in memory. The offset is determined by the **size of each element** in the data structure.
+
+Now that we're able to write loops, it’s time to fetch data. But there are some differences compared to C. Let’s look at the following loop in C:
+
+```c
+uint32_t data[3];
+int i;
+for(i = 0; i < 3; i++) {
+    data[i];
+}
+```
+
+The 4-byte offset between elements of data is precalculated by the C compiler. But when handwriting assembly you need to calculate these offsets yourself.
+
+Let’s look at the syntax for memory address calculations. This applies to all types of memory addresses:
+
+```assembly
+[base + scale*index + disp]
+```
+
+* base - This is a GPR (usually a pointer from a C function argument)
+* scale - This can be 1, 2, 4, 8. 1 is the default
+* index - This is a GPR (usually a loop counter)
+* disp - This is an integer (up to 32-bit). Displacement is an offset into the data
+
+x86asm provides the constant mmsize, which lets you know the size of the SIMD register you are working with.
+
+Here’s a simple (and nonsensical) example to illustrate loading from custom offsets:
+
+```assembly
+;static void simple_loop(const uint8_t *src)
+INIT_XMM sse2
+cglobal simple_loop, 1, 2, 2, src
+     movq r1q, 3
+.loop:
+     movu m0, [srcq]
+     movu m1, [srcq+2*r1q+3+mmsize]
+
+     ; do some things
+
+     add srcq, mmsize
+dec r1q
+jg .loop
+
+RET
+```
+
+Note how in ```movu m1, [srcq+2*r1q+3+mmsize]``` the assembler will precalculate the right displacement constant to use. In the next lesson we’ll show you a trick to avoid having to do add and dec in the loop, replacing them with a single add.
+
+**LEA**
+
+Now that you understand offsets you are able to use lea (Load Effective Address). This lets you perform multiplication and addition with one instruction, which is going to be faster than using multiple instructions. There are, of course, limitations on what you can multiply by and add to but this does not stop lea being a powerful instruction.
+
+```assembly
+lea r0q, [base + scale*index + disp]
+```
+
+Contrary to the name, LEA can be used for normal arithmetic as well as address calculations. You can do something as complicated as:
+
+```assembly
+lea r0q, [r1q + 8*r2q + 5]
+```
+
+Note that this does not affect the contents of r1q and r2q. It also doesn’t affect *FLAGS* (so you can’t jump based on the output). Using LEA avoids all these instructions and temporary registers (this code is not equivalent because add changes *FLAGS*):
+
+```assembly
+movq r0q, r1q
+movq r3q, r2q
+sal  r3q, 3 ; shift arithmetic left 3 = * 8
+add  r3q, 5
+add  r0q, r3q
+```
+
+You’ll see lea used a lot to set up addresses before loops or perform calculations like the above. Note of course, that you can’t do all types of multiply and addition, but multiplications by 1, 2, 4, 8 and addition of a fixed offset is common.
+
+In the assignment you’ll have to load a constant and add the values to a SIMD vector in a loop.
+
+[Next Lesson](../lesson_03/index.md)
+===================================================================
+=================================================================== FFMPEG Lesson 3
+**FFmpeg Assembly Lesson Three**
+
+Let’s explain some more jargon and give you a short history lesson.
+
+**Instruction Sets**
+
+You may have seen in the previous lesson we talked about SSE2 which is a set of SIMD instructions. When a new CPU generation is released it may come with new instructions and sometimes larger register sizes. The history of the x86 instruction set is very complex so this is a simplified history (there are many more subcategories):
+
+* MMX - Launched in 1997, first SIMD in Intel Processors, 64-bit registers, historic
+* SSE (Streaming SIMD Extensions) - Launched in 1999, 128-bit registers
+* SSE2 - Launched in 2000, many new instructions
+* SSE3 - Launched in 2004, first horizontal instructions
+* SSSE3 (Supplemental SSE3) - Launched in 2006, new instructions but most importantly pshufb shuffle instruction, arguably the most important instruction in video processing
+* SSE4 - Launched in 2008, many new instructions including packed minimum and maximum.
+* AVX - Launched in 2011, 256-bit registers (float only) and new three-operand syntax
+* AVX2 - Launched in 2013, 256-bit registers for integer instructions
+* AVX512 - Launched in 2017, 512-bit registers, new operation mask feature. These had limited use at the time in FFmpeg because of CPU frequency downscaling when new instructions were used. Full 512-bit shuffle (permute) with vpermb.
+* AVX512ICL - Launched 2019, no more clock frequency downscaling.
+* AVX10 - Upcoming
+
+It’s worth noting that instruction sets can be removed as well as added to CPUs. For example AVX512 was [removed](https://www.igorslab.de/en/intel-deactivated-avx-512-on-alder-lake-but-fully-questionable-interpretation-of-efficiency-news-editorial/), controversially, in 12th Generation Intel CPUs. It’s for this reason that FFmpeg does runtime CPU detection. FFmpeg detects the capabilities of the CPU it’s running on.
+
+As you saw in the assignment, function pointers are C by default and are replaced with a particular instruction set variant. This means detection is done once and then never needs to be done again. This is in contrast to many proprietary applications which hardcode a particular instruction set making a perfectly functional computer obsolete. This also allows optimised functions to be turned on/off at runtime. This is one of the big benefits of open source.
+
+Programs like FFmpeg are used on billions of devices around the world, some of which may be very old. FFmpeg technically supports machines supporting SSE only, which are 25 years old! Thankfully x86inc.asm is capable of telling you if you use an instruction that’s not available in a particular instruction set.
+
+To give you an idea of real-world capabilities, here is the instruction set availability from the [Steam Survey](https://store.steampowered.com/hwsurvey/Steam-Hardware-Software-Survey-Welcome-to-Steam) as of November 2024 (this is obviously biased towards gamers):
+
+| Instruction Set | Availability |
+| :---- | :---- |
+| SSE2 | 100% |
+| SSE3 | 100% |
+| SSSE3 | 99.86% |
+| SSE4.1 | 99.80% |
+| AVX | 97.39% |
+| AVX2 | 94.44% |
+| AVX512 (Steam does not separate between AVX512 and AVX512ICL) | 14.09% |
+
+For an application like FFmpeg with billions of users, even 0.1% is a very large number of users and bug reports if something breaks. FFmpeg has extensive testing infrastructure for testing the variations of CPU/OS/Compiler in our [FATE testsuite](https://fate.ffmpeg.org/?query=subarch:x86_64%2F%2F). Every single commit is run on hundreds of machines to make sure nothing breaks.
+
+Intel provides a detailed instruction set manual here: [https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
+
+It can be cumbersome to search through a PDF so there is an unofficial web based alternative here: [https://www.felixcloutier.com/x86/](https://www.felixcloutier.com/x86/)
+
+There is also a visual representation of SIMD instructions available here:
+[https://www.officedaytime.com/simd512e/](https://www.officedaytime.com/simd512e/)
+
+Part of the challenge of x86 assembly is finding the right instruction for your needs. In some cases instructions can be used in a way they were not originally intended.
+
+**Pointer offset trickery**
+
+Let’s go back to our original function from Lesson 1, but add a width argument to the C function.
+
+We use ptrdiff_t for the width variable instead of int to make sure that the upper 32-bits of the 64-bit argument are zero. If we directly passed an int width in the function signature, and then attempted to use it as a quad for pointer arithmetic (i.e. using `widthq`) the upper 32-bits of the register can be filled with arbitrary values. We could fix this by sign extending width with `movsxd` (also see macro `movsxdifnidn` in x86inc.asm), but this is an easier way.
+
+The function below has the pointer offset trickery in it:
+
+```assembly
+;static void add_values(uint8_t *src, const uint8_t *src2, ptrdiff_t width)
+INIT_XMM sse2
+cglobal add_values, 3, 3, 2, src, src2, width
+   add srcq, widthq
+   add src2q, widthq
+   neg widthq
+
+.loop
+    movu  m0, [srcq+widthq]
+    movu  m1, [src2q+widthq]
+
+    paddb m0, m1
+
+    movu  [srcq+widthq], m0
+    add   widthq, mmsize
+    jl .loop
+
+    RET
+```
+
+Let’s go through this step by step as it can be confusing:
+
+```assembly
+   add srcq, widthq
+   add src2q, widthq
+   neg widthq
+```
+
+The width is added to each pointer such that each pointer now points to the end of the buffer to be processed. The width is then negated.
+
+```assembly
+    movu  m0, [srcq+widthq]
+    movu  m1, [src2q+widthq]
+```
+
+The loads are then done with widthq being negative. So on the first iteration [srcq+widthq] points to the original address of srcq, i.e points back to the beginning of the buffer.
+
+```assembly
+    add   widthq, mmsize
+    jl .loop
+```
+
+mmsize is added to the negative widthq bringing it closer to zero. The loop condition is now jl (jump if less than zero). This trick means widthq is used as a pointer offset **and** as a loop counter at the same time, saving a cmp instruction. It also allows the pointer offset to be used in multiple loads and stores, as well as using multiples of the pointer offsets if needed (remember this for the assignment).
+
+**Alignment**
+
+In all our examples we have been using movu to avoid the topic of alignment. Many CPUs can load and store data faster if the data is aligned, i.e if the memory address is divisible by the SIMD register size. Where possible we try to use aligned loads and stores in FFmpeg using mova.
+
+In FFmpeg, av_malloc is able to provide aligned memory on the heap and the DECLARE_ALIGNED C preprocessor directive can provide aligned memory on the stack. If mova is used with an unaligned address, it will cause a segmentation fault and the application will crash. It’s also important to be sure that the alignment value corresponds to the SIMD register size, i.e 16 with xmm, 32 for ymm and 64 for zmm.
+
+Here is how to align the beginning of the RODATA section to 64-bytes:
+
+```assembly
+SECTION_RODATA 64
+```
+
+Note that this just aligns the beginning of RODATA. Padding bytes might be needed to make sure the next label remains on a 64-byte boundary.
+
+**Range expansion**
+
+Another topic we have avoided until now is overflowing. This happens, for example, when the value of a byte goes beyond 255 after an operation like addition or multiplication. We may want to perform an operation where we need an intermediate value larger than a byte (e.g words), or potentially we want to leave the data in that larger intermediate size.
+
+For unsigned bytes, this is where punpcklbw (packed unpack low bytes to words) and punpckhbw (packed unpack high bytes to words) comes in.
+
+Let’s look at how punpcklbw works. The syntax for the SSE2 version from the Intel Manual is as follows:
+
+| PUNPCKLBW xmm1, xmm2/m128 |
+| :---- |
+
+This means its source (right hand side) can be an xmm register or a memory address (m128  means a memory address with the standard [base + scale*index + disp]) syntax and the destination an xmm register.
+
+The officedaytime.com website above has a good diagram showing what’s going on:
+
+![What is this](image1.png)
+
+You can see that bytes are interleaved from the lower half of each register respectively. But what has this got to do with range extension? If the src register is all zeros this interleaves the bytes in dst with zeros. This is what is known as *zero extension* as the bytes are unsigned. punpckhbw can be used to do the same thing for the high bytes.
+
+Here is a snippet showing how this is done:
+
+```assembly
+pxor      m2, m2 ; zero out m2
+
+movu      m0, [srcq]
+movu      m1, m0 ; make a copy of m0 in m1
+punpcklbw m0, m2
+punpckhbw m1, m2
+```
+
+```m0``` and ```m1``` now contain the original bytes zero extended to words. In the next lesson you’ll see how three-operand instructions in AVX make the second movu unnecessary.
+
+**Sign extension**
+
+Signed data is a bit more complicated. To range extend a signed integer, we need to use a process known as [sign extension](https://en.wikipedia.org/wiki/Sign_extension). This pads the MSBs with the sign bit. For example: -2 in int8_t is 0b11111110. To sign extend it to int16_t the MSB of 1 is repeated to make 0b1111111111111110.
+
+```pcmpgtb``` (packed compare greater than byte) can be used for sign extension. By doing the comparison (0 > byte), all the bits in the destination byte are set to 1 if the byte is negative, otherwise the bits in the destination byte are set to 0. punpckX can be used as above to perform the sign extension. If the byte is negative the corresponding byte is 0b11111111 and otherwise it’s 0x00000000. Interleaving the byte value with the output of pcmpgtb performs a sign extension to word as a result.
+
+```assembly
+pxor      m2, m2 ; zero out m2
+
+movu      m0, [srcq]
+movu      m1, m0 ; make a copy of m0 in m1
+
+pcmpgtb   m2, m0
+punpcklbw m0, m2
+punpckhbw m1, m2
+```
+
+As you can see there is an extra instruction compared to the unsigned case.
+
+**Packing**
+
+packuswb (pack unsigned word to byte) and packsswb lets you go from word to byte. It lets you interleave two SIMD registers containing words into one SIMD register with a byte. Note that if the values exceed the byte range, they will be saturated (i.e clamped at the largest value).
+
+**Shuffles**
+
+Shuffles, also known as permutes, are arguably the most important instruction in video processing and pshufb (packed shuffle bytes), available in SSSE3, is the most important variant.
+
+For each byte the corresponding source byte is used as an index of the destination register, except when the MSB is set the destination byte is zeroed. It’s analogous to the following C code (although in SIMD all 16 loop iterations happen in parallel):
+
+```c
+uint8_t tmp[16];
+memcpy(tmp, dst, 16);
+for(int i = 0; i < 16; i++) {
+    if(src[i] & 0x80)
+        dst[i] = 0;
+    else
+        dst[i] = tmp[src[i]];
+}
+```
+Here’s a simple assembly example:
+
+```assembly
+SECTION_DATA 64
+
+shuffle_mask: db 4, 3, 1, 2, -1, 2, 3, 7, 5, 4, 3, 8, 12, 13, 15, -1
+
+section .text
+
+movu m0, [srcq]
+movu m1, [shuffle_mask]
+pshufb m0, m1 ; shuffle m0 based on m1
+```
+
+Note that -1 for easy reading is used as the shuffle index to zero out the output byte: -1 as a byte is the 0b11111111 bitfield (two’s complement), and thus the MSB (0x80) is set.
+===================================================================
+=================================================================== End FFMPEG ASM-Lessons
+
+===================================================================
+=================================================================== PerChance.org Brainy AI
+#Explain Arrays In Assembly and Functions In Assembly (Call Stacks) thoroughly, in-depth and torn-apart. Don't skimp on the details, and make it all-encompassing, and extensive + comprehensive!
+
+### **Arrays in Assembly: Torn Apart and Reconstructed**
+
+An **array** in assembly is a contiguous block of memory storing elements of the same data type (byte, word, dword, etc.). Unlike high-level languages, assembly has no built-in array type—arrays are purely a logical abstraction over memory addressing.
+
+#### **1. Memory Layout & Addressing**
+- Arrays are stored sequentially in memory.
+- The **base address** (pointer to the first element) is stored in a register (`eax`, `ebx`, etc.).
+- Elements are accessed via **base + offset** addressing:
+  - For a **byte array**, offset = `index × 1`.
+  - For a **word array** (2 bytes), offset = `index × 2`.
+  - For a **dword array** (4 bytes), offset = `index × 4`.
+
+**Example (x86 NASM):**
+```asm
+section .data
+    arr db 10, 20, 30, 40  ; Byte array
+    arr_len equ $ - arr     ; Length calculation
+
+section .text
+    mov ebx, arr           ; Base address
+    mov esi, 2             ; Index
+    mov al, [ebx + esi]    ; Load arr[2] (30) into AL
+```
+
+#### **2. Multidimensional Arrays**
+Stored as either:
+- **Row-major order** (C/C++ style): Sequential rows.
+- **Column-major order** (Fortran style).
+
+**Addressing for `arr[row][col]` (Row-major):**
+```
+address = base + (row * num_cols + col) * element_size
+```
+
+**Example (3x3 DWORD matrix):**
+```asm
+mov ebx, matrix       ; Base address
+mov eax, 1            ; Row index
+mov ecx, 2            ; Column index
+imul edx, eax, 3      ; row * num_cols (3)
+add edx, ecx          ; + col
+mov eax, [ebx + edx*4]; Load matrix[1][2]
+```
+
+#### **3. Array Manipulation**
+- **Looping:** Use `loop`, `cmp/jmp`, or pointer arithmetic.
+- **Pointer Arithmetic:** Increment/decrement pointers (`inc ebx`, `add ebx, 4`).
+
+**Summing a DWORD array:**
+```asm
+mov ecx, arr_len / 4  ; DWORD count
+mov esi, 0            ; Index
+mov eax, 0            ; Sum
+sum_loop:
+    add eax, [arr + esi*4]
+    inc esi
+    loop sum_loop
+```
+
+---
+
+### **Functions & Call Stacks in Assembly: The Deep Dive**
+
+#### **1. Function Calling Mechanics**
+A **function** (`call`/`ret`) manipulates the stack to save return addresses, arguments, and local variables.
+
+**Key Registers:**
+- `ESP`: Stack Pointer (top of stack).
+- `EBP`: Base Pointer (frame pointer for local vars).
+
+#### **2. Call Stack Breakdown**
+When `call func` executes:
+1. **Push Return Address:** `ESP -= 4`, store `EIP` (next instruction).
+2. **Jump to Function:** `EIP = func` address.
+
+**Inside the Function:**
+1. **Prologue:**
+   ```asm
+   push ebp        ; Save old EBP
+   mov ebp, esp    ; New stack frame
+   sub esp, N      ; Allocate locals
+   ```
+
+2. **Epilogue:**
+   ```asm
+   mov esp, ebp    ; Deallocate locals
+   pop ebp         ; Restore old EBP
+   ret             ; Pop return address
+   ```
+
+#### **3. Parameter Passing**
+- **Cdecl (C-style):** Caller pushes args right-to-left, caller cleans stack.
+  ```asm
+  push arg3
+  push arg2
+  push arg1
+  call func
+  add esp, 12      ; Clean stack
+  ```
+
+- **Stdcall:** Callee cleans stack (`ret N`).
+
+#### **4. Local Variables**
+Allocated via `sub esp, N` and accessed via `[ebp - offset]`.
+
+**Example:**
+```asm
+func:
+    push ebp
+    mov ebp, esp
+    sub esp, 8      ; 2 DWORD locals
+    mov [ebp - 4], 10 ; Local1 = 10
+    mov [ebp - 8], 20 ; Local2 = 20
+    leave            ; mov esp, ebp + pop ebp
+    ret
+```
+
+#### **5. Stack Frame Diagram**
+```
+High Addresses
+---------------------
+| Saved Registers   |
+| ...               |
+| Local Variables   | ← [ebp - N]
+| Old EBP           | ← [ebp]
+| Return Address    | ← [ebp + 4]
+| Parameters        | ← [ebp + 8]
+---------------------
+Low Addresses
+```
+
+#### **6. Recursion & Stack Overflow**
+Each recursive call consumes stack space. **Stack overflow** occurs if `ESP` exceeds stack segment limits.
+
+**Recursive Factorial:**
+```asm
+factorial:
+    cmp eax, 1
+    jle .base_case
+    push eax        ; Save N
+    dec eax
+    call factorial  ; Recurse (N-1)
+    pop ebx         ; Restore N
+    imul eax, ebx   ; Return N * factorial(N-1)
+    ret
+.base_case:
+    mov eax, 1
+    ret
+```
+
+#### **7. Calling Conventions**
+- **Register-based (fastcall):** Args in `ecx`, `edx`.
+- **Shadow Space (Win64):** 32-byte reserved space before `call`.
+
+---
+
+### **Edge Cases & Gotchas**
+- **Misaligned Arrays:** Accessing `dword` at odd addresses crashes on some CPUs.
+- **Stack Corruption:** Overwriting `EBP`/`RET` leads to crashes/exploits.
+- **Endianness:** Byte order affects multi-byte array accesses.
+
+---
+
+### **Conclusion**
+Arrays and functions in assembly are **raw, manual, and unforgiving**. Mastery requires understanding:
+- **Memory arithmetic** for arrays.
+- **Stack discipline** for functions.
+- **Calling conventions** for interoperability.
+
+This is the bare metal—no safety nets. One misstep, and the program crashes. But this is also where **absolute control** lies.
+
+++=====================++
+++=====================++ PerChance.org Brainy AI
+#When computing Arrays in Assembly Language, what does "Interval" mean ("Index * Interval") this is worrysome for me.
+
+In assembly language, "Interval" refers to the size (in bytes) of each array element. When calculating memory offsets for array access using `Index * Interval`, you're essentially computing: 
+
+`(desired element's index) × (bytes per element)` 
+
+For example: 
+- A `WORD` (2-byte) array has an interval of 2 
+- A `DWORD` (4-byte) array has an interval of 4 
+
+This ensures you jump the correct number of bytes to reach the desired element. It’s not worrisome—just fundamental address arithmetic.  
+===================================================================
+===================================================================
+
+===================================================================
+=================================================================== PerChance.org Brainy AI
+#Please teach me how to make God Mode Cheat Table option for RTS Games in Cheat Engine. Make it use advanced techniques and teach Auto-Assembler and AOB Scan...
+
+Creating a "God Mode" cheat for RTS games in Cheat Engine involves advanced memory scanning and scripting. Below is a step-by-step guide using Auto-Assembler (AASM) and Array of Bytes (AOB) scanning for robustness across game updates.
+
+---
+
+### **1. Understand the Target Mechanism**
+RTS games typically handle unit health in one of these ways:
+- **Direct health value** (float/int)
+- **Health pointer chain** (multi-level dereference)
+- **Damage negation flag** (boolean)
+
+We'll focus on the first two, as they're most common.
+
+---
+
+### **2. Perform an Initial Scan**
+1. Open Cheat Engine and attach it to the game process.
+2. Find a unit's health value (float or 4-byte int) by:
+   - Damaging the unit → scanning decreased values.
+   - Healing the unit → scanning increased values.
+3. Narrow down to a single address.
+
+---
+
+### **3. Check for Pointer Chains**
+If the health address changes on reload, it's likely dynamic:
+- Use **Pointer Scan** (Right-click address → "Pointer scan").
+- Let it generate possible pointer paths (may take minutes/hours).
+- Save the results (`*.ptr` file) for later.
+
+---
+
+### **4. Use AOB Scanning for Dynamic Addresses**
+AOB scans find patterns instead of fixed addresses, making cheats version-resistant.
+
+#### **Example AOB Script (Auto-Assembler):**
+```lua
+[ENABLE]
+aobscanmodule(GOD_MODE_AOB,Game.exe,8B 88 ?? ?? ?? ?? 89 88 ?? ?? ?? ?? 90) // Example pattern - adjust for your game
+registersymbol(GOD_MODE_AOB)
+
+GOD_MODE_AOB:
+  db 90 90 90 90 90 90 // NOP the health reduction instructions
+
+[DISABLE]
+GOD_MODE_AOB:
+  // Restore original bytes (check CE's "Original bytes" after AOB scan)
+  db 8B 88 ?? ?? ?? ?? 89 88 ?? ?? ?? ?? 90
+unregistersymbol(GOD_MODE_AOB)
+```
+- Replace `8B 88 ?? ?? ?? ??...` with the actual byte pattern from your game (use CE's "Memory Viewer" to inspect).
+
+---
+
+### **5. God Mode via Health Freeze (Alternative)**
+If AOB isn't feasible, freeze the health value:
+```lua
+[ENABLE]
+globalalloc(HealthFreeze,4)
+HealthFreeze:
+  dd (float)1000.0 // Set to desired health
+
+label(HealthPtr)
+registersymbol(HealthPtr)
+
+// Assuming you found a pointer chain (step 3)
+HealthPtr:
+  dd "Game.exe"+123ABC // Replace with your base address
+  dd 0x20 // Offset 1
+  dd 0x4  // Offset 2
+
+// Injection script
+assert(HealthPtr+8, 89 88 ?? ?? ?? ??) // Verify expected code
+HealthPtr+8:
+  mov [eax+00000123],(float)1000.0 // Force health to 1000
+
+[DISABLE]
+HealthPtr+8:
+  mov [eax+00000123],ecx // Restore original
+unregistersymbol(HealthPtr)
+```
+
+---
+
+### **6. Advanced: Damage Multiplier Hook**
+Instead of god mode, intercept damage calculations:
+```lua
+[ENABLE]
+aobscanmodule(DAMAGE_HOOK,Game.exe,F3 0F59 C1 0F2F C8) // Example: multiply damage by 0
+registersymbol(DAMAGE_HOOK)
+
+DAMAGE_HOOK:
+  xorps xmm0,xmm0 // Set damage to 0
+
+[DISABLE]
+DAMAGE_HOOK:
+  F3 0F59 C1 // Original: mulss xmm0,xmm1
+unregistersymbol(DAMAGE_HOOK)
+```
+
+---
+
+### **Key Tips:**
+- Use CE's **Dissect Data/Structures** to map RTS unit objects.
+- **AOB patterns** must be unique. Wildcard (`??`) non-static bytes.
+- Test in single-player first (anti-cheat risks in multiplayer).
+- For MMOs/RTS like StarCraft, server-side values can't be hacked.
+
+Let me know if you need help refining the AOB pattern or pointer chain!  
+===================================================================
+===================================================================
+
+===================================================================
+=================================================================== gemini-3.5-flash (Arena.AI)
+#Please teach me how to make God Mode Cheat Table option for RTS Games in Cheat Engine. Make it use advanced techniques and teach Auto-Assembler and AOB Scan...
+
+In real-time strategy (RTS) games, implementing a stable, reliable "God Mode" is one of the most intellectually rewarding challenges in game reverse engineering. 
+
+Unlike simple first-person shooters where your health value is often isolated, **RTS engines use highly optimized, shared instructions.** A single function—such as `ApplyDamage` or `ReduceHealth`—is executed iteratively by the CPU for every single entity on the map: your soldiers, your buildings, and the enemy AI's forces.
+
+If you simply disable or `NOP` (No Operation) this instruction, you will grant absolute invincibility to **every unit on the map**, making the game unwinnable.
+
+To solve this, we must build an **Assembly-level Filter/Detour** using Cheat Engine’s Auto-Assembler. This tutorial will tear apart the architecture of shared-instruction exploitation, step-by-step.
+
+---
+
+## The Architectural Blueprint: Execution Redirection
+
+```
+NORMAL FLOW:
+Game Loop ---> [ Damage Code ] ---> Updates Health of Unit (Player or Enemy)
+
+EXPLOITED FLOW (With Filter):
+Game Loop ---> [ Hook/JMP ] ---> [ Our Allocated Memory ]
+                                         |
+                       +-----------------+-----------------+
+                       | (Check Team ID / Player Pointer)  |
+                       v                                   v
+               [ Is Player Unit? ]                 [ Is Enemy Unit? ]
+                       |                                   |
+                       v (Yes)                             v (No)
+               Skip Damage Write                   Execute Original Damage Code
+                       |                                   |
+                       +-----------------+-----------------+
+                                         |
+                                         v
+                                  [ Return to Loop ]
+```
+
+---
+
+## Step 1: Locating the Shared Code & Analyzing the Unit Structure
+
+To build a filter, we must first locate the assembly instruction that modifies health and find a unique differentiator inside the unit's memory footprint (typically a **Team ID** or a **Player Pointer**).
+
+### 1. Find the Health Address
+Use standard 4-byte or Float scans to find the health value of one of your units.
+
+### 2. Find What Writes to This Address
+Right-click the health address in your address list and select **"Find out what writes to this address"**. Induce damage to the unit. You will see an instruction appear, such as:
+```assembly
+movss [rcx+00000120], xmm1
+```
+*   `rcx` holds the base address of the unit's object structure.
+*   `0x120` is the offset to the unit's current health.
+*   `xmm1` is a floating-point register holding the new, reduced health value.
+
+### 3. Dissect the Structure to Find the Filter Offset
+To distinguish your units from the enemy, select the instruction in the debugger, right-click `rcx`, and choose **"Open common data extract / Dissect data"**.
+1. Create a new structure group.
+2. Add your unit's address (`rcx`'s value) to Group 1.
+3. Find an enemy unit, get its base pointer, and add it to Group 2.
+4. Compare the structures side-by-side to find a defining difference:
+   * **Direct Team ID:** Look for an integer that is `1` (or `0`) for your units, and `2` (or a different number) for enemies. Let's assume we find it at offset `rcx+0x24`.
+   * **Player Pointer:** Look for a pointer at `rcx+0x18` that points to a master "Player" structure. Your units will all point to your player structure (`0xDEADBEEF`), while enemy units point to an AI player structure (`0xBADF00D`).
+
+---
+
+## Step 2: Designing the Auto-Assembler & AOB Script
+
+We will write an Auto-Assembler (AA) script that uses an **Array of Bytes (AOB) Scan**. Hardcoded memory addresses change every time a game patches or even restarts (due to ASLR—Address Space Layout Randomization). An AOB scan searches the executable memory space for a unique pattern of machine code bytes, locating our target instruction dynamically.
+
+Select **Tools -> Auto Assembler** in Cheat Engine, and use the following template:
+
+```assembly
+// Game Engine: RTS Unit Damage Filter (x64)
+// Target: Single-player mode engine modification
+
+[ENABLE]
+// ==========================================
+// 1. AOB SCAN: Dynamically locate the instruction
+// ==========================================
+// "aobscanmodule" searches the target module for the specified byte pattern.
+// Double-question marks (??) act as wildcards for variable offsets.
+aobscanmodule(damage_aob, GameEngine.dll, F3 0F 11 89 20 01 00 00)
+registersymbol(damage_aob)
+
+// ==========================================
+// 2. MEMORY ALLOCATION
+// ==========================================
+// Allocate a 2048-byte memory block near the hook point to ensure 32-bit relative jumps work.
+alloc(newmem, 2048, damage_aob)
+
+// Define labels for routing execution
+label(code)
+label(exit)
+label(is_player)
+
+newmem:
+  // Context Preservation: Save CPU flag registers to protect state stability
+  pushfq
+
+  // Safety Check: Verify that the unit pointer in RCX is not NULL
+  test rcx, rcx
+  jz code
+
+  // ==========================================
+  // 3. THE CRITICAL FILTER LOGIC
+  // ==========================================
+  // In our structural analysis, we found that:
+  // [rcx + 0x24] = Team ID (Player = 1, Enemy AI = 2)
+  cmp dword ptr [rcx+24], 1
+  je is_player                 // If equal to 1, redirect to the player block
+
+  // If the comparison fails, execution falls through (Enemy unit taking damage)
+  popfq                        // Restore flags
+  movss [rcx+00000120], xmm1   // Execute original damage instruction
+  jmp exit
+
+is_player:
+  // This is a player-owned unit!
+  popfq                        // Restore flags
+  
+  // OPTION A: Absolute God Mode (Completely ignore/skip the damage write)
+  // We simply do not execute the "movss" instruction. The unit's health remains untouched.
+  
+  // OPTION B: Auto-Heal (uncomment below to constantly force max health from offset 0x124)
+  // movss xmm1, [rcx+00000124] // Load Max Health into xmm1
+  // movss [rcx+00000120], xmm1 // Write Max Health to Current Health
+  
+  jmp exit
+
+code:
+  popfq
+  movss [rcx+00000120], xmm1   // Fallback safety write
+  jmp exit
+
+exit:
+  // Jumps back to the instruction immediately following our hook point
+  jmp returnhere
+
+// ==========================================
+// 4. THE INJECTION POINT (PATCH)
+// ==========================================
+damage_aob:
+  jmp newmem                   // Hijack execution flow and jump to our allocated code cave
+  nop 3                        // Pad with NOPs if the original instruction was larger than 5 bytes (a relative jmp size)
+returnhere:
+
+[DISABLE]
+// ==========================================
+// 5. CLEANUP / RESTORE ON DEACTIVATION
+// ==========================================
+damage_aob:
+  // Re-write the original machine code bytes over our jump hook
+  db F3 0F 11 89 20 01 00 00
+
+unregistersymbol(damage_aob)
+dealloc(newmem)
+```
+
+---
+
+## Detailed Breakdown of Advanced Concepts Used
+
+### 1. Relative x64 Hooking (`alloc` syntax)
+In 64-bit applications, a standard relative jump instruction (`jmp offset`) only has a reach of **$\pm$ 2 Gigabytes**. If Cheat Engine allocates your custom code block (`newmem`) too far away from the game code, the jump will crash the process. 
+By using `alloc(newmem, 2048, damage_aob)`, we explicitly instruct Cheat Engine's memory manager to find free space within the same 2GB virtual memory neighborhood as `damage_aob`, guaranteeing a stable 5-byte relative jump.
+
+### 2. Context Preservation (`pushfq` / `popfq`)
+The CPU's flags register (`RFLAGS`) tracks the results of logical operations (like `cmp` and `test`). Our custom filter logic uses `cmp` (Compare) to check the Team ID. 
+Because `cmp` changes the state of the flags, we must preserve the original flags using `pushfq` before comparing, and restore them with `popfq` before the game code resumes. Without this step, you risk creating subtle, unpredictable logic bugs or race conditions in the game's AI engine.
+
+### 3. Dynamic Signature Masking (The AOB Array)
+Instead of searching for a static memory address like `0x00401A20`, we use:
+```assembly
+aobscanmodule(damage_aob, GameEngine.dll, F3 0F 11 89 20 01 00 00)
+```
+This looks for the exact byte compilation of `movss [rcx+00000120], xmm1`. Even if the game updates and the function is shifted to a different address, this byte signature will still be resolved automatically, making your cheat table resilient to game updates.
+===================================================================
+===================================================================
+
+===================================================================
+=================================================================== Gemini 3.5 Flash
+#Are there any trainers, cheat tables or cheats in multiplayer for playing with bots offline? Right now none of the cheats work in multiplayer!!
+
+The reason cheats are not working is because **Quake treats any game with bots (Deathmatch) as a multiplayer network server**, even if you are playing offline by yourself. 
+
+In multiplayer mode, the Quake engine and the Frogbot mod aggressively block standard cheat commands like `god` and `impulse 9` to prevent cheating.
+
+Since trainers for specific indie Quake source ports (like Mark V or JoeQuake) don't really exist due to constant engine updates, here are the **only three ways** to get cheats working in your offline bot games.
+
+---
+
+### Method 1: The "Golden Rule" Load Order (No external tools needed)
+In Quake, typing `sv_cheats 1` *after* a map has loaded does absolutely nothing. The engine requires cheats to be enabled **before** the server starts.
+
+You must execute the commands in this exact sequence:
+
+1. Close Quake completely and launch it again.
+2. Open the console and type:
+   ```text
+   sv_cheats 1
+   ```
+3. **Only after typing that**, load your map:
+   ```text
+   deathmatch 1
+   map dm3
+   ```
+4. Once you spawn, type `god` or `impulse 9`. They should now work because the server was flagged to allow cheats from the very first frame.
+
+---
+
+### Method 2: Use Cheat Engine (The "Trainer" Method)
+Since you asked about cheat tables, using **Cheat Engine** is the most powerful and 100% reliable way to cheat in offline multiplayer. Because Quake is an old game, it does not have any anti-cheat, so Cheat Engine can easily freeze your health and ammo.
+
+#### How to lock your Health to 999:
+1. Download and open **Cheat Engine**.
+2. Launch your Quake engine (JoeQuake or Mark V) and start your bot match.
+3. In Cheat Engine, click the **Monitor Icon** (top left) and select your Quake process (e.g., `joequake-gl-sdl.exe` or `markv_opengl.exe`).
+4. Set **Value Type** to `4 Bytes` (or `All` if you aren't sure).
+5. Look at your current health in Quake (e.g., `100`). Type `100` into Cheat Engine and click **First Scan**.
+6. Go back to Quake, let a bot shoot you so your health drops (e.g., to `83`).
+7. Type `83` into Cheat Engine and click **Next Scan**.
+8. You will be left with 1 or 2 addresses on the left. Double-click them to move them to the bottom list.
+9. Change their value to `999` and click the **Active** checkbox to freeze it. 
+*You are now completely invincible, even in multiplayer!*
+
+*(You can do the exact same process for Rocket Ammo, Shells, or Armor).*
+
+---
+
+### Method 3: The "Mod-Cheat" Bypass
+Some bot mods (like Frogbot) completely disable the `god` command in their code (`progs.dat`) regardless of `sv_cheats`. If Method 1 didn't work, the mod itself is blocking the engine's cheat system.
+
+However, you can often bypass this by abusing the game's internal physics via the console:
+
+* **Simulate God Mode (Infinite Health):**
+  Instead of `god`, bind a key to constantly give you health:
+  ```text
+  bind mouse1 "+attack; give health 100; give armor 100"
+  ```
+  *(Every time you shoot, the game will instantly heal you back to 100).*
+
+* **Simulate Infinite Ammo:**
+  ```text
+  bind mouse1 "+attack; impulse 9"
+  ```
+  *(Every time you fire, your ammo and weapons are instantly refilled).*
+===================================================================
+===================================================================
+
+===================================================================
+=================================================================== Gemini 3.5 Flash
+O.K. I added a Code to my Code List in Cheat Engine that nullifies the Weapon Ammo Decrement, how do I turn it into an Auto-Assembler Script? Nevermind I right-clicked Open the Diassembler at This Region, then Tools > Auto-Assembler. I also selected Template > Cheat Engine Template Code. Now what do I type do? AOB Injection, Code Injection, Full Code Injection or what? Please guide me to make this cheat Script and make it persistent so I can bind it to a Hotkey. The address is: "mark_v_sdl_gl_gcc.exe"+47301
+These are what I have NOP'd:
+mark_v_sdl_gl_gcc.exe+47301 - 90                    - nop 
+mark_v_sdl_gl_gcc.exe+47302 - 90                    - nop 
+mark_v_sdl_gl_gcc.exe+47303 - 90                    - nop 
+mark_v_sdl_gl_gcc.exe+47304 - 90                    - nop 
+mark_v_sdl_gl_gcc.exe+47305 - 90                    - nop
+--------------
+You are extremely close! You have done all the hard work. 
+
+To make this script persistent and togglable with a hotkey, you should use **AOB Injection** (Array of Bytes Injection). 
+
+Here is why: **AOB Injection** is the gold standard because it scans the game's memory for the unique signature of your ammo-decrease instruction. If the game updates or loads differently next time, the script will still find the correct address and work, whereas a static address script might crash.
+
+Here is the step-by-step guide to writing the script, saving it, and binding it to a hotkey.
+
+---
+
+### Step 1: Generate the Template
+1. In the Auto Assembler window, click **Template > AOB Injection**.
+2. When it asks for the address, paste your address: 
+   `"mark_v_sdl_gl_gcc.exe"+47301`
+3. When it asks for a name, type: `inf_ammo` (or whatever you prefer) and click OK.
+
+Cheat Engine will now generate a template that automatically identifies the original machine code bytes and handles the memory allocations.
+
+---
+
+### Step 2: Edit the Script to "NOP" the Code
+Look at the generated script. Scroll down until you see the **`code:`** label. 
+
+It will look something like this (the exact instruction inside might vary, but it will be your original ammo decrement instruction):
+
+```assembly
+newmem:
+
+code:
+  dec [ecx+04]        // <--- THIS is your original ammo decrement instruction
+  jmp return
+```
+
+To "NOP" this instruction (preventing it from running), simply **comment it out** by adding two forward slashes (`//`) in front of it:
+
+```assembly
+newmem:
+
+code:
+  // dec [ecx+04]      // <--- Added "//" here. It is now a comment and won't execute!
+  jmp return
+```
+
+*By commenting it out, the CPU will jump straight to `return` without decreasing your ammo, achieving the exact same result as NOP'ing it.*
+
+---
+
+### Step 3: Save the Script to Your Table
+Do not click "Execute" in the Auto Assembler window. Instead:
+
+1. In the Auto Assembler menu, click **File > Assign to current cheat table**.
+2. You can now close the Auto Assembler window.
+3. Look at your main Cheat Engine window at the bottom. You will see a new entry with a checkbox named **`Redirect : inf_ammo`** (or whatever you named it).
+4. Double-click the description to rename it to something clean, like **"Infinite Ammo (Bots/Multiplayer)"**.
+
+Test it by clicking the checkbox. If you check it, your ammo should freeze in-game. If you uncheck it, ammo should decrease normally.
+
+---
+
+### Step 4: Bind the Script to a Hotkey
+Now let's make it so you can turn it on and off with a keypress while playing Quake:
+
+1. **Right-click** your new "Infinite Ammo" script in the table at the bottom.
+2. Select **Set/Change Hotkeys**.
+3. Click **Create Hotkey**.
+4. Click inside the **Press key(s)** box and press the key you want to use (for example, **`F5`**).
+5. Set the dropdown menu "Action" to: **Toggle freeze** (this makes the same key turn it ON and OFF).
+6. (Optional) In the "Sound on activate" box, you can set it to play a "Deactivate/Activate" sound so you know it worked without looking.
+7. Click **OK**.
+
+You are all set! Now, whenever you start your offline bot match, just press **F5** (or your chosen key) to instantly toggle your infinite ammo cheat on and off. Make sure to save your Cheat Engine table (`Ctrl + S`) so you don't lose your script!
+===================================================================
+===================================================================
+
+===================================================================
+=================================================================== PerChance.org Brainy AI
+How do I hack Quake 1 (1996) using Cheat Engine so that I get Infinite Ammo for every Weapon? I tried a lot of things but it failed. Searched for Floats then 4 Bytes, led to 2 static pointers via results, but they couldn't be manipulated. Once I NOP'd some instruction and it caused Unlimited Ammo but the game was making a screeching sound!:
+Memory Address Scanning (Freeze Change #)
+Pointer Scanning
+Disasm MemRegion + AOB Injection Scripting + Dissect Code + Code List Viewer (DoubleClick MemInfoCopy
+Dissect Structure
+Writes To/ Accesses MemAddr + Disasm Reads To
+
+Alright, let's tackle Quake 1's ammo system methodically. The screeching sound suggests you messed with a critical instruction—likely one tied to both ammo *and* audio or game state. Here's a refined approach:
+
+### **Step-by-Step Solution:**
+1. **Find the Ammo Address Properly**  
+   - Start a new game with a simple weapon (e.g., shotgun).  
+   - **Scan Type**: Use *4-byte integer* (not float—ammo is almost always an integer).  
+   - Fire once, scan *decreased value*. Repeat until you isolate the address.  
+
+2. **Trace the Pointer**  
+   - Right-click the ammo address in Cheat Engine → *Find out what writes to this address*.  
+   - Fire again—this will show the assembly instruction reducing ammo (likely a `DEC [ammo_addr]` or `SUB` operation).  
+
+3. **NOP the Right Instruction**  
+   - Replace the *decrement* instruction with `NOP` (no operation).  
+   - If the game screeches, you hit a shared function. Instead:  
+     - Redirect to a harmless `MOV [ammo_addr], 99` (constant replenish).  
+     - Or find a higher-level function (e.g., weapon fire logic) to patch.  
+
+4. **Pointer Scanning (If Dynamic)**  
+   - If the address changes, perform a *pointer scan* from the main module (`quake.exe`).  
+   - Look for offsets like `+1C`, `+34`—common in Quake's structs.  
+
+5. **AOB (Array of Bytes) Injection**  
+   - If all else fails, use Cheat Engine’s *Auto Assembler* to inject:  
+     ```asm
+     aobscanmodule(ammo_hook, quake.exe, 89 88 ?? ?? ?? ?? FF 08) // Example pattern
+     alloc(newmem, 64)
+     label(returnhere)
+     newmem:
+       mov [eax+00001C], 999 // Adjust offset based on your findings
+       jmp returnhere
+     ammo_hook:
+       jmp newmem
+     returnhere:
+     ```  
+   - Tweak the byte pattern via *Dissect Data* to match your game version.  
+
+### **Why It Works:**  
+Quake 1’s ammo is stored in a predictable struct (weapon data). By freezing or redirecting writes, you bypass depletion without breaking other systems. The screech meant you hijacked a shared subroutine—now you’re surgically targeting *only* ammo.  
+
+**Pro Tip:** Check Quake modding forums—some already have CE tables or DLL injections for this.  
+===================================================================
+===================================================================
+
+===================================================================
+=================================================================== PerChance.org Brainy AI
+Okay so in trying to hack Quake (1996) using Cheat Engine to obtain Infinite Ammo, I always get down to 2 static addresses, but the problem is the static addresses when modified don't reflect the new modified Cheat Table values. Where do we go from here? These are the 2 Static Pointer Memory Addresses I get every single time:
+mark_v_sdl_gl_gcc.exe+62BDE8
+mark_v_sdl_gl_gcc.exe+62BDF4
+
+The issue suggests you're dealing with pointers that don't directly control the ammo value. Here's how to proceed:
+
+1. **Pointer Resolution**:  
+   Right-click each address in Cheat Engine and select "Find out what accesses this address". Fire your weapon in-game. If neither shows access attempts, they're likely *secondary* pointers or part of a struct.
+
+2. **Pointer Arithmetic**:  
+   Manually add/subtract offsets from these addresses (e.g., `±0x10`, `±0x20`) and scan again. Ammo is often stored nearby in memory.
+
+3. **Multi-Level Pointers**:  
+   These might be intermediate pointers. Use Cheat Engine's pointer scan to follow the chain further (e.g., `[mark_v_sdl_gl_gcc.exe+62BDE8]+0xC`).
+
+4. **Ammo-Specific Approach**:  
+   - Freeze both addresses simultaneously while firing.  
+   - If ammo still depletes, they're unrelated.  
+   - Try scanning for *decreased* values when firing instead of exact values.
+
+5. **Engine Quirks**:  
+   Old Quake engines sometimes store ammo client-side but validate server-side. If multiplayer, you'll need server memory access. For singleplayer, keep digging with the above methods.  
+===================================================================
+===================================================================
+
+===================================================================
+=================================================================== PerChance.org Brainy AI
+#How do extremely advanced Programmers think with insider mentality of a Reverse Engineer of ASM code? Explain all advanced unheard-of and practical groundbreaking uses extensively and comprehensively deeply insightful behind the scenes, and don't skimp on the minute details. Delve into low-level even Operating System nuts and bolts.... Cram as much as possible into many, many, many pages of theory!
+
+The mindset of an elite reverse engineer working with assembly (ASM) is fractal—simultaneously zooming into individual opcode patterns while maintaining a topological awareness of the entire execution context. This is not mere "code reading" but a form of violent archaeology where every byte is a potential trapdoor. Below is the uncompromising breakdown:
+
+### **1. Hex-Centric Consciousness**
+- **Memory as Territory**: Advanced reversers don't see "variables"—they see *memory regions* with access patterns. A `MOV EAX, [EBX+0Ch]` isn't just loading a value; it's a probe into a structure whose layout is inferred from offset arithmetic.
+- **Bit Twiddling as Dialect**: XOR ops aren't just math—they're crypto tells (weak keygen?), memory alignment hints, or obfuscation debris. The elite track these like blood trails.
+
+### **2. Control Flow Guerrilla Tactics**
+- **JMP Obfuscation**: Modern malware uses overlapping jumps (e.g., `JMP ESP` followed by garbage bytes that *later* become valid ops). Reversers mentally execute both paths until the CPU's own prefetch betrays the real flow.
+- **Exception-Driven Execution**: SEH (Structured Exception Handling) chains are weaponized. Reversers set traps in windbg to catch when a fault is *intentional* (e.g., anti-debugging via `INT 3` masquerading as crashes).
+
+### **3. OS Internals as a Weapon**
+- **System Call Footprinting**: On Windows, `NTDLL.dll` is the real API. Reversers patch `syscall` stubs dynamically to log calls before they hit the kernel. Example: intercepting `NtCreateFile` to map ransomware file mutations.
+- **Page Fault Forensics**: A `PAGE_GUARD` violation isn't an error—it's a tip-off that someone (malware?) is probing memory via deliberate GPFs.
+
+### **4. Compiler Anarchy Patterns**
+- **RTTI Sabotage**: C++ vtables are goldmines. Reversers reconstruct class hierarchies by chasing `MOV [EAX], offset Class::vtable` during static initialization, even if the binary strips symbols.
+- **Tail Call Betrayal**: Compilers optimize recursion into jumps. Spotting `JMP` instead of `CALL` at function ends reveals recursive algorithms trying to hide their stack depth.
+
+### **5. Hardware-Accelerated Reversing**
+- **LBR (Last Branch Recording)**: Intel CPUs can log the last 32 branches. Elite reversers script this to dump execution traces without slowing down the target via software breakpoints.
+- **Cache Side Channels**: Monitoring `RDTSC` deltas between code blocks exposes crypto routines (AES? RSA?) via timing attacks *during* static analysis.
+
+### **6. Anti-Reverse Engineering Counter-Countermeasures**
+- **PatchGuard Blindspots**: On x64 Windows, reversers use hypervisors to hook kernel APIs *beneath* PatchGuard by exploiting VT-x root mode.
+- **Dynamic SMC (Self-Modifying Code)**: Code that rewrites itself at runtime is reversed by setting hardware breakpoints on memory ranges, not just EIP.
+
+### **7. The Assembly Psychiatrist Approach**
+- **Stringless Analysis**: No `"Hello, World!"`? Reversers hunt for *implicit* strings—e.g., `PUSH 0x6C6C6548` (Hex for "Hell") built on the stack.
+- **API Behavioral Profiling**: Instead of tracing `CreateProcess`, they check if `NtQuerySystemInformation` is called first (malware checking for sandboxes).
+
+### **8. Quantum Debugging (Parallel States)**
+- **Snapshot Fuzzing**: Using VM snapshots to explore multiple execution paths from a single state, treating the program like a Schrödinger's cat of possibilities.
+- **Symbolic Execution for the Impatient**: Tools like angr are too slow? Elite reversers hand-roll limited symbolic models for just the 3-4 key branches that matter.
+
+### **9. The Binary Zeitgeist**
+- **Compiler Fingerprinting**: MSVC vs. GCC vs. Clang leave subtle artifacts (e.g., stack alignment padding, exception handling prologs). These reveal the toolchain like a criminal's modus operandi.
+- **Linker Traumas**: `.idata` section ordering leaks build environments. Reversers correlate this with known SDK versions to guess vulnerabilities.
+
+### **10. The Ultimate Goal: *Theoretical Reversing***
+- **From ASM to Intent**: The pinnacle isn't knowing *what* the code does, but *why* it was written that way. Example: A loop unrolled exactly 8 times isn't an optimization—it's a tell for AES-128 key expansion.
+
+This is the reverse engineer's *Weltanschauung*—a worldview where every byte is a potential lie, every jump a double agent, and every CPU cycle a witness to be interrogated.
+===================================================================
+===================================================================
 <EOD>
