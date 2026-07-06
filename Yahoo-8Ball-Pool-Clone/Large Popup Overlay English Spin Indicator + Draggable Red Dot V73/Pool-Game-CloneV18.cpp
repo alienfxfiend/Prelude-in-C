@@ -366,6 +366,7 @@ bool railHitAfterContact = false;     // Did any ball hit a rail AFTER cue hit a
 // How long to display the FOUL! HUD after a foul is detected (frames)
 const int HUD_TEXT_ANIMATION_FRAMES = 120;
 int foulDisplayCounter = 0;           // counts down each frame; >0 => show FOUL!
+int g_scratchDisplayCounter = 0;      // counts down each frame; >0 => show "Scratch!" (a specific type of foul: cue ball pocketed). Same red font/color as FOUL!.
 int shootAgainDisplayCounter = 0;     // counts down each frame; >0 => show SHOOT AGAIN!
 int comboShotDisplayCounter = 0;      // counts down each frame; >0 => show COMBO SHOT!
 int consecutivePocketShotStreak = 0;  // legal non-practice pocket streak across consecutive shots
@@ -6816,6 +6817,7 @@ void InitGame() {
     // Reset other state variables
     foulCommitted = false;
     foulDisplayCounter = 0;
+    g_scratchDisplayCounter = 0; // [+] NEW: Defensive reset of the Scratch! HUD counter on new game
     shootAgainDisplayCounter = 0;
     comboShotDisplayCounter = 0;
     consecutivePocketShotStreak = 0;
@@ -8070,6 +8072,16 @@ void ProcessShotResults() {
             shootAgainDisplayCounter = 0;
             comboShotDisplayCounter = 0;
             consecutivePocketShotStreak = 0;
+            // [+] NEW: If the foul was a scratch (cue ball pocketed), also
+            // arm the dedicated "Scratch!" HUD counter. The HUD draw block
+            // prioritizes scratch over the general "FOUL!" text so the
+            // player sees the more specific message. Same red color and
+            // font as FOUL! — only the text content differs. Other foul
+            // types (wrong ball first, no rail, etc.) leave this counter
+            // at 0 and the general "FOUL!" text is shown instead.
+            if (cueBallPocketedThisTurn) {
+                g_scratchDisplayCounter = HUD_TEXT_ANIMATION_FRAMES;
+            }
         }
         if (turnFoul && foulDisplayCounter <= 0) foulDisplayCounter = 120; // Show "FOUL!" text
 
@@ -15698,8 +15710,14 @@ void DrawUI(ID2D1RenderTarget* pRT) {
             }
         };
 
-        // Priority: FOUL overrides pocket messages; Combo overrides Shoot Again.
-        if (foulDisplayCounter > 0) {
+        // [+] NEW: Priority order — Scratch! > FOUL! > COMBO SHOT! > SHOOT AGAIN!
+// "Scratch!" is a more specific type of foul (cue ball pocketed), so
+// it takes precedence over the general "FOUL!" text. Both use the same
+// red color and large font; only the text content differs.
+        if (g_scratchDisplayCounter > 0) {
+            DrawZoomHudText(L"Scratch!", 8, FOUL_TEXT_COLOR, g_scratchDisplayCounter);
+        }
+        else if (foulDisplayCounter > 0) {
             DrawZoomHudText(L"FOUL!", 5, FOUL_TEXT_COLOR, foulDisplayCounter);
         }
         else if (comboShotDisplayCounter > 0) {
@@ -15710,6 +15728,7 @@ void DrawUI(ID2D1RenderTarget* pRT) {
         }
 
         if (foulDisplayCounter > 0) foulDisplayCounter--;
+        if (g_scratchDisplayCounter > 0) g_scratchDisplayCounter--;
         if (shootAgainDisplayCounter > 0) shootAgainDisplayCounter--;
         if (comboShotDisplayCounter > 0) comboShotDisplayCounter--;
     }
@@ -16239,6 +16258,44 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
     pBgBrush->SetOpacity(1.0f);
     // --- End use outer scope variables ---
 
+    // [+] NEW: For 8-Ball mode (and Practice mode with 8-Ball), split the
+    // single bar into two separate "Bay" indicators — one for Player 1
+    // (left) and one for Player 2 (right). For 9-Ball and Straight Pool,
+    // keep the single combined bar (these modes pool balls in numerical
+    // order and have no per-player split). A small horizontal gap
+    // separates the two bays visually.
+    bool useTwoBays = (currentGameType == GameType::EIGHT_BALL_MODE);
+    D2D1_RECT_F p1BayRect = pocketedBallsBarRect;
+    D2D1_RECT_F p2BayRect = pocketedBallsBarRect;
+    const float bayGap = 360.0f; // Pixels between the two bays
+    if (useTwoBays) {
+        float midX = (pocketedBallsBarRect.left + pocketedBallsBarRect.right) * 0.5f;
+        p1BayRect = D2D1::RectF(
+            pocketedBallsBarRect.left,
+            pocketedBallsBarRect.top,
+            midX - bayGap * 0.5f,
+            pocketedBallsBarRect.bottom
+        );
+        p2BayRect = D2D1::RectF(
+            midX + bayGap * 0.5f,
+            pocketedBallsBarRect.top,
+            pocketedBallsBarRect.right,
+            pocketedBallsBarRect.bottom
+        );
+        // Draw a second background for the P2 bay (the single FillRoundedRectangle
+        // above already covered the whole bar; draw P2's bay explicitly on top
+        // so the gap area isn't double-darkened. The P1 bay is implicitly
+        // covered by the original fill because it sits within pocketedBallsBarRect.
+        D2D1_ROUNDED_RECT p1Rounded = D2D1::RoundedRect(p1BayRect, 10.0f, 10.0f);
+        pBgBrush->SetOpacity(finalAlpha);
+        pRT->FillRoundedRectangle(&p1Rounded, pBgBrush);
+        pBgBrush->SetOpacity(1.0f);
+        D2D1_ROUNDED_RECT p2Rounded = D2D1::RoundedRect(p2BayRect, 10.0f, 10.0f);
+        pBgBrush->SetOpacity(finalAlpha);
+        pRT->FillRoundedRectangle(&p2Rounded, pBgBrush);
+        pBgBrush->SetOpacity(1.0f);
+    }
+
 
     // ... (Calculation of ballDisplayRadius, spacing, padding, center_Y remains the same) ...
     float barHeight = pocketedBallsBarRect.bottom - pocketedBallsBarRect.top;
@@ -16246,8 +16303,11 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
     float spacing = ballDisplayRadius * 2.2f;
     float padding = spacing * 0.75f;
     float center_Y = pocketedBallsBarRect.top + barHeight / 2.0f;
-    float currentX_P1 = pocketedBallsBarRect.left + padding;
-    float currentX_P2 = pocketedBallsBarRect.right - padding;
+    // [+] NEW: In 8-Ball two-bay mode, anchor each player's ball-placement
+    // origin to their own bay rect. In other modes, use the full bar
+    // (the original single-bar behavior).
+    float currentX_P1 = (useTwoBays ? p1BayRect.left : pocketedBallsBarRect.left) + padding;
+    float currentX_P2 = (useTwoBays ? p2BayRect.right : pocketedBallsBarRect.right) - padding;
     int p1DrawnCount = 0;
     int p2DrawnCount = 0;
 
