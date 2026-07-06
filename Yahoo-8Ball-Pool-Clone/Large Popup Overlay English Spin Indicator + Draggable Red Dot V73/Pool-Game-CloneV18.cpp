@@ -15922,6 +15922,40 @@ void DrawPowerMeter(ID2D1RenderTarget* pRT) {
             pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
             pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
             pRT->DrawText(L"Power", 5, pTextFormat, &textRect, pTextBrush);
+
+            // [+] NEW: Draw the shot-strength percentage text directly below
+            // the "Power" label, using the same pTextFormat (16pt Segoe UI,
+            // center-aligned) so the two lines share a single visual style.
+            // The percentage is derived from the same fillRatio that drives
+            // the meter's colored fill, so it stays in perfect sync:
+            //   - When the human/AI is actively setting power (fillRatio > 0),
+            //     the text shows "NN%" (no space, per the request).
+            //   - When no shot is being specified (fillRatio == 0), the text
+            //     shows "0%".
+            //   - The value is clamped to [0, 100] and rounded to the nearest
+            //     integer so we always draw a clean "NN%" string.
+            int powerPercent = (int)std::round(fillRatio * 100.0f);
+            if (powerPercent < 0)   powerPercent = 0;
+            if (powerPercent > 100) powerPercent = 100;
+
+            wchar_t percentText[8];
+            swprintf_s(percentText, _countof(percentText), L"%d%%", powerPercent);
+
+            D2D1_RECT_F percentRect = D2D1::RectF(
+                powerMeterRect.left - 20.0f,
+                powerMeterRect.bottom + 38.0f,
+                powerMeterRect.right + 20.0f,
+                powerMeterRect.bottom + 60.0f
+            );
+            pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+            pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+            pRT->DrawText(
+                percentText,
+                (UINT32)wcslen(percentText),
+                pTextFormat,
+                &percentRect,
+                pTextBrush
+            );
         }
     }
 
