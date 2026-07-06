@@ -13782,8 +13782,8 @@ void DrawBalls(ID2D1RenderTarget* pRT)
                 for (int t = 1; t <= TRAIL_SEGMENTS; ++t) {
                     float trailDist = t * (BALL_RADIUS * 0.55f); // Stretch the trail backwards
 
-                    // High baseline opacity ensures it pops on dark/saturated felts like Blood Red
-                    float alpha = 0.80f * speedFactor * (1.0f - (float)t / (TRAIL_SEGMENTS + 1));
+                    // High baseline opacity ensures it pops on dark/saturated felts like Blood Red (default=0.80 -> 0.40)
+                    float alpha = 0.30f * speedFactor * (1.0f - (float)t / (TRAIL_SEGMENTS + 1));
 
                     trailColor.a = alpha;
                     pMotionTrailBrush->SetColor(trailColor);
@@ -16267,7 +16267,7 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
     bool useTwoBays = (currentGameType == GameType::EIGHT_BALL_MODE);
     D2D1_RECT_F p1BayRect = pocketedBallsBarRect;
     D2D1_RECT_F p2BayRect = pocketedBallsBarRect;
-    const float bayGap = 360.0f; // Pixels between the two bays
+    const float bayGap = 360.0f; // Pixels between the two bays (default=8.0 -> 360)
     if (useTwoBays) {
         float midX = (pocketedBallsBarRect.left + pocketedBallsBarRect.right) * 0.5f;
         p1BayRect = D2D1::RectF(
