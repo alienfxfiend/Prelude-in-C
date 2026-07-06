@@ -4070,9 +4070,9 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
         SetWindowPos(hDlg, HWND_TOP, xPos, yPos, 0, 0,
             SWP_NOSIZE | SWP_NOZORDER);
 
-        // Now set the long About text /*4827+ 8903+ 10192+ 10192+ 11578+ 11885+ 11902+ 12014+ 12127+ 12413+ 13711+*/
+        // Now set the long About text /*4827+ 8903+ 10192+ 10192+ 11578+ 11885+ 11902+ 12014+ 12127+ 12413+ 13711+ 13033+*/
         const wchar_t* aboutText =
-            L"Direct2D-based StickPool game made in C++ from scratch (13033+ lines of code) (non-OOP-based)\n"
+            L"Direct2D-based StickPool game made in C++ from scratch (16542+ lines of code) (non-OOP-based)\n"
             L"First successful Clone in C++ (no other sites or projects were there to glean from.)\n"
             L"Made with AI assist (others were in JS / non-8-Ball in C# etc.)\n"
             L"Copyright (C) 2024-2026 Evans Thorpemorton, Entisoft Software Solutions.\n"
@@ -5551,6 +5551,21 @@ case WM_ACTIVATE: {
                 }
                 break;
             case VK_ESCAPE:
+                // [+] NEW (AMENDMENT): Close the centred English-spin popup
+                // overlay on Escape. This is the dedicated close action for
+                // the popup; right-click on the spin indicator only resets
+                // the spin (see WM_RBUTTONDOWN). Runs unconditionally so
+                // the popup closes even during its post-release linger
+                // window (~1.5s) when the player is not actively aiming.
+                // If a drag is in progress, drop it and release mouse
+                // capture so the popup disappears cleanly.
+                g_spinPopupLingerCounter = 0;
+                if (isSettingEnglish) {
+                    isSettingEnglish = false;
+                    ReleaseCapture();
+                }
+                InvalidateRect(hwnd, NULL, FALSE); // Force immediate repaint so the popup vanishes this frame
+
                 if ((currentGameState == AIMING || currentGameState == BREAKING) || shotPower > 0 || g_hintActive)
                 {
                     shotPower = 0.0f;
@@ -6223,19 +6238,17 @@ case WM_ACTIVATE: {
         int y = (short)HIWORD(lParam);
 
         // --- FEATURE ADDITION: Right-Click to Reset English Spin ---
-        // Check if the right-click occurred within the bounds of the Spin Indicator
+// Check if the right-click occurred within the bounds of the Spin Indicator.
+// [+] AMENDMENT: Right-click on the spin indicator now ONLY resets
+// the small spin indicator to (0, 0). It does NOT close the
+// centred popup overlay — that is handled by pressing Escape
+// (see WM_KEYDOWN VK_ESCAPE). The drag state (isSettingEnglish) is
+// intentionally left untouched so a right-click during a drag
+// merely recentres the dot; the drag continues and the next
+// mouse-move updates the spin again.
         if (GetDistanceSq((float)x, (float)y, spinIndicatorCenter.x, spinIndicatorCenter.y) <= (spinIndicatorRadius * spinIndicatorRadius)) {
             cueSpinX = 0.0f;
             cueSpinY = 0.0f;
-            // [+] NEW: Immediately hide the centred popup overlay as well
-// as resetting the small indicator's dot. Zeroing the linger
-// counter makes DrawSpinPopup() skip rendering on the next
-// frame, and ReleaseCapture() drops any drag in progress.
-            g_spinPopupLingerCounter = 0;
-            if (isSettingEnglish) {
-                isSettingEnglish = false;
-                ReleaseCapture();
-            }
             InvalidateRect(hwnd, NULL, FALSE); // Force redraw to show centered dot
             return 0; // Consume the message
         }
@@ -13782,7 +13795,7 @@ void DrawBalls(ID2D1RenderTarget* pRT)
                 for (int t = 1; t <= TRAIL_SEGMENTS; ++t) {
                     float trailDist = t * (BALL_RADIUS * 0.55f); // Stretch the trail backwards
 
-                    // High baseline opacity ensures it pops on dark/saturated felts like Blood Red (default=0.80 -> 0.40)
+                    // High baseline opacity ensures it pops on dark/saturated felts like Blood Red (default=0.80 -> 0.30)
                     float alpha = 0.30f * speedFactor * (1.0f - (float)t / (TRAIL_SEGMENTS + 1));
 
                     trailColor.a = alpha;
