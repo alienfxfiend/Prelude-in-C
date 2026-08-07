@@ -93,7 +93,10 @@ jobs:
           COMMIT_MSG=$(git log -1 --pretty=%B)
           COMMIT_SHA=$(git rev-parse --short HEAD)
           COMMIT_DATE=$(git log -1 --pretty=%ci)
-          echo "commit_msg=$COMMIT_MSG" >> $GITHUB_OUTPUT
+          # Multi-line output to preserve commit message formatting
+          echo "commit_msg<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMIT_MSG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
           echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
           echo "commit_date=$COMMIT_DATE" >> $GITHUB_OUTPUT
 
