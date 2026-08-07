@@ -202,52 +202,52 @@ jobs:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: "🎱 Yahoo 8 Ball Pool Clone - V${{ steps.find-exe.outputs.version }}"
           body: |
-      # 🎱 Yahoo 8 Ball Pool Clone - V${{ steps.find-exe.outputs.version }}
-      
-      ![Pool Game](https://img.shields.io/badge/Version-${{ steps.find-exe.outputs.version }}-blue)
-      ![Platform](https://img.shields.io/badge/Platform-Windows%2010%20x64-lightgrey)
-      
-      ---
-      
-      ### 📋 Release Details
-      
-      | Detail | Info |
-      |--------|------|
-      | **File** | `${{ steps.find-exe.outputs.filename }}` |
-      | **Size** | ${{ steps.file-details.outputs.size_mb }} MB |
-      | **Platform** | Windows 10 x64 |
-      | **Release Date** | ${{ steps.file-details.outputs.commit_date }} |
-      | **Commit** | `${{ steps.file-details.outputs.commit_sha }}` |
-      
-      ### 📦 Download
-      Click the **${{ steps.find-exe.outputs.filename }}** file below to download.
-      
-      ### 🚀 How to Run
-      1. Download `${{ steps.find-exe.outputs.filename }}` from the assets below
-      2. Double-click the executable to launch the game
-      3. No installation required – runs directly as a standalone application!
-      4. Enjoy the game! 🎱
-      
-      ### 📝 Changelog
-      ```
-      ${{ steps.file-details.outputs.commit_msg }}
-      ```
-      
-      ### ⚠️ Notes
-      - **Windows 10 x64** or later required
-      - May trigger Windows SmartScreen on first run (click “More Info” → “Run Anyway”)
-      - This is a standalone executable – no installation or extraction needed
-      - Source code available in the [repository folder](https://github.com/alienfxfiend/Prelude-in-C/tree/main/Yahoo-8Ball-Pool-Clone)
-      - Report any issues on the [Issues page](https://github.com/alienfxfiend/Prelude-in-C/issues)
-      
-      ---
-      *Auto-generated release from your latest Pool Game build*
-      files: ${{ steps.find-exe.outputs.full_path }}
-      draft: false
-      prerelease: false
-      make_latest: true
-      env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            # 🎱 Yahoo 8 Ball Pool Clone - V${{ steps.find-exe.outputs.version }}
+            
+            ![Pool Game](https://img.shields.io/badge/Version-${{ steps.find-exe.outputs.version }}-blue)
+            ![Platform](https://img.shields.io/badge/Platform-Windows%2010%20x64-lightgrey)
+            
+            ---
+            
+            ### 📋 Release Details
+            
+            | Detail | Info |
+            |--------|------|
+            | **File** | `${{ steps.find-exe.outputs.filename }}` |
+            | **Size** | ${{ steps.file-details.outputs.size_mb }} MB |
+            | **Platform** | Windows 10 x64 |
+            | **Release Date** | ${{ steps.file-details.outputs.commit_date }} |
+            | **Commit** | `${{ steps.file-details.outputs.commit_sha }}` |
+            
+            ### 📦 Download
+            Click the **${{ steps.find-exe.outputs.filename }}** file below to download.
+            
+            ### 🚀 How to Run
+            1. Download `${{ steps.find-exe.outputs.filename }}` from the assets below
+            2. Double-click the executable to launch the game
+            3. No installation required – runs directly as a standalone application!
+            4. Enjoy the game! 🎱
+            
+            ### 📝 Changelog
+            ```
+            ${{ steps.file-details.outputs.commit_msg }}
+            ```
+            
+            ### ⚠️ Notes
+            - **Windows 10 x64** or later required
+            - May trigger Windows SmartScreen on first run (click “More Info” → “Run Anyway”)
+            - This is a standalone executable – no installation or extraction needed
+            - Source code available in the [repository folder](https://github.com/alienfxfiend/Prelude-in-C/tree/main/Yahoo-8Ball-Pool-Clone)
+            - Report any issues on the [Issues page](https://github.com/alienfxfiend/Prelude-in-C/issues)
+            
+            ---
+            *Auto-generated release from your latest Pool Game build*
+          files: ${{ steps.find-exe.outputs.full_path }}
+          draft: false
+          prerelease: false
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
       - name: Release Summary
         if: steps.find-exe.outputs.found == 'true'
@@ -269,4 +269,3 @@ jobs:
           echo "Check your Releases page:"
           echo "https://github.com/alienfxfiend/Prelude-in-C/releases"
           echo "========================================="
-          
