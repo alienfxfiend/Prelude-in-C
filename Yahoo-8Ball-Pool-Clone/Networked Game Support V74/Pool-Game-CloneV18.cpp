@@ -8737,6 +8737,27 @@ void ProcessShotResults() {
 
     // --- PRACTICE MODE LOGIC ---
     if (g_isPracticeMode) {
+        // [+] FIX: Sync player stats so the Balls Pocketed Indicator panels
+// correctly display pocketed Solids (Left) and Stripes (Right) in Practice Mode.
+// The indicator relies on player1Info/player2Info which Cheat Mode updates,
+// but normal Practice Mode did not, causing panels to remain empty.
+        PlayerInfo& shootingPlayer = (currentPlayer == 1) ? player1Info : player2Info;
+        for (int id : pocketedThisTurn) {
+            Ball* b = GetBallById(id);
+            if (b && b->id != 0 && b->id != 8) {
+                if (shootingPlayer.assignedType == BallType::NONE) {
+                    AssignPlayerBallTypes(b->type, true);
+                }
+            }
+        }
+        PlayerInfo& otherPlayer = (currentPlayer == 1) ? player2Info : player1Info;
+        if (otherPlayer.assignedType == BallType::NONE && shootingPlayer.assignedType != BallType::NONE) {
+            otherPlayer.assignedType = (shootingPlayer.assignedType == BallType::SOLID) ? BallType::STRIPE : BallType::SOLID;
+        }
+        if (currentGameType == GameType::EIGHT_BALL_MODE && player1Info.assignedType != BallType::NONE) {
+            RecountEightBallGroupProgressFromTable();
+        }
+
         foulDisplayCounter = 0;
         shootAgainDisplayCounter = 0;
         comboShotDisplayCounter = 0;
@@ -8747,6 +8768,11 @@ void ProcessShotResults() {
             // RespawnCueBall sets state to BALL_IN_HAND_P1
         }
         else if (ballsOnTableCount == 0) {
+            // [+] FIX: Reset player stats so the indicator panels clear properly on re-rack
+            player1Info.assignedType = BallType::NONE;
+            player1Info.ballsPocketedCount = 0;
+            player2Info.assignedType = BallType::NONE;
+            player2Info.ballsPocketedCount = 0;
             ReRackPracticeMode();
         }
         else {
