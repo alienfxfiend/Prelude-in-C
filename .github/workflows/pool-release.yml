@@ -185,14 +185,14 @@ jobs:
             
             ---
             *Auto-generated release from your latest Pool Game build*
-            files: |
+          files: |
             ${{ steps.find-exe.outputs.full_path }}
             ${{ steps.create-zip.outputs.zip_path }}
-            draft: false
-            prerelease: false
-            make_latest: true
-            env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: false
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
       # Fallback: Release WITHOUT source code
       - name: Create GitHub Release (without Source)
