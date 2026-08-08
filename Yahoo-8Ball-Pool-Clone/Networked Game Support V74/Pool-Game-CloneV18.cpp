@@ -558,6 +558,10 @@ D2D1_RECT_F powerMeterRect = { TABLE_RIGHT + WOODEN_RAIL_THICKNESS + 20, TABLE_T
 D2D1_RECT_F spinIndicatorRect = { TABLE_LEFT - WOODEN_RAIL_THICKNESS - 50, TABLE_TOP + 20, TABLE_LEFT - WOODEN_RAIL_THICKNESS - 10, TABLE_TOP + 60 }; // Circle area
 D2D1_POINT_2F spinIndicatorCenter = { spinIndicatorRect.left + (spinIndicatorRect.right - spinIndicatorRect.left) / 2.0f, spinIndicatorRect.top + (spinIndicatorRect.bottom - spinIndicatorRect.top) / 2.0f };
 float spinIndicatorRadius = (spinIndicatorRect.right - spinIndicatorRect.left) / 2.0f;
+// [+] NEW: Globals for the large centered English Spin Popup Overlay
+// Used to make the popup directly clickable and draggable
+const float SPIN_POPUP_RADIUS = 150.0f;
+D2D1_POINT_2F g_spinPopupCenter = { 512.0f, 350.0f }; // Center of 1024x700 client area
 D2D1_RECT_F pocketedBallsBarRect = { TABLE_LEFT, TABLE_BOTTOM + WOODEN_RAIL_THICKNESS + 30, TABLE_RIGHT, TABLE_BOTTOM + WOODEN_RAIL_THICKNESS + 70 };
 
 // Corrected Pocket Center Positions (aligned with table corners/edges)
@@ -6630,12 +6634,16 @@ case WM_ACTIVATE: {
             ((currentPlayer == 1 && (currentGameState == PLAYER1_TURN || currentGameState == AIMING || currentGameState == BREAKING || currentGameState == BALL_IN_HAND_P1 || currentGameState == PRE_BREAK_PLACEMENT)) ||
                 (!isPlayer2AI && currentPlayer == 2 && (currentGameState == PLAYER2_TURN || currentGameState == AIMING || currentGameState == BREAKING || currentGameState == BALL_IN_HAND_P2 || currentGameState == PRE_BREAK_PLACEMENT))))
         {
-            float dx = (float)ptMouse.x - spinIndicatorCenter.x;
-            float dy = (float)ptMouse.y - spinIndicatorCenter.y;
+            // [+] NEW: Map drag coordinates to the Popup center if it's visible
+            D2D1_POINT_2F activeCenter = (g_spinPopupLingerCounter > 0) ? g_spinPopupCenter : spinIndicatorCenter;
+            float activeRadius = (g_spinPopupLingerCounter > 0) ? SPIN_POPUP_RADIUS : spinIndicatorRadius;
+
+            float dx = (float)ptMouse.x - activeCenter.x;
+            float dy = (float)ptMouse.y - activeCenter.y;
             float dist = GetDistance(dx, dy, 0, 0);
-            if (dist > spinIndicatorRadius) { dx *= spinIndicatorRadius / dist; dy *= spinIndicatorRadius / dist; }
-            cueSpinX = dx / spinIndicatorRadius;
-            cueSpinY = dy / spinIndicatorRadius;
+            if (dist > activeRadius) { dx *= activeRadius / dist; dy *= activeRadius / dist; }
+            cueSpinX = dx / activeRadius;
+            cueSpinY = dy / activeRadius;
 
             // [+] NEW: Keep the linger counter pinned high so the popup
             // stays visible for the entire drag. The render loop won't
@@ -6720,21 +6728,28 @@ case WM_ACTIVATE: {
 
         if (canPlayerClickInteract && canInteractState) {
             float spinDistSq = GetDistanceSq((float)ptMouse.x, (float)ptMouse.y, spinIndicatorCenter.x, spinIndicatorCenter.y);
-            if (spinDistSq < spinIndicatorRadius * spinIndicatorRadius * 1.2f) {
+            // [+] NEW: Check if clicking the small indicator OR the large popup overlay
+            bool clickedSmallIndicator = (spinDistSq < spinIndicatorRadius* spinIndicatorRadius * 1.2f);
+            bool isPopupVisible = (g_spinPopupLingerCounter > 0 || isSettingEnglish);
+            float popupDistSq = GetDistanceSq((float)ptMouse.x, (float)ptMouse.y, g_spinPopupCenter.x, g_spinPopupCenter.y);
+            bool clickedPopup = isPopupVisible && (popupDistSq < SPIN_POPUP_RADIUS* SPIN_POPUP_RADIUS);
+
+            if (clickedSmallIndicator || clickedPopup) {
                 isSettingEnglish = true;
-                // [+] NEW: Pin the linger counter to a large value so the
-                // popup stays visible for the entire drag, and capture the
-                // mouse so WM_MOUSEMOVE keeps firing reliably even when the
-                // cursor leaves the small spin indicator's tiny bounding
-                // box or the client window entirely.
-                g_spinPopupLingerCounter = 9999;
+                g_spinPopupLingerCounter = 9999; // Keep popup visible for drag
                 SetCapture(hwndMain);
-                float dx = (float)ptMouse.x - spinIndicatorCenter.x;
-                float dy = (float)ptMouse.y - spinIndicatorCenter.y;
+
+                // Map coordinates to whichever center was clicked
+                D2D1_POINT_2F activeCenter = clickedPopup ? g_spinPopupCenter : spinIndicatorCenter;
+                float activeRadius = clickedPopup ? SPIN_POPUP_RADIUS : spinIndicatorRadius;
+
+                float dx = (float)ptMouse.x - activeCenter.x;
+                float dy = (float)ptMouse.y - activeCenter.y;
                 float dist = GetDistance(dx, dy, 0, 0);
-                if (dist > spinIndicatorRadius) { dx *= spinIndicatorRadius / dist; dy *= spinIndicatorRadius / dist; }
-                cueSpinX = dx / spinIndicatorRadius;
-                cueSpinY = dy / spinIndicatorRadius;
+                if (dist > activeRadius) { dx *= activeRadius / dist; dy *= activeRadius / dist; }
+                cueSpinX = dx / activeRadius;
+                cueSpinY = dy / activeRadius;
+
                 isAiming = false; isDraggingStick = false; isDraggingCueBall = false;
                 InvalidateRect(hwnd, NULL, FALSE); // Force UI update instantly on click
                 return 0;
@@ -8691,7 +8706,11 @@ void ProcessShotResults() {
         else if (b->id == 8 && currentGameType == GameType::EIGHT_BALL_MODE) { // Only track 8-ball pocketing in 8-ball mode
             eightBallPocketedThisTurn = true;
         }
-        else if (b->id > 0 && b->id <= 15) { // Any numbered ball
+
+        // [+] FIX: Decrement ballsOnTableCount for ALL pocketed object balls (including the 8-ball)
+        // Previously, the 8-ball fell into the "else if" above and skipped this decrement,
+        // causing Practice Mode to never reach 0 balls and never trigger a re-rack.
+        if (b->id > 0 && b->id <= 15) {
             numberedBallsPocketedThisTurn++;
             if (currentGameType != GameType::NINE_BALL || g_isPracticeMode) ballsOnTableCount--; // Decrement balls on table count (9-ball handles this differently, unless practice)
 
@@ -8739,8 +8758,6 @@ void ProcessShotResults() {
     if (g_isPracticeMode) {
         // [+] FIX: Sync player stats so the Balls Pocketed Indicator panels
 // correctly display pocketed Solids (Left) and Stripes (Right) in Practice Mode.
-// The indicator relies on player1Info/player2Info which Cheat Mode updates,
-// but normal Practice Mode did not, causing panels to remain empty.
         PlayerInfo& shootingPlayer = (currentPlayer == 1) ? player1Info : player2Info;
         for (int id : pocketedThisTurn) {
             Ball* b = GetBallById(id);
@@ -17159,25 +17176,17 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
     }
 
     // --- Use outer scope variables ---
-    roundedRect = D2D1::RoundedRect(pocketedBallsBarRect, 10.0f, 10.0f); // FIXED
     float baseAlpha = 0.8f;
     float flashBoost = pocketFlashTimer * 0.5f;
     finalAlpha = std::min(1.0f, baseAlpha + flashBoost); // FIXED
     pBgBrush->SetOpacity(finalAlpha); // FIXED
-    pRT->FillRoundedRectangle(&roundedRect, pBgBrush); // FIXED
-    pBgBrush->SetOpacity(1.0f);
-    // --- End use outer scope variables ---
 
-    // [+] NEW: For 8-Ball mode (and Practice mode with 8-Ball), split the
-    // single bar into two separate "Bay" indicators — one for Player 1
-    // (left) and one for Player 2 (right). For 9-Ball and Straight Pool,
-    // keep the single combined bar (these modes pool balls in numerical
-    // order and have no per-player split). A small horizontal gap
-    // separates the two bays visually.
+    // [+] FIX: Truly separate the bays by avoiding the underlying full-bar draw.
     bool useTwoBays = (currentGameType == GameType::EIGHT_BALL_MODE);
     D2D1_RECT_F p1BayRect = pocketedBallsBarRect;
     D2D1_RECT_F p2BayRect = pocketedBallsBarRect;
-    const float bayGap = 360.0f; // Pixels between the two bays (default=8.0 -> 360)
+    const float bayGap = 360.0f; // Pixels between the two bays 
+
     if (useTwoBays) {
         float midX = (pocketedBallsBarRect.left + pocketedBallsBarRect.right) * 0.5f;
         p1BayRect = D2D1::RectF(
@@ -17192,19 +17201,23 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
             pocketedBallsBarRect.right,
             pocketedBallsBarRect.bottom
         );
-        // Draw a second background for the P2 bay (the single FillRoundedRectangle
-        // above already covered the whole bar; draw P2's bay explicitly on top
-        // so the gap area isn't double-darkened. The P1 bay is implicitly
-        // covered by the original fill because it sits within pocketedBallsBarRect.
+
+        // Draw Player 1 Bay
         D2D1_ROUNDED_RECT p1Rounded = D2D1::RoundedRect(p1BayRect, 10.0f, 10.0f);
-        pBgBrush->SetOpacity(finalAlpha);
         pRT->FillRoundedRectangle(&p1Rounded, pBgBrush);
-        pBgBrush->SetOpacity(1.0f);
+
+        // Draw Player 2 Bay
         D2D1_ROUNDED_RECT p2Rounded = D2D1::RoundedRect(p2BayRect, 10.0f, 10.0f);
-        pBgBrush->SetOpacity(finalAlpha);
         pRT->FillRoundedRectangle(&p2Rounded, pBgBrush);
-        pBgBrush->SetOpacity(1.0f);
     }
+    else {
+        // Draw standard single combined bar for 9-Ball and Straight Pool
+        roundedRect = D2D1::RoundedRect(pocketedBallsBarRect, 10.0f, 10.0f);
+        pRT->FillRoundedRectangle(&roundedRect, pBgBrush);
+    }
+
+    pBgBrush->SetOpacity(1.0f);
+    // --- End background drawing logic ---
 
 
     // ... (Calculation of ballDisplayRadius, spacing, padding, center_Y remains the same) ...
