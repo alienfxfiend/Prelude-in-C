@@ -17306,6 +17306,49 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
     // --- FIX: Split logic by game type ---
     if (currentGameType == GameType::EIGHT_BALL_MODE) {
         const int maxBallsToShow = 7;
+
+        // [+] NEW: Draw sophisticated UI ghost placeholders for the 7 balls
+        ID2D1SolidColorBrush* pPlaceholderOutline = nullptr;
+        ID2D1SolidColorBrush* pPlaceholderFill = nullptr;
+        // Deep recessed pocket fill to make the UI look indented
+        pRT->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f), &pPlaceholderFill);
+        pRT->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.2f), &pPlaceholderOutline);
+
+        if (pPlaceholderFill && pPlaceholderOutline) {
+            // Determine player group colors for the placeholders
+            D2D1_COLOR_F p1Color = D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.2f); // Default / Open Table
+            if (player1Info.assignedType == BallType::SOLID) p1Color = D2D1::ColorF(D2D1::ColorF::Goldenrod, 0.5f);
+            else if (player1Info.assignedType == BallType::STRIPE) p1Color = D2D1::ColorF(D2D1::ColorF::DarkOrchid, 0.5f);
+
+            D2D1_COLOR_F p2Color = D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.2f); // Default / Open Table
+            if (player2Info.assignedType == BallType::SOLID) p2Color = D2D1::ColorF(D2D1::ColorF::Goldenrod, 0.5f);
+            else if (player2Info.assignedType == BallType::STRIPE) p2Color = D2D1::ColorF(D2D1::ColorF::DarkOrchid, 0.5f);
+
+            for (int i = 0; i < maxBallsToShow; ++i) {
+                // Player 1 Placeholder (Left bay)
+                D2D1_POINT_2F p1Center = D2D1::Point2F(currentX_P1 + i * spacing, center_Y);
+                D2D1_ELLIPSE p1Slot = D2D1::Ellipse(p1Center, ballDisplayRadius, ballDisplayRadius);
+                D2D1_ELLIPSE p1Inner = D2D1::Ellipse(p1Center, ballDisplayRadius * 0.45f, ballDisplayRadius * 0.45f);
+
+                pRT->FillEllipse(&p1Slot, pPlaceholderFill);
+                pPlaceholderOutline->SetColor(p1Color);
+                pRT->DrawEllipse(&p1Slot, pPlaceholderOutline, 1.5f);  // Outer thin ring
+                pRT->DrawEllipse(&p1Inner, pPlaceholderOutline, 0.8f); // Inner HUD ring
+
+                // Player 2 Placeholder (Right bay)
+                D2D1_POINT_2F p2Center = D2D1::Point2F(currentX_P2 - i * spacing, center_Y);
+                D2D1_ELLIPSE p2Slot = D2D1::Ellipse(p2Center, ballDisplayRadius, ballDisplayRadius);
+                D2D1_ELLIPSE p2Inner = D2D1::Ellipse(p2Center, ballDisplayRadius * 0.45f, ballDisplayRadius * 0.45f);
+
+                pRT->FillEllipse(&p2Slot, pPlaceholderFill);
+                pPlaceholderOutline->SetColor(p2Color);
+                pRT->DrawEllipse(&p2Slot, pPlaceholderOutline, 1.5f);  // Outer thin ring
+                pRT->DrawEllipse(&p2Inner, pPlaceholderOutline, 0.8f); // Inner HUD ring
+            }
+        }
+        SafeRelease(&pPlaceholderOutline);
+        SafeRelease(&pPlaceholderFill);
+
         for (const auto& b : balls) {
             if (b.isPocketed) {
                 if (b.id == 0 || b.id == 8) continue;
