@@ -8780,17 +8780,19 @@ void ProcessShotResults() {
         comboShotDisplayCounter = 0;
         consecutivePocketShotStreak = 0;
 
-        if (cueBallPocketedThisTurn) {
-            RespawnCueBall(false);
-            // RespawnCueBall sets state to BALL_IN_HAND_P1
-        }
-        else if (ballsOnTableCount == 0) {
+        // [+] BUG FIX: Re-rack priority must override scratching. If both happen 
+        // simultaneously, the table MUST re-rack (which resets the cue ball anyway).
+        if (ballsOnTableCount == 0) {
             // [+] FIX: Reset player stats so the indicator panels clear properly on re-rack
             player1Info.assignedType = BallType::NONE;
             player1Info.ballsPocketedCount = 0;
             player2Info.assignedType = BallType::NONE;
             player2Info.ballsPocketedCount = 0;
             ReRackPracticeMode();
+        }
+        else if (cueBallPocketedThisTurn) {
+            RespawnCueBall(false);
+            // RespawnCueBall sets state to BALL_IN_HAND_P1
         }
         else {
             // Always let the player shoot again!
