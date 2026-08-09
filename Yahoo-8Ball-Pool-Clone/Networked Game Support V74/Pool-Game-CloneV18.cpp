@@ -14843,6 +14843,17 @@ void DrawBalls(ID2D1RenderTarget* pRT)
             }
         }
 
+        // [+] NEW: Cyan Glow for Cue Ball during Ball-in-Hand
+        if (b.id == 0 && !isDraggingCueBall && (currentGameState == BALL_IN_HAND_P1 || currentGameState == BALL_IN_HAND_P2)) {
+            ID2D1SolidColorBrush* pCyanGlow = nullptr;
+            pRT->CreateSolidColorBrush(D2D1::ColorF(0.0f, 1.0f, 1.0f, 0.8f), &pCyanGlow); // Cyan Glow
+            if (pCyanGlow) {
+                D2D1_ELLIPSE glowE = D2D1::Ellipse(D2D1::Point2F(b.x, b.y), BALL_RADIUS * 1.8f, BALL_RADIUS * 1.8f);
+                pRT->FillEllipse(&glowE, pCyanGlow);
+                SafeRelease(&pCyanGlow);
+            }
+        }
+
         D2D1_GRADIENT_STOP gs[3];
         gs[0].position = 0.0f;  gs[0].color = D2D1::ColorF(1, 1, 1, 0.95f);   // bright spot
         gs[1].position = 0.35f; gs[1].color = Lighten(b.color);               // transitional
