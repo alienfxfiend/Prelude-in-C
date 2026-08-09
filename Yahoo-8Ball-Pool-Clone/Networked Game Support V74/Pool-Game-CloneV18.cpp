@@ -17369,6 +17369,38 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
     }
     // --- NEW LOGIC FOR 9-BALL (and Straight Pool)
     else if (currentGameType == GameType::NINE_BALL || currentGameType == GameType::STRAIGHT_POOL) {
+        // [+] NEW: Draw sophisticated UI ghost placeholders for 9-Ball and Straight Pool
+        int placeholderCount = 0;
+        if (currentGameType == GameType::NINE_BALL) {
+            placeholderCount = 9; // Exactly 9 for 9-Ball
+        }
+        else {
+            // Calculate max placeholders that fit in the single long panel for Straight Pool
+            float barWidth = pocketedBallsBarRect.right - pocketedBallsBarRect.left;
+            float availableWidth = barWidth - (padding * 2.0f);
+            placeholderCount = 1 + static_cast<int>(availableWidth / spacing);
+        }
+
+        ID2D1SolidColorBrush* pPlaceholderOutline = nullptr;
+        ID2D1SolidColorBrush* pPlaceholderFill = nullptr;
+        // Deep recessed pocket fill to make the UI look indented
+        pRT->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f), &pPlaceholderFill);
+        pRT->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.2f), &pPlaceholderOutline); // Neutral silver
+
+        if (pPlaceholderFill && pPlaceholderOutline) {
+            for (int i = 0; i < placeholderCount; ++i) {
+                D2D1_POINT_2F slotCenter = D2D1::Point2F(currentX_P1 + i * spacing, center_Y);
+                D2D1_ELLIPSE slot = D2D1::Ellipse(slotCenter, ballDisplayRadius, ballDisplayRadius);
+                D2D1_ELLIPSE inner = D2D1::Ellipse(slotCenter, ballDisplayRadius * 0.45f, ballDisplayRadius * 0.45f);
+
+                pRT->FillEllipse(&slot, pPlaceholderFill);
+                pRT->DrawEllipse(&slot, pPlaceholderOutline, 1.5f);  // Outer thin ring
+                pRT->DrawEllipse(&inner, pPlaceholderOutline, 0.8f); // Inner HUD ring
+            }
+        }
+        SafeRelease(&pPlaceholderOutline);
+        SafeRelease(&pPlaceholderFill);
+
         const int maxBallsToShow = 15; // Max possible
         int drawnCount = 0;
 
