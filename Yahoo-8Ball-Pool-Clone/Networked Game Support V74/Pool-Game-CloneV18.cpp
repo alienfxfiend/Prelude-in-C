@@ -17373,8 +17373,14 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
     else if (currentGameType == GameType::NINE_BALL || currentGameType == GameType::STRAIGHT_POOL) {
         // [+] NEW: Draw sophisticated UI ghost placeholders for 9-Ball and Straight Pool
         int placeholderCount = 0;
+        float startX = currentX_P1; // Default to left-aligned
+
         if (currentGameType == GameType::NINE_BALL) {
             placeholderCount = 9; // Exactly 9 for 9-Ball
+            // [+] FIX: Center the 9 slots exactly in the middle of the panel
+            float barCenterX = (pocketedBallsBarRect.left + pocketedBallsBarRect.right) * 0.5f;
+            float totalWidth = (placeholderCount - 1) * spacing;
+            startX = barCenterX - (totalWidth * 0.5f);
         }
         else {
             // Calculate max placeholders that fit in the single long panel for Straight Pool
@@ -17391,7 +17397,7 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
 
         if (pPlaceholderFill && pPlaceholderOutline) {
             for (int i = 0; i < placeholderCount; ++i) {
-                D2D1_POINT_2F slotCenter = D2D1::Point2F(currentX_P1 + i * spacing, center_Y);
+                D2D1_POINT_2F slotCenter = D2D1::Point2F(startX + i * spacing, center_Y);
                 D2D1_ELLIPSE slot = D2D1::Ellipse(slotCenter, ballDisplayRadius, ballDisplayRadius);
                 D2D1_ELLIPSE inner = D2D1::Ellipse(slotCenter, ballDisplayRadius * 0.45f, ballDisplayRadius * 0.45f);
 
@@ -17415,7 +17421,7 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
 
             Ball* b = GetBallById(id);
             if (b && b->isPocketed) {
-                Draw3DPocketBall(*b, D2D1::Point2F(currentX_P1 + drawnCount * spacing, center_Y), ballDisplayRadius);
+                Draw3DPocketBall(*b, D2D1::Point2F(startX + drawnCount * spacing, center_Y), ballDisplayRadius);
                 drawnCount++;
             }
         }
