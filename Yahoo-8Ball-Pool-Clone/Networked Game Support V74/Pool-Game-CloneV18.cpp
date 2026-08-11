@@ -2045,6 +2045,9 @@ void HandleCheatDropPocket(Ball* b, int p) {
 
     // 4. Check Post-Pocketing Game State (Win/Re-rack)
     if (g_isPracticeMode) {
+        // [+] FIX: Sync target if you cheat-drop a ball in Practice Mode
+        if (currentGameType == GameType::NINE_BALL) UpdateLowestBall();
+
         if (ballsOnTableCount == 0) ReRackPracticeMode();
         else currentGameState = PLAYER1_TURN; // Always P1 turn in practice
     }
@@ -8775,6 +8778,12 @@ void ProcessShotResults() {
             RecountEightBallGroupProgressFromTable();
         }
 
+        // [+] FIX: We must update the lowest ball for 9-Ball in Practice Mode 
+        // so the visual wave/pulse effect advances to the next target!
+        if (currentGameType == GameType::NINE_BALL) {
+            UpdateLowestBall();
+        }
+
         foulDisplayCounter = 0;
         shootAgainDisplayCounter = 0;
         comboShotDisplayCounter = 0;
@@ -14856,6 +14865,30 @@ void DrawBalls(ID2D1RenderTarget* pRT)
             }
         }
 
+        // [+] NEW: Nine-Ball Target Pulse Effect (Gray expanding waves)
+        // if (currentGameType == GameType::NINE_BALL && !g_isPracticeMode && !isOpeningBreakShot && b.id == lowestBallOnTable && b.id != 0) {
+        if (currentGameType == GameType::NINE_BALL && !isOpeningBreakShot && b.id == lowestBallOnTable && b.id != 0) {
+            ID2D1SolidColorBrush* pPulseBrush = nullptr;
+            pRT->CreateSolidColorBrush(D2D1::ColorF(0.7f, 0.7f, 0.7f, 1.0f), &pPulseBrush); // Gray base
+            if (pPulseBrush) {
+                float elapsed = GetTickCount() / 1000.0f;
+                const int numRings = 3;
+                for (int i = 0; i < numRings; ++i) {
+                    // Loop phase from 0.0 to 1.0
+                    float phase = fmodf(elapsed * 1.5f + (i * (1.0f / numRings)), 1.0f);
+                    // Radius expands from ball surface outward
+                    float currentRadius = BALL_RADIUS + (BALL_RADIUS * 2.8f * phase);
+                    // Alpha fades to 0 as it expands outward
+                    float alpha = 0.8f * (1.0f - phase);
+
+                    pPulseBrush->SetColor(D2D1::ColorF(0.75f, 0.75f, 0.75f, alpha));
+                    D2D1_ELLIPSE pulseE = D2D1::Ellipse(D2D1::Point2F(b.x, b.y), currentRadius, currentRadius);
+                    pRT->DrawEllipse(&pulseE, pPulseBrush, 2.0f); // Emitting wave
+                }
+                SafeRelease(&pPulseBrush);
+            }
+        }
+
         D2D1_GRADIENT_STOP gs[3];
         gs[0].position = 0.0f;  gs[0].color = D2D1::ColorF(1, 1, 1, 0.95f);   // bright spot
         gs[1].position = 0.35f; gs[1].color = Lighten(b.color);               // transitional
@@ -16298,6 +16331,10 @@ void ReRackPracticeMode() {
 
     // 5. Reset counts and state
     isOpeningBreakShot = true;
+
+    // [+] FIX: Reset the 9-Ball target back to the 1-ball on a fresh rack
+    if (currentGameType == GameType::NINE_BALL) lowestBallOnTable = 1;
+
     pocketedThisTurn.clear();
     currentGameState = PRE_BREAK_PLACEMENT; // Go to placement state
     currentPlayer = 1; // Always player 1
