@@ -151,6 +151,7 @@ typedef struct tagUAHDRAWMENUITEM {
 #define WM_UAHNCPAINTMENUPOPUP 0x0095
 
 #define ID_MENUBAR_EMPTY_SPACE 49999
+#define ID_GAME_NINEBALLTRACKING 49998
 #define WM_UPDATE_MENU_STRIP (WM_APP + 1)
 
 // [+] Timer ID for deferred menu bar repaint
@@ -430,6 +431,7 @@ int g_hintIndex = 0;
 bool g_debugMode = true; // Enabled by default on first initial run
 // [+] NEW: Paths Feature Globals
 bool g_tracePaths = true;       // Toggle for ball trails
+bool g_nineBallTracking = true; // [+] NEW: Toggle for Nine-Ball target waves
 std::map<int, std::vector<D2D1_POINT_2F>> g_lastShotTrails; // Trails from the previous shot
 std::map<int, std::vector<D2D1_POINT_2F>> g_tempShotTrails; // Trails being recorded for the current shot
 bool foulCommitted = false;
@@ -2829,6 +2831,7 @@ void SaveSettings() {
         outFile << g_customTableColor.r << " " << g_customTableColor.g << " " << g_customTableColor.b << std::endl;
         outFile << g_debugMode << std::endl;   // Kibitzer Mode
         outFile << g_tracePaths << std::endl;  // Trace Paths
+        outFile << g_nineBallTracking << std::endl; // [+] NEW: Nine-Ball Tracking
 
         // [+] NEW: Save Avatar selections
         outFile << g_p1SpriteIndex << " " << g_p2SpriteIndex << std::endl;
@@ -2885,6 +2888,10 @@ void LoadSettings() {
         // [+] NEW: Trace Paths persistence
         inFile >> g_tracePaths;
         if (inFile.fail()) { g_tracePaths = true; inFile.clear(); }
+
+        // [+] NEW: Nine-Ball Tracking persistence
+        inFile >> g_nineBallTracking;
+        if (inFile.fail()) { g_nineBallTracking = true; inFile.clear(); }
 
         // [+] NEW: Load Avatar selections
         inFile >> g_p1SpriteIndex >> g_p2SpriteIndex;
@@ -4651,6 +4658,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
         // [+] NEW: Restore persisted toggle states to menu
         CheckMenuItem(hCurrentMenu, ID_GAME_DEBUGMODE, g_debugMode ? MF_CHECKED : MF_UNCHECKED);
         CheckMenuItem(hCurrentMenu, ID_GAME_TRACEPATHS, g_tracePaths ? MF_CHECKED : MF_UNCHECKED);
+        CheckMenuItem(hCurrentMenu, ID_GAME_NINEBALLTRACKING, g_nineBallTracking ? MF_CHECKED : MF_UNCHECKED);
+        EnableMenuItem(hCurrentMenu, ID_GAME_NINEBALLTRACKING, MF_BYCOMMAND | ((currentGameType == GameType::NINE_BALL) ? MF_ENABLED : MF_GRAYED));
 
         int colorID = ID_TABLECOLOR_INDIGO;
         if (selectedTableColor == TAN) colorID = ID_TABLECOLOR_TAN;
@@ -5150,6 +5159,7 @@ void CreateAppMenu(HWND hwnd) {
     AppendMenu(hGame, MF_STRING, ID_GAME_RETRY, L"&Retry Shot\tR");
     AppendMenu(hGame, MF_STRING, ID_GAME_HINTMOVE, L"&Hint Move\tH");
     AppendMenu(hGame, MF_STRING, ID_GAME_TRACEPATHS, L"Trace &Paths\tP");
+    AppendMenu(hGame, MF_STRING, ID_GAME_NINEBALLTRACKING, L"&Nine-Ball Tracking");
     AppendMenu(hGame, MF_STRING, ID_GAME_UNDO_SUNK_BALL, L"&Undo Sunk Ball\tCtrl+Z");
     AppendMenu(hGame, MF_SEPARATOR, 0, NULL);
 
@@ -5564,6 +5574,9 @@ case WM_ACTIVATE: {
         HMENU hMenuPopup = (HMENU)wParam;
         bool canUndo = cheatModeEnabled && !g_pocketHistory.empty();
         EnableMenuItem(hMenuPopup, ID_GAME_UNDO_SUNK_BALL, MF_BYCOMMAND | (canUndo ? MF_ENABLED : MF_GRAYED));
+
+        // [+] NEW: Gray out Nine-Ball Tracking if we aren't playing Nine-Ball
+        EnableMenuItem(hMenuPopup, ID_GAME_NINEBALLTRACKING, MF_BYCOMMAND | ((currentGameType == GameType::NINE_BALL) ? MF_ENABLED : MF_GRAYED));
         return 0;
     }
 
@@ -5810,6 +5823,12 @@ case WM_ACTIVATE: {
             // [+] NEW: Show Paths Menu Command
         case ID_GAME_TRACEPATHS:
             SendMessage(hwnd, WM_KEYDOWN, 'P', 0);
+            break;
+
+        case ID_GAME_NINEBALLTRACKING:
+            g_nineBallTracking = !g_nineBallTracking;
+            CheckMenuItem(hMenu, ID_GAME_NINEBALLTRACKING, g_nineBallTracking ? MF_CHECKED : MF_UNCHECKED);
+            InvalidateRect(hwnd, NULL, FALSE);
             break;
 
             // --- Return Sunk Ball command (guarded so it only runs when Cheat Mode is ON) ---
@@ -14867,7 +14886,7 @@ void DrawBalls(ID2D1RenderTarget* pRT)
 
         // [+] NEW: Nine-Ball Target Pulse Effect (Gray expanding waves)
         // if (currentGameType == GameType::NINE_BALL && !g_isPracticeMode && !isOpeningBreakShot && b.id == lowestBallOnTable && b.id != 0) {
-        if (currentGameType == GameType::NINE_BALL && !isOpeningBreakShot && b.id == lowestBallOnTable && b.id != 0) {
+        if (g_nineBallTracking && currentGameType == GameType::NINE_BALL && !isOpeningBreakShot && b.id == lowestBallOnTable && b.id != 0) {
             ID2D1SolidColorBrush* pPulseBrush = nullptr;
             pRT->CreateSolidColorBrush(D2D1::ColorF(0.7f, 0.7f, 0.7f, 1.0f), &pPulseBrush); // Gray base
             if (pPulseBrush) {
