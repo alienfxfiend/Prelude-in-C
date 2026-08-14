@@ -17365,6 +17365,13 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
     if (currentGameType == GameType::EIGHT_BALL_MODE) {
         const int maxBallsToShow = 7;
 
+        // [+] FIX: Center the 7 slots exactly in the middle of each player's bay
+        float totalWidth = (maxBallsToShow - 1) * spacing;
+        float p1CenterX = (p1BayRect.left + p1BayRect.right) * 0.5f;
+        float p2CenterX = (p2BayRect.left + p2BayRect.right) * 0.5f;
+        float startX_P1 = p1CenterX - (totalWidth * 0.5f);
+        float startX_P2 = p2CenterX + (totalWidth * 0.5f); // P2 draws right-to-left
+
         // [+] NEW: Draw sophisticated UI ghost placeholders for the 7 balls
         ID2D1SolidColorBrush* pPlaceholderOutline = nullptr;
         ID2D1SolidColorBrush* pPlaceholderFill = nullptr;
@@ -17384,7 +17391,7 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
 
             for (int i = 0; i < maxBallsToShow; ++i) {
                 // Player 1 Placeholder (Left bay)
-                D2D1_POINT_2F p1Center = D2D1::Point2F(currentX_P1 + i * spacing, center_Y);
+                D2D1_POINT_2F p1Center = D2D1::Point2F(startX_P1 + i * spacing, center_Y);
                 D2D1_ELLIPSE p1Slot = D2D1::Ellipse(p1Center, ballDisplayRadius, ballDisplayRadius);
                 D2D1_ELLIPSE p1Inner = D2D1::Ellipse(p1Center, ballDisplayRadius * 0.45f, ballDisplayRadius * 0.45f);
 
@@ -17394,7 +17401,7 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
                 pRT->DrawEllipse(&p1Inner, pPlaceholderOutline, 0.8f); // Inner HUD ring
 
                 // Player 2 Placeholder (Right bay)
-                D2D1_POINT_2F p2Center = D2D1::Point2F(currentX_P2 - i * spacing, center_Y);
+                D2D1_POINT_2F p2Center = D2D1::Point2F(startX_P2 - i * spacing, center_Y);
                 D2D1_ELLIPSE p2Slot = D2D1::Ellipse(p2Center, ballDisplayRadius, ballDisplayRadius);
                 D2D1_ELLIPSE p2Inner = D2D1::Ellipse(p2Center, ballDisplayRadius * 0.45f, ballDisplayRadius * 0.45f);
 
@@ -17415,11 +17422,11 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
                 bool isPlayer2Ball = (player2Info.assignedType != BallType::NONE && b.type == player2Info.assignedType);
 
                 if (isPlayer1Ball && p1DrawnCount < maxBallsToShow) {
-                    Draw3DPocketBall(b, D2D1::Point2F(currentX_P1 + p1DrawnCount * spacing, center_Y), ballDisplayRadius);
+                    Draw3DPocketBall(b, D2D1::Point2F(startX_P1 + p1DrawnCount * spacing, center_Y), ballDisplayRadius);
                     p1DrawnCount++;
                 }
                 else if (isPlayer2Ball && p2DrawnCount < maxBallsToShow) {
-                    Draw3DPocketBall(b, D2D1::Point2F(currentX_P2 - p2DrawnCount * spacing, center_Y), ballDisplayRadius);
+                    Draw3DPocketBall(b, D2D1::Point2F(startX_P2 - p2DrawnCount * spacing, center_Y), ballDisplayRadius);
                     p2DrawnCount++;
                 }
             }
@@ -17429,21 +17436,23 @@ void DrawPocketedBallsIndicator(ID2D1RenderTarget* pRT) {
     else if (currentGameType == GameType::NINE_BALL || currentGameType == GameType::STRAIGHT_POOL) {
         // [+] NEW: Draw sophisticated UI ghost placeholders for 9-Ball and Straight Pool
         int placeholderCount = 0;
-        float startX = currentX_P1; // Default to left-aligned
 
         if (currentGameType == GameType::NINE_BALL) {
             placeholderCount = 9; // Exactly 9 for 9-Ball
-            // [+] FIX: Center the 9 slots exactly in the middle of the panel
-            float barCenterX = (pocketedBallsBarRect.left + pocketedBallsBarRect.right) * 0.5f;
-            float totalWidth = (placeholderCount - 1) * spacing;
-            startX = barCenterX - (totalWidth * 0.5f);
         }
         else {
             // Calculate max placeholders that fit in the single long panel for Straight Pool
             float barWidth = pocketedBallsBarRect.right - pocketedBallsBarRect.left;
             float availableWidth = barWidth - (padding * 2.0f);
             placeholderCount = 1 + static_cast<int>(availableWidth / spacing);
+            // Cap at 15 balls to ensure perfect symmetry (since 14.1 Continuous uses max 15 balls)
+            if (placeholderCount > 15) placeholderCount = 15;
         }
+
+        // [+] FIX: Center the slots exactly in the middle of the panel for BOTH modes
+        float barCenterX = (pocketedBallsBarRect.left + pocketedBallsBarRect.right) * 0.5f;
+        float totalWidth = (placeholderCount - 1) * spacing;
+        float startX = barCenterX - (totalWidth * 0.5f);
 
         ID2D1SolidColorBrush* pPlaceholderOutline = nullptr;
         ID2D1SolidColorBrush* pPlaceholderFill = nullptr;
