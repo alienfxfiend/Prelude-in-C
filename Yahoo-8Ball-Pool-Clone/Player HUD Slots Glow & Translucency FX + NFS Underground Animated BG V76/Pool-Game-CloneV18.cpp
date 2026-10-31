@@ -161,7 +161,7 @@ typedef struct tagUAHDRAWMENUITEM {
 const float PI = std::numbers::pi_v<float>; // [+] C++20: Standard constant
 const float BALL_RADIUS = 10.0f;
 const float TABLE_LEFT = 80.0f;  // Adjusted for new window size
-const float TABLE_TOP = 110.0f;  // [+] FIX: Shifted down to make ample room for the new Pro HUD bays
+const float TABLE_TOP = 110.0f;  // [+] FIX: Shifted down to make ample room for the new Pro HUD bays Default=80.0f
 const float TABLE_WIDTH = 840.0f;  // Increased by 20%
 const float TABLE_HEIGHT = 420.0f; // Increased by 20%
 const float TABLE_RIGHT = TABLE_LEFT + TABLE_WIDTH;
@@ -17305,9 +17305,24 @@ void DrawPowerMeter(ID2D1RenderTarget* pRT) {
     ID2D1SolidColorBrush* pTextBrush = nullptr;
     ID2D1SolidColorBrush* pGlowBrush = nullptr;
 
-    pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pBorderBrush);
+    // [+] FIX: Changed Power Meter border to match the neutral silver/glassy 
+    // look of the Pocketed Balls Indicator slots (White with 35% opacity).
+    // This pops beautifully against the dark animated background.
+    pRT->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.35f), &pBorderBrush);
     if (!pBorderBrush) return;
     pRT->DrawRectangle(&powerMeterRect, pBorderBrush, 2.0f);
+/*void DrawPowerMeter(ID2D1RenderTarget* pRT) {
+    ID2D1SolidColorBrush* pBorderBrush = nullptr;
+    ID2D1SolidColorBrush* pBackgroundBrush = nullptr;     // [+] NEW: cobalt blue background
+    ID2D1GradientStopCollection* pGradientStops = nullptr;
+    ID2D1LinearGradientBrush* pGradientBrush = nullptr;
+    ID2D1SolidColorBrush* pNotchBrush = nullptr;
+    ID2D1SolidColorBrush* pTextBrush = nullptr;
+    ID2D1SolidColorBrush* pGlowBrush = nullptr;
+
+    pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Gray), &pBorderBrush); //Default=(D2D1::ColorF(D2D1::ColorF::Black)
+    if (!pBorderBrush) return;
+    pRT->DrawRectangle(&powerMeterRect, pBorderBrush, 2.0f);*/
     // [+] NEW: Fill entire meter with semi-transparent dark cobalt blue (#07050d)
     pRT->CreateSolidColorBrush(
         D2D1::ColorF(7.0f / 255.0f, 5.0f / 255.0f, 13.0f / 255.0f, 0.72f),
@@ -17378,7 +17393,9 @@ void DrawPowerMeter(ID2D1RenderTarget* pRT) {
         }
     }
 
-    pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pNotchBrush);
+    // [+] FIX: Changed the outer tick marks to match the new glassy silver border.
+    // If left black, they would be invisible on the dark Cyberpunk background!
+    pRT->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.35f), &pNotchBrush);
     if (pNotchBrush) {
         for (int i = 0; i <= 8; ++i) {
             float y = powerMeterRect.top + (powerMeterRect.bottom - powerMeterRect.top) * (i / 8.0f);
@@ -17390,9 +17407,26 @@ void DrawPowerMeter(ID2D1RenderTarget* pRT) {
             );
         }
     }
+            /*SafeRelease(&pGraySegmentBrush);
+        }
+    }
+
+    pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pNotchBrush);
+    if (pNotchBrush) {
+        for (int i = 0; i <= 8; ++i) {
+            float y = powerMeterRect.top + (powerMeterRect.bottom - powerMeterRect.top) * (i / 8.0f);
+            pRT->DrawLine(
+                D2D1::Point2F(powerMeterRect.right + 2.0f, y),
+                D2D1::Point2F(powerMeterRect.right + 8.0f, y),
+                pNotchBrush,
+                1.5f
+            );
+        }
+    }*/
 
     if (pTextFormat) {
-        pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pTextBrush);
+        //Default=(D2D1::ColorF(D2D1::ColorF::Black)
+        pRT->CreateSolidColorBrush(D2D1::ColorF(0.0f, 1.0f, 1.0f, 1.0f), &pTextBrush);
         if (pTextBrush) {
             D2D1_RECT_F textRect = D2D1::RectF(
                 powerMeterRect.left - 20.0f,
@@ -17551,8 +17585,9 @@ void DrawSpinIndicator(ID2D1RenderTarget* pRT) {
         pRT->DrawEllipse(&dotEllipse, pDotOutlineBrush, 1.0f);
     }
 
-    // 5. Draw "English" Text (Yahoo Clone Style)
-    pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pTextBrush);
+    // 5. Draw "English" Text (Yahoo Clone Style) Default=(D2D1::ColorF(D2D1::ColorF::Black)
+    // [+] FIX: Changed small English label color from Black to Neon Cyan
+    pRT->CreateSolidColorBrush(D2D1::ColorF(0.0f, 1.0f, 1.0f, 1.0f), &pTextBrush);
     if (pTextBrush && pBallNumFormat) {
         D2D1_RECT_F textRect = D2D1::RectF(
             spinIndicatorCenter.x - 40.0f,
@@ -17665,8 +17700,9 @@ void DrawSpinPopup(ID2D1RenderTarget* pRT) {
         pRT->DrawEllipse(&dotEllipse, pDotOutlineBrush, 1.5f);
     }
 
-    // 7. "English" label below the popup (bold for readability at this size).
-    pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &pTextBrush);
+    // 7. "English" label below the popup (bold for readability at this size). Default=(D2D1::ColorF(D2D1::ColorF::Black)
+    // [+] FIX: Changed large English popup label color from Black to Neon Cyan
+    pRT->CreateSolidColorBrush(D2D1::ColorF(0.0f, 1.0f, 1.0f, 1.0f), &pTextBrush);
     if (pTextBrush && pTextFormatBold) {
         D2D1_RECT_F textRect = D2D1::RectF(
             popupCenter.x - 100.0f,
