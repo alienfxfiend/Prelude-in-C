@@ -87,7 +87,7 @@ jobs:
 
           # 3) Game Assets folder with icon, images, sounds, MIDI and Sprite Sheets
           mkdir -p "$STAGING/Game Assets"
-          for f in 8Ball_Colored.ico splash-screen.jpeg hacker.jpg captboat.gif \
+          for f in 8Ball_Colored.ico splash-screen.bmp hacker.jpg captboat.gif \
                    wall.wav poolballhit.wav pocket.wav cue.wav BSQ.MID \
                    foul.wav won.wav rack.wav loss.wav; do
             if [ -f "Yahoo-8Ball-Pool-Clone/$f" ]; then
